@@ -4,6 +4,12 @@ import matplotlib.pyplot as plt
 import yt
 
 
+# TODO:
+#   - extract and save subsets of profiles (for faster loading)
+#   - load .dat file
+#   - plotly slider
+#   - 
+
 class BangSim:
     def __init__(self, name, bang_path='~/projects/codes/BANG/runs', xmax=1e12,
                  dim=1, chk_name=None, output_dir='output'):
