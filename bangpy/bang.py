@@ -19,11 +19,25 @@ class BangSim:
         self.xmax = xmax
         self.chk = None
         self.ray = None
+        self.x = None
 
     def load_chk(self, step):
-        """Loads checkpoint data file
+        """Load checkpoint data file
         """
         f_name = f'{self.chk_name}_hdf5_chk_{step:04d}'
         f_path = os.path.join(self.output_path, f_name)
         self.chk = yt.load(f_path)
         self.ray = self.chk.ray([0, 0, 0], [self.xmax, 0, 0])
+        self.x = self.ray['t'] * self.xmax
+
+    def plot(self, var, y_log=True, x_log=True):
+        """Plot given variable
+        """
+        fig, ax = plt.subplots()
+        ax.plot(self.x, self.ray[var])
+
+        if y_log:
+            ax.set_yscale('log')
+        if x_log:
+            ax.set_xscale('log')
+
