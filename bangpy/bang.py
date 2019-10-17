@@ -15,13 +15,11 @@ from . import load_save
 
 
 class BangSim:
-    def __init__(self, model, runs_path=None, xmax=1e12, config='config',
-                 dim=1, job_name=None, output_dir='output', verbose=True):
+    def __init__(self, model, job_name=None, runs_path=None, config='default',
+                 xmax=1e12, dim=1, output_dir='output', verbose=True,
+                 load_all=True):
         self.verbose = verbose
-
-        if runs_path is None:
-            runs_path = paths.model_path(model=model, runs_path=runs_path)
-        self.path = os.path.join(runs_path, f'run_{model}')
+        self.path = paths.model_path(model=model, runs_path=runs_path)
         self.output_path = os.path.join(self.path, output_dir)
 
         self.model = model
@@ -34,6 +32,11 @@ class BangSim:
         self.chk = None
         self.ray = None
         self.x = None
+
+        self.load_config(config=config)
+
+        if load_all:
+            self.load_dat()
 
     def printv(self, string):
         if self.verbose:
@@ -49,9 +52,9 @@ class BangSim:
     def load_dat(self):
         """Load .dat file
         """
-        f_name = f'{self.job_name}.dat'
-        f_path = os.path.join(self.path, f_name)
-        self.dat = np.loadtxt(f_path, usecols=[0])
+        filename = paths.dat_filename(self.job_name)
+        filepath = os.path.join(self.path, filename)
+        self.dat = load_save.load_dat(filepath, cols_dict=self.config['dat_columns'])
 
     def load_chk(self, step):
         """Load checkpoint data file
