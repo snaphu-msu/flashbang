@@ -76,3 +76,17 @@ class BangSim:
         if x_log:
             ax.set_xscale('log')
 
+    def plot_dat(self, var, y_log=True, display=True):
+        """Plots quantity from dat file
+        """
+        fig, ax = plt.subplots()
+        if y_log:
+            ax.set_yscale('log')
+
+        ax.plot(self.dat['time'], self.dat[var])
+
+        ax.set_xlabel('$t$ (s)') 
+        ax.set_ylabel(var)
+
+        if display:
+            plt.show(block=False)
