@@ -40,7 +40,7 @@ class BangSim:
         if self.verbose:
             print(string)
 
-    def load_config(self, config='config'):
+    def load_config(self, config='default'):
         """Load config file
         """
         config_filepath = paths.config_filepath(name=config)
