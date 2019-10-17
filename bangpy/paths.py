@@ -12,16 +12,16 @@ bangpy_path = os.environ['BANGPY']
 models_path = os.environ['BANG_MODELS']
 
 
-def config_filepath(name='config'):
+def config_filepath(name='default'):
     """Returns path to config file
 
     parameters
     ----------
     name : str (optional)
         base name of config file
-        defaults to 'config' (for file 'config.ini')
+        defaults to 'default' (for file 'default.ini')
     """
-    return os.path.join(bangpy_path, 'bangpy', f'{name}.ini')
+    return os.path.join(bangpy_path, 'bangpy', 'config', f'{name}.ini')
 
 
 def model_path(model, runs_path=None, prefix='run_'):
