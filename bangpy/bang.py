@@ -2,11 +2,10 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import yt
-import configparser
-import ast
 
 # bangpy
 from . import paths
+from . import load_save
 
 # TODO:
 #   - extract and save subsets of profiles (for faster loading)
@@ -43,20 +42,8 @@ class BangSim:
     def load_config(self, config='default'):
         """Load config file
         """
-        config_filepath = paths.config_filepath(name=config)
-        if not os.path.exists(config_filepath):
-            raise FileNotFoundError(f'Config file not found: {config_filepath}')
-
-        self.printv(f'Loading config: {config_filepath}')
-        ini = configparser.ConfigParser()
-        ini.read(config_filepath)
-
-        config = {}
-        for section in ini.sections():
-            config[section] = {}
-            for option in ini.options(section):
-                config[section][option] = ast.literal_eval(ini.get(section, option))
-
+        filepath = paths.config_filepath(name=config)
+        config = load_save.load_config(filepath, verbose=self.verbose)
         self.config = config
 
     def load_dat(self):
