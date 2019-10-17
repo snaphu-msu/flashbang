@@ -21,7 +21,7 @@ def config_filepath(name='config'):
         base name of config file
         defaults to 'config' (for file 'config.ini')
     """
-    return os.path.join(bangpy_path, f'{name}.ini')
+    return os.path.join(bangpy_path, 'bangpy', f'{name}.ini')
 
 
 def model_path(model, runs_path=None, prefix='run_'):
