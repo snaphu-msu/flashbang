@@ -4,6 +4,7 @@ import os
 import numpy as np
 import configparser
 import ast
+import sys
 
 # bangpy
 from .strings import printv
@@ -28,7 +29,7 @@ def load_config(filepath, verbose=True):
     return config
 
 
-def load_dat(filepath, cols_dict):
+def load_dat(filepath, cols_dict, verbose=True):
     """Loads .dat file and returns as dict of quantities
 
     parameters
@@ -36,10 +37,12 @@ def load_dat(filepath, cols_dict):
     filepath: str
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
+    verbose : bool
     """
+    printv(f'Loading dat file: {filepath}', verbose=verbose)
     dat = {}
+
     for key, idx_1 in cols_dict.items():
-        print(idx_1)
         index = idx_1 - 1
         dat[key] = np.loadtxt(filepath, usecols=index)
 
