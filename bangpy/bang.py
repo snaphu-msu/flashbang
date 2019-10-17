@@ -16,7 +16,7 @@ from . import paths
 
 
 class BangSim:
-    def __init__(self, model, runs_path=None, xmax=1e12,
+    def __init__(self, model, runs_path=None, xmax=1e12, config='config',
                  dim=1, job_name=None, output_dir='output', verbose=True):
         self.verbose = verbose
 
@@ -40,16 +40,16 @@ class BangSim:
         if self.verbose:
             print(string)
 
-    def load_config(self):
+    def load_config(self, config='config'):
         """Load config file
         """
-        config_filepath = paths.config_filepath()
+        config_filepath = paths.config_filepath(name=config)
+        if not os.path.exists(config_filepath):
+            raise FileNotFoundError(f'Config file not found: {config_filepath}')
+
         self.printv(f'Loading config: {config_filepath}')
         ini = configparser.ConfigParser()
         ini.read(config_filepath)
-        if not os.path.exists(config_filepath):
-            raise FileNotFoundError(f'Config file not found: {config_filepath}'
-                                    '\nEither create one or set load_config=False')
 
         config = {}
         for section in ini.sections():
