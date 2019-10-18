@@ -1,12 +1,25 @@
-"""Functions that return strings for paths and files
+"""Functions that return standardised strings for paths and files
 
-Naming convention:
+For this module to work, you must set the bash environment variables:
+    - BANGPY (path to bangpy)
+    - BANG_MODELS (path to location of Bang (Flash) models, i.e. BANG/runs)
+
+Function naming convention:
   - "_filename" name of file only
   - "_path" full path to a directory
   - "_filepath" full path to a file (i.e., path + filename)
 
 Expected directory structure:
-[TODO]
+    BANG/runs/run_[model]/output/
+
+    where:
+        - '.dat' and '.log' files are in directory 'run_[model]'
+        - 'chk' and 'plt' files in directory 'output'
+
+    Note:
+        - path to 'runs' directory can be set with arg 'runs_path'
+        - prefix to model directory, 'run_', can be set with arg 'runs_prefix'
+        - name of 'output' directory can be set with arg 'output_dir'
 """
 
 import os
@@ -35,8 +48,8 @@ def dat_filepath(job_name, model, runs_path=None, runs_prefix='run_'):
         see model_path()
     """
     filename = dat_filename(job_name)
-    path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    return os.path.join(path, filename)
+    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    return os.path.join(m_path, filename)
 
 
 def chk_filename(job_name, chk_i):
@@ -50,8 +63,9 @@ def chk_filepath(job_name, model, chk_i, output_dir='output',
     """Returns filepath to checkpoint file
     """
     filename = chk_filename(job_name, chk_i=chk_i)
-    path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    return os.path.join(path, output_dir, filename)
+    o_path = output_path(model, output_dir=output_dir, runs_path=runs_path,
+                         runs_prefix=runs_prefix)
+    return os.path.join(o_path, filename)
 
 
 def config_filepath(name='default'):
@@ -90,5 +104,5 @@ def output_path(model, output_dir='output', runs_path=None,
                 runs_prefix='run_'):
     """Returns path to model output directory
     """
-    path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    return os.path.join(path, output_dir)
+    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    return os.path.join(m_path, output_dir)
