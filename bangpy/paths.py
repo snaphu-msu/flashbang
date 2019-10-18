@@ -1,4 +1,5 @@
-"""Functions that return standardised strings for paths and files
+"""Functions that return standardised strings for paths and files of
+    BANG (FLASH) models, and also bangpy stuff
 
 For this module to work, you must set the bash environment variables:
     - BANGPY (path to bangpy)
