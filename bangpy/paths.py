@@ -45,6 +45,15 @@ def chk_filename(job_name, chk_i):
     return f'{job_name}_hdf5_chk_{chk_i:04d}'
 
 
+def chk_filepath(job_name, model, chk_i, output_dir='output',
+                 runs_path=None, runs_prefix='run_'):
+    """Returns filepath to checkpoint file
+    """
+    filename = chk_filename(job_name, chk_i=chk_i)
+    path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    return os.path.join(path, output_dir, filename)
+
+
 def config_filepath(name='default'):
     """Returns path to config file
 
