@@ -39,6 +39,12 @@ def dat_filepath(job_name, model, runs_path=None, runs_prefix='run_'):
     return os.path.join(path, filename)
 
 
+def chk_filename(job_name, chk_i):
+    """Returns filename for checkpoint (chk) file
+    """
+    return f'{job_name}_hdf5_chk_{chk_i:04d}'
+
+
 def config_filepath(name='default'):
     """Returns path to config file
 
