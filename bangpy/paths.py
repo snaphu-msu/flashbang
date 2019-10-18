@@ -84,3 +84,11 @@ def model_path(model, runs_path=None, runs_prefix='run_'):
         runs_path = models_path
 
     return os.path.join(runs_path, f'{runs_prefix}{model}')
+
+
+def output_path(model, output_dir='output', runs_path=None,
+                runs_prefix='run_'):
+    """Returns path to model output directory
+    """
+    path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    return os.path.join(path, output_dir)
