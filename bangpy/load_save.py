@@ -4,9 +4,29 @@ import os
 import numpy as np
 import configparser
 import ast
+import subprocess
+import sys
 
 # bangpy
 from .strings import printv
+
+
+def try_mkdir(path, skip=False, verbose=True):
+    printv(f'Creating directory  {path}', verbose)
+    if os.path.exists(path):
+        if skip:
+            printv('Directory already exists - skipping', verbose)
+        else:
+            print('Directory exists')
+            cont = input('Overwrite (DESTROY)? (y/[n]): ')
+
+            if cont == 'y' or cont == 'Y':
+                subprocess.run(['rm', '-r', path])
+                subprocess.run(['mkdir', path])
+            elif cont == 'n' or cont == 'N':
+                sys.exit()
+    else:
+        subprocess.run(['mkdir', '-p', path], check=True)
 
 
 def load_config(filepath, verbose=True):
