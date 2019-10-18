@@ -28,7 +28,7 @@ class BangSim:
         self.config = None
         self.dat = None
         self.chk = None
-        self.ray = None
+        self.profile = None
         self.x = None
 
         self.load_config(config=config)
@@ -61,14 +61,14 @@ class BangSim:
         f_name = f'{self.job_name}_hdf5_chk_{step:04d}'
         f_path = os.path.join(self.output_path, f_name)
         self.chk = yt.load(f_path)
-        self.ray = self.chk.ray([0, 0, 0], [self.xmax, 0, 0])
-        self.x = self.ray['t'] * self.xmax
+        self.profile = self.chk.ray([0, 0, 0], [self.xmax, 0, 0])
+        self.x = self.profile['t'] * self.xmax
 
     def plot(self, var, y_log=True, x_log=True):
         """Plot given variable
         """
         fig, ax = plt.subplots()
-        ax.plot(self.x, self.ray[var])
+        ax.plot(self.x, self.profile[var])
 
         if y_log:
             ax.set_yscale('log')
