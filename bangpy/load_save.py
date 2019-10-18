@@ -6,8 +6,10 @@ import configparser
 import ast
 import subprocess
 import sys
+import yt
 
 # bangpy
+from . import paths
 from .strings import printv
 
 
@@ -66,6 +68,16 @@ def load_dat(filepath, cols_dict, verbose=True):
         dat[key] = np.loadtxt(filepath, usecols=index)
 
     return dat
+
+
+def load_chk(job_name, model, chk_i, output_dir='output',
+             runs_path=None, runs_prefix='run_', o_path=None):
+    """Loads checkpoint file for given model
+    """
+    filepath = paths.chk_filepath(job_name, model=model, chk_i=chk_i,
+                                  output_dir=output_dir, runs_path=runs_path,
+                                  runs_prefix=runs_prefix, o_path=o_path)
+    return yt.load(filepath)
 
 
 def find_chk(path, match_str='hdf5_chk_', n_digits=4):
