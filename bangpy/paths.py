@@ -60,12 +60,13 @@ def chk_filename(job_name, chk_i):
 
 
 def chk_filepath(job_name, model, chk_i, output_dir='output',
-                 runs_path=None, runs_prefix='run_'):
+                 runs_path=None, runs_prefix='run_', o_path=None):
     """Returns filepath to checkpoint file
     """
     filename = chk_filename(job_name, chk_i=chk_i)
-    o_path = output_path(model, output_dir=output_dir, runs_path=runs_path,
-                         runs_prefix=runs_prefix)
+    if o_path is None:
+        o_path = output_path(model, output_dir=output_dir, runs_path=runs_path,
+                             runs_prefix=runs_prefix)
     return os.path.join(o_path, filename)
 
 
