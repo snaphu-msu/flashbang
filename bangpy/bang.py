@@ -9,9 +9,7 @@ from . import load_save
 
 # TODO:
 #   - extract and save subsets of profiles (for faster loading)
-#   - load .dat file
 #   - plotly slider
-#   -
 
 
 class BangSim:
@@ -34,6 +32,7 @@ class BangSim:
         self.x = None
 
         self.load_config(config=config)
+        self.chk_idxs = load_save.find_chk(path=self.output_path)
 
         if load_all:
             self.load_dat()
@@ -85,7 +84,7 @@ class BangSim:
 
         ax.plot(self.dat['time'], self.dat[var])
 
-        ax.set_xlabel('$t$ (s)') 
+        ax.set_xlabel('$t$ (s)')
         ax.set_ylabel(var)
 
         if display:
