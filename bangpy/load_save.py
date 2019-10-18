@@ -4,7 +4,6 @@ import os
 import numpy as np
 import configparser
 import ast
-import sys
 
 # bangpy
 from .strings import printv
@@ -47,3 +46,26 @@ def load_dat(filepath, cols_dict, verbose=True):
         dat[key] = np.loadtxt(filepath, usecols=index)
 
     return dat
+
+
+def find_chk(path, match_str='hdf5_chk_', n_digits=4):
+    """Returns list of checkpoint (chk) files available in given directory
+        returns as nparray of checkpoint numbers
+
+    parameters
+    ----------
+    path : str
+        path to directory to look in
+    match_str : str
+        string to match for in filename, to identify chk files
+    n_digits : int
+        number of digits at end of filename corresponding to checkpoint ID
+    """
+    file_list = os.listdir(path)
+    chks = []
+
+    for file in file_list:
+        if match_str in file:
+            chks += [int(file[-n_digits:])]
+
+    return np.sort(chks)
