@@ -17,6 +17,7 @@ class BangSim:
                  xmax=1e12, dim=1, output_dir='output', verbose=True,
                  load_all=True):
         self.verbose = verbose
+        self.runs_path = runs_path
         self.path = paths.model_path(model=model, runs_path=runs_path)
         self.output_path = os.path.join(self.path, output_dir)
 
@@ -28,7 +29,7 @@ class BangSim:
         self.config = None
         self.dat = None
         self.chk = None
-        self.profile = None
+        self.profiles = {}
         self.x = None
 
         self.load_config(config=config)
@@ -55,14 +56,14 @@ class BangSim:
         filepath = os.path.join(self.path, filename)
         self.dat = load_save.load_dat(filepath, cols_dict=self.config['dat_columns'])
 
-    def load_chk(self, step):
+    def load_profile(self, chk_i):
         """Load checkpoint data file
         """
-        f_name = f'{self.job_name}_hdf5_chk_{step:04d}'
-        f_path = os.path.join(self.output_path, f_name)
+        f_path = paths.chk_filepath(self.job_name, model=self.model, chk_i=chk_i,
+                                    o_path=self.output_path)
         self.chk = yt.load(f_path)
-        self.profile = self.chk.ray([0, 0, 0], [self.xmax, 0, 0])
-        self.x = self.profile['t'] * self.xmax
+        self.profiles[chk_i] = self.chk.ray([0, 0, 0], [self.xmax, 0, 0])
+        self.x = self.profiles[chk_i]['t'] * self.xmax
 
     def plot(self, var, y_log=True, x_log=True):
         """Plot given variable
