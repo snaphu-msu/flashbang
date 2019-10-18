@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-import yt
 
 # bangpy
 from . import paths
@@ -59,9 +58,8 @@ class BangSim:
     def load_profile(self, chk_i):
         """Load checkpoint data file
         """
-        f_path = paths.chk_filepath(self.job_name, model=self.model, chk_i=chk_i,
-                                    o_path=self.output_path)
-        self.chk = yt.load(f_path)
+        self.chk = load_save.load_chk(self.job_name, model=self.model, chk_i=chk_i,
+                                      o_path=self.output_path)
         self.profiles[chk_i] = self.chk.ray([0, 0, 0], [self.xmax, 0, 0])
         self.x = self.profiles[chk_i]['t'] * self.xmax
 
