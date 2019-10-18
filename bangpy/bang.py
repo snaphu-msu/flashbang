@@ -27,9 +27,7 @@ class BangSim:
 
         self.config = None
         self.dat = None
-        self.chk = None
         self.profiles = {}
-        self.x = None
 
         self.load_config(config=config)
         self.chk_idxs = load_save.find_chk(path=self.output_path)
@@ -58,16 +56,17 @@ class BangSim:
     def load_profile(self, chk_i):
         """Load checkpoint data file
         """
-        self.chk = load_save.load_chk(self.job_name, model=self.model, chk_i=chk_i,
-                                      o_path=self.output_path)
-        self.profiles[chk_i] = self.chk.ray([0, 0, 0], [self.xmax, 0, 0])
-        self.x = self.profiles[chk_i]['t'] * self.xmax
+        self.profiles[chk_i] = load_save.extract_profile(
+                                    self.job_name, self.model, chk_i=chk_i,
+                                    xmax=self.xmax, o_path=self.output_path,
+                                    params=self.config['profile']['params'])
 
-    def plot(self, var, y_log=True, x_log=True):
+    def plot(self, chk_i, var, y_log=True, x_log=True):
         """Plot given variable
         """
         fig, ax = plt.subplots()
-        ax.plot(self.x, self.profile[var])
+        profile = self.profiles[chk_i]
+        ax.plot(profile['x'], profile[var])
 
         if y_log:
             ax.set_yscale('log')
