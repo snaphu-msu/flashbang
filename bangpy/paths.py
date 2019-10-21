@@ -70,6 +70,12 @@ def chk_filepath(basename, model, chk_i, output_dir='output',
     return os.path.join(o_path, filename)
 
 
+def profile_filename(basename, chk_i):
+    """Returns filename for pickled profile
+    """
+    return f'{basename}_profile_{chk_i:04d}.pickle'
+
+
 def config_filepath(name='default'):
     """Returns path to config file
 
