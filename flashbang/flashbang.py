@@ -7,10 +7,10 @@ from . import paths
 from . import load_save
 
 # TODO:
-#   - plotly slider
+#   - plotly slider of profiles
 
 
-class BangSim:
+class Simulation:
     def __init__(self, model, basename=None, runs_path=None, config='default',
                  xmax=1e12, dim=1, output_dir='output', verbose=True,
                  load_all=True):
