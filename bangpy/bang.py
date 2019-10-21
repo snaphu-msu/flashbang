@@ -48,9 +48,8 @@ class BangSim:
     def load_dat(self):
         """Load .dat file
         """
-        filename = paths.dat_filename(self.basename)
-        filepath = os.path.join(self.path, filename)
-        self.dat = load_save.load_dat(filepath, cols_dict=self.config['dat_columns'])
+        self.dat = load_save.load_dat(self.basename, model=self.model,
+                                      cols_dict=self.config['dat_columns'])
 
     def load_all_profiles(self, reload=False, save=True):
         """Load profiles for all available checkpoints

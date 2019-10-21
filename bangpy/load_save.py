@@ -69,16 +69,25 @@ def load_config(filepath, verbose=True):
     return config
 
 
-def load_dat(filepath, cols_dict, verbose=True):
+def load_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
+             verbose=True):
     """Loads .dat file and returns as dict of quantities
 
     parameters
     ----------
-    filepath: str
+    basename: str
+    model : str
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
+    runs_path : str
+    runs_prefix : str
     verbose : bool
     """
+    # TODO: allow pickle saving/loading
+    model_path = paths.model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    filename = paths.dat_filename(basename)
+    filepath = os.path.join(model_path, filename)
+
     printv(f'Loading dat file: {filepath}', verbose=verbose)
     dat = {}
 
