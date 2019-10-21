@@ -55,7 +55,7 @@ class BangSim:
     def load_profile(self, chk_i, reload=False, save=True):
         """Load checkpoint data file
         """
-        self.profiles[chk_i] = load_save.extract_profile_from_chk(
+        self.profiles[chk_i] = load_save.extract_profile(
                                     self.basename, chk_i=chk_i, model=self.model,
                                     xmax=self.xmax, o_path=self.output_path,
                                     params=self.config['profile']['params'],

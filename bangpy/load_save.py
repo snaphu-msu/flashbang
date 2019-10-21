@@ -89,10 +89,10 @@ def load_dat(filepath, cols_dict, verbose=True):
     return dat
 
 
-def extract_profile_from_chk(basename, chk_i, model, xmax=1e12, output_dir='output',
-                             runs_path=None, runs_prefix='run_', o_path=None,
-                             params=('temp', 'dens', 'pres'), reload=False,
-                             save=True, verbose=True):
+def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
+                    runs_path=None, runs_prefix='run_', o_path=None,
+                    params=('temp', 'dens', 'pres'), reload=False,
+                    save=True, verbose=True):
     """Extracts and returns profile dict from checkpoint file
 
     parameters
