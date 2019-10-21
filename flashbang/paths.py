@@ -26,7 +26,7 @@ Expected directory structure:
 import os
 
 # Bash environment variables, need to set these first
-bangpy_path = os.environ['BANGPY']
+flashbang_path = os.environ['FLASHBANG']
 models_path = os.environ['BANG_MODELS']
 
 
@@ -101,7 +101,7 @@ def config_filepath(name='default'):
         base name of config file
         defaults to 'default' (for file 'default.ini')
     """
-    return os.path.join(bangpy_path, 'bangpy', 'config', f'{name}.ini')
+    return os.path.join(flashbang_path, 'flashbang', 'config', f'{name}.ini')
 
 
 def model_path(model, runs_path=None, runs_prefix='run_'):
