@@ -76,7 +76,7 @@ def load_dat(filepath, cols_dict, verbose=True):
     return dat
 
 
-def extract_profile(basename, model, chk_i, xmax=1e12, output_dir='output',
+def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
                     runs_path=None, runs_prefix='run_', o_path=None,
                     params=('temp', 'dens', 'pres')):
     """Extracts and returns profile dict from checkpoint file
@@ -94,7 +94,7 @@ def extract_profile(basename, model, chk_i, xmax=1e12, output_dir='output',
     return profile
 
 
-def save_profile(profile, basename, model, chk_i, runs_path=None,
+def save_profile(profile, basename, chk_i, model, runs_path=None,
                  runs_prefix='run_', verbose=True):
     """Saves profile to file for faster loading
 
@@ -114,7 +114,26 @@ def save_profile(profile, basename, model, chk_i, runs_path=None,
     pickle.dump(profile, open(filepath, 'wb'))
 
 
-def load_chk(basename, model, chk_i, output_dir='output',
+def load_profile(basename, chk_i, model, runs_path=None,
+                 runs_prefix='run_', verbose=True):
+    """Saves profile to file for faster loading
+
+    parameters
+    ----------
+    basename : str
+    model : str
+    chk_i : int
+    runs_path : str (optional)
+    runs_prefix : str (optional)
+    verbose : bool (optional)
+    """
+    filepath = paths.profile_filepath(basename, model=model, chk_i=chk_i,
+                                      runs_path=runs_path, runs_prefix=runs_prefix)
+    printv(f'Loading: {filepath}', verbose)
+    return pickle.load(open(filepath, 'rb'))
+
+
+def load_chk(basename, chk_i, model, output_dir='output',
              runs_path=None, runs_prefix='run_', o_path=None):
     """Loads checkpoint file for given model
     """
