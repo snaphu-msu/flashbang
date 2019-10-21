@@ -7,7 +7,6 @@ from . import paths
 from . import load_save
 
 # TODO:
-#   - extract and save subsets of profiles (for faster loading)
 #   - plotly slider
 
 
@@ -64,6 +63,10 @@ class BangSim:
     def plot(self, chk_i, var, y_log=True, x_log=True):
         """Plot given variable
         """
+        # TODO:
+        #       - autoload chk_i
+        #       - check if var exists in profile
+
         fig, ax = plt.subplots()
         profile = self.profiles[chk_i]
         ax.plot(profile['x'], profile[var])
