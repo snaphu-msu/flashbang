@@ -92,7 +92,7 @@ def load_dat(filepath, cols_dict, verbose=True):
 def extract_profile_from_chk(basename, chk_i, model, xmax=1e12, output_dir='output',
                              runs_path=None, runs_prefix='run_', o_path=None,
                              params=('temp', 'dens', 'pres'), reload=False,
-                             verbose=True):
+                             save=True, verbose=True):
     """Extracts and returns profile dict from checkpoint file
 
     parameters
@@ -101,24 +101,45 @@ def extract_profile_from_chk(basename, chk_i, model, xmax=1e12, output_dir='outp
     chk_i : int
     model : str
     xmax : float (optional)
+        Return profile between radius=0 to xmax
     output_dir : str (optional)
     runs_path : str (optional)
     runs_prefix : str (optional)
     o_path : str (optional)
     params : [] (optional)
+        profile parameters to extract and return from chk file
     reload : bool (optional)
+        force reload from chk file, else try to load pickled profile
+    save : bool
+        pickle profile to file for faster loading next time
     verbose : bool (optional)
     """
-    chk = load_chk(basename, model=model, chk_i=chk_i,
-                   output_dir=output_dir, runs_path=runs_path,
-                   runs_prefix=runs_prefix, o_path=o_path)
+    def reload_chk():
+        return load_chk(basename, model=model, chk_i=chk_i,
+                        output_dir=output_dir, runs_path=runs_path,
+                        runs_prefix=runs_prefix, o_path=o_path)
     profile = {}
-    ray = chk.ray([0, 0, 0], [xmax, 0, 0])
-    profile['x'] = ray['t'] * xmax
+    loaded_successfully = False
+    if not reload:
+        try:
+            profile = load_profile(basename, chk_i=chk_i, model=model,
+                                   runs_path=runs_path, runs_prefix=runs_prefix,
+                                   verbose=verbose)
+            loaded_successfully = True
+        except FileNotFoundError:
+            pass
 
-    for v in params:
-        profile[v] = ray[v]
+    if len(profile.keys()) == 0:
+        chk = reload_chk()
+        ray = chk.ray([0, 0, 0], [xmax, 0, 0])
+        profile['x'] = ray['t'] * xmax
 
+        for v in params:
+            profile[v] = ray[v]
+
+    if save and not loaded_successfully:
+        save_profile(profile, basename=basename, chk_i=chk_i, model=model,
+                     runs_path=runs_path, runs_prefix=runs_prefix, verbose=verbose)
     return profile
 
 
