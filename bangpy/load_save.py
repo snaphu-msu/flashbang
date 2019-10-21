@@ -45,14 +45,16 @@ def try_mkdir(path, skip=False, verbose=True):
         subprocess.run(['mkdir', '-p', path], check=True)
 
 
-def load_config(filepath, verbose=True):
+def load_config(name='default', verbose=True):
     """Load .ini config file and return as dict
 
     parameters
     ----------
-    filepath: str
-    verbose : bool
+    name: str (optional)
+        label of config file to load
+    verbose : bool (optional)
     """
+    filepath = paths.config_filepath(name=name)
     printv(f'Loading config: {filepath}', verbose)
     if not os.path.exists(filepath):
         raise FileNotFoundError(f'Config file not found: {filepath}')
