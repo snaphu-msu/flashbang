@@ -83,11 +83,13 @@ def profile_filename(basename, chk_i):
     return f'{basename}_profile_{chk_i:04d}.pickle'
 
 
-def profile_filepath(basename, model, chk_i, output_dir='output',
-                     runs_path=None, runs_prefix='run_', o_path=None):
+def profile_filepath(basename, model, chk_i, runs_path=None,
+                     runs_prefix='run_'):
     """Returns filepath to pickled profile
     """
-    pass
+    path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    filename = profile_filename(basename, chk_i)
+    return os.path.join(path, filename)
 
 
 def config_filepath(name='default'):
