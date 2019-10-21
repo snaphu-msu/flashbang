@@ -30,6 +30,13 @@ bangpy_path = os.environ['BANGPY']
 models_path = os.environ['BANG_MODELS']
 
 
+def temp_path(model, runs_path=None, runs_prefix='run_'):
+    """Path to directory for temporary file saving
+    """
+    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    return os.path.join(m_path, 'temp')
+
+
 def dat_filename(basename):
     """Returns filename for .dat file
     """
@@ -74,6 +81,13 @@ def profile_filename(basename, chk_i):
     """Returns filename for pickled profile
     """
     return f'{basename}_profile_{chk_i:04d}.pickle'
+
+
+def profile_filepath(basename, model, chk_i, output_dir='output',
+                     runs_path=None, runs_prefix='run_', o_path=None):
+    """Returns filepath to pickled profile
+    """
+    pass
 
 
 def config_filepath(name='default'):
