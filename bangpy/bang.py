@@ -52,8 +52,27 @@ class BangSim:
         filepath = os.path.join(self.path, filename)
         self.dat = load_save.load_dat(filepath, cols_dict=self.config['dat_columns'])
 
+    def load_all_profiles(self, reload=False, save=True):
+        """Load profiles for all available checkpoints
+
+        parameters
+        ----------
+        reload : bool
+        save : bool
+        """
+        # TODO: parallelize (refer to burst_pipeline in pyburst)
+        for chk_i in self.chk_idxs:
+            self.load_profile(chk_i, reload=reload, save=save)
+
     def load_profile(self, chk_i, reload=False, save=True):
         """Load checkpoint data file
+
+        parameters
+        ----------
+        chk_i : int
+            checkpoint ID to load
+        reload : bool
+        save : bool
         """
         self.profiles[chk_i] = load_save.extract_profile(
                                     self.basename, chk_i=chk_i, model=self.model,
