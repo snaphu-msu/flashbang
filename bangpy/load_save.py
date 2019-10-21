@@ -7,13 +7,16 @@ import ast
 import subprocess
 import sys
 import yt
+import pickle
 
 # bangpy
 from . import paths
 from .strings import printv
 
 #  TODO:
-#   - extract and save subsets of profiles (for faster loading)
+#   - pickle profiles
+#   - load pickled profiles
+#   - pickle .dat file
 
 
 def try_mkdir(path, skip=False, verbose=True):
@@ -89,6 +92,26 @@ def extract_profile(basename, model, chk_i, xmax=1e12, output_dir='output',
         profile[v] = ray[v]
 
     return profile
+
+
+def save_profile(profile, basename, model, chk_i, runs_path=None,
+                 runs_prefix='run_', verbose=True):
+    """Saves profile to file for faster loading
+
+    parameters
+    ----------
+    profile : dict
+    basename : str
+    model : str
+    chk_i : int
+    runs_path : str (optional)
+    runs_prefix : str (optional)
+    verbose : bool (optional)
+    """
+    filepath = paths.profile_filepath(basename, model=model, chk_i=chk_i,
+                                      runs_path=runs_path, runs_prefix=runs_prefix)
+    printv(f'Saving: {filepath}', verbose)
+    pickle.dump(profile, open(filepath, 'wb'))
 
 
 def load_chk(basename, model, chk_i, output_dir='output',
