@@ -14,12 +14,20 @@ from . import paths
 from .strings import printv
 
 #  TODO:
-#   - pickle profiles
-#   - load pickled profiles
 #   - pickle .dat file
 
 
 def try_mkdir(path, skip=False, verbose=True):
+    """Try to make given directory
+
+    parameters
+    ----------
+    path: str
+    skip : bool
+        do nothing if directory already exists
+        if skip=false, will ask to overwrite an existing directory
+    verbose : bool
+    """
     printv(f'Creating directory  {path}', verbose)
     if os.path.exists(path):
         if skip:
@@ -39,6 +47,11 @@ def try_mkdir(path, skip=False, verbose=True):
 
 def load_config(filepath, verbose=True):
     """Load .ini config file and return as dict
+
+    parameters
+    ----------
+    filepath: str
+    verbose : bool
     """
     printv(f'Loading config: {filepath}', verbose)
     if not os.path.exists(filepath):
@@ -76,10 +89,25 @@ def load_dat(filepath, cols_dict, verbose=True):
     return dat
 
 
-def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
-                    runs_path=None, runs_prefix='run_', o_path=None,
-                    params=('temp', 'dens', 'pres')):
+def extract_profile_from_chk(basename, chk_i, model, xmax=1e12, output_dir='output',
+                             runs_path=None, runs_prefix='run_', o_path=None,
+                             params=('temp', 'dens', 'pres'), reload=False,
+                             verbose=True):
     """Extracts and returns profile dict from checkpoint file
+
+    parameters
+    ----------
+    basename : str
+    chk_i : int
+    model : str
+    xmax : float (optional)
+    output_dir : str (optional)
+    runs_path : str (optional)
+    runs_prefix : str (optional)
+    o_path : str (optional)
+    params : [] (optional)
+    reload : bool (optional)
+    verbose : bool (optional)
     """
     chk = load_chk(basename, model=model, chk_i=chk_i,
                    output_dir=output_dir, runs_path=runs_path,
@@ -102,8 +130,8 @@ def save_profile(profile, basename, chk_i, model, runs_path=None,
     ----------
     profile : dict
     basename : str
-    model : str
     chk_i : int
+    model : str
     runs_path : str (optional)
     runs_prefix : str (optional)
     verbose : bool (optional)
@@ -121,8 +149,8 @@ def load_profile(basename, chk_i, model, runs_path=None,
     parameters
     ----------
     basename : str
-    model : str
     chk_i : int
+    model : str
     runs_path : str (optional)
     runs_prefix : str (optional)
     verbose : bool (optional)
@@ -136,6 +164,16 @@ def load_profile(basename, chk_i, model, runs_path=None,
 def load_chk(basename, chk_i, model, output_dir='output',
              runs_path=None, runs_prefix='run_', o_path=None):
     """Loads checkpoint file for given model
+
+    parameters
+    ----------
+    basename : str
+    chk_i : int
+    model : str
+    output_dir : str (optional)
+    runs_path : str (optional)
+    runs_prefix : str (optional)
+    o_path : str (optional)
     """
     filepath = paths.chk_filepath(basename, model=model, chk_i=chk_i,
                                   output_dir=output_dir, runs_path=runs_path,
