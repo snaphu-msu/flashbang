@@ -52,13 +52,14 @@ class BangSim:
         filepath = os.path.join(self.path, filename)
         self.dat = load_save.load_dat(filepath, cols_dict=self.config['dat_columns'])
 
-    def load_profile(self, chk_i):
+    def load_profile(self, chk_i, reload=False, save=True):
         """Load checkpoint data file
         """
-        self.profiles[chk_i] = load_save.extract_profile(
-                                    self.basename, self.model, chk_i=chk_i,
+        self.profiles[chk_i] = load_save.extract_profile_from_chk(
+                                    self.basename, chk_i=chk_i, model=self.model,
                                     xmax=self.xmax, o_path=self.output_path,
-                                    params=self.config['profile']['params'])
+                                    params=self.config['profile']['params'],
+                                    reload=reload, save=save, verbose=self.verbose)
 
     def plot(self, chk_i, var, y_log=True, x_log=True):
         """Plot given variable
