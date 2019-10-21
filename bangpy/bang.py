@@ -24,11 +24,10 @@ class BangSim:
         self.dim = dim
         self.xmax = xmax
 
-        self.config = None
+        self.config = load_save.load_config(name=config, verbose=self.verbose)
         self.dat = None
         self.profiles = {}
 
-        self.load_config(config=config)
         self.chk_idxs = load_save.find_chk(path=self.output_path)
 
         if load_all:
@@ -37,13 +36,6 @@ class BangSim:
     def printv(self, string):
         if self.verbose:
             print(string)
-
-    def load_config(self, config='default'):
-        """Load config file
-        """
-        filepath = paths.config_filepath(name=config)
-        config = load_save.load_config(filepath, verbose=self.verbose)
-        self.config = config
 
     def load_dat(self):
         """Load .dat file
