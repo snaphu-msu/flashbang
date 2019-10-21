@@ -12,6 +12,9 @@ import yt
 from . import paths
 from .strings import printv
 
+#  TODO:
+#   - extract and save subsets of profiles (for faster loading)
+
 
 def try_mkdir(path, skip=False, verbose=True):
     printv(f'Creating directory  {path}', verbose)
@@ -70,12 +73,12 @@ def load_dat(filepath, cols_dict, verbose=True):
     return dat
 
 
-def extract_profile(job_name, model, chk_i, xmax=1e12, output_dir='output',
+def extract_profile(basename, model, chk_i, xmax=1e12, output_dir='output',
                     runs_path=None, runs_prefix='run_', o_path=None,
-                    params=('temp', 'dens')):
-    """Extracts and returns profile from checkpoint file
+                    params=('temp', 'dens', 'pres')):
+    """Extracts and returns profile dict from checkpoint file
     """
-    chk = load_chk(job_name, model=model, chk_i=chk_i,
+    chk = load_chk(basename, model=model, chk_i=chk_i,
                    output_dir=output_dir, runs_path=runs_path,
                    runs_prefix=runs_prefix, o_path=o_path)
     profile = {}
@@ -88,11 +91,11 @@ def extract_profile(job_name, model, chk_i, xmax=1e12, output_dir='output',
     return profile
 
 
-def load_chk(job_name, model, chk_i, output_dir='output',
+def load_chk(basename, model, chk_i, output_dir='output',
              runs_path=None, runs_prefix='run_', o_path=None):
     """Loads checkpoint file for given model
     """
-    filepath = paths.chk_filepath(job_name, model=model, chk_i=chk_i,
+    filepath = paths.chk_filepath(basename, model=model, chk_i=chk_i,
                                   output_dir=output_dir, runs_path=runs_path,
                                   runs_prefix=runs_prefix, o_path=o_path)
     return yt.load(filepath)

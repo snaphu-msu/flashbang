@@ -11,7 +11,7 @@ from . import load_save
 
 
 class BangSim:
-    def __init__(self, model, job_name=None, runs_path=None, config='default',
+    def __init__(self, model, basename=None, runs_path=None, config='default',
                  xmax=1e12, dim=1, output_dir='output', verbose=True,
                  load_all=True):
         self.verbose = verbose
@@ -20,7 +20,7 @@ class BangSim:
         self.output_path = os.path.join(self.path, output_dir)
 
         self.model = model
-        self.job_name = job_name
+        self.basename = basename
         self.dim = dim
         self.xmax = xmax
 
@@ -48,7 +48,7 @@ class BangSim:
     def load_dat(self):
         """Load .dat file
         """
-        filename = paths.dat_filename(self.job_name)
+        filename = paths.dat_filename(self.basename)
         filepath = os.path.join(self.path, filename)
         self.dat = load_save.load_dat(filepath, cols_dict=self.config['dat_columns'])
 
@@ -56,7 +56,7 @@ class BangSim:
         """Load checkpoint data file
         """
         self.profiles[chk_i] = load_save.extract_profile(
-                                    self.job_name, self.model, chk_i=chk_i,
+                                    self.basename, self.model, chk_i=chk_i,
                                     xmax=self.xmax, o_path=self.output_path,
                                     params=self.config['profile']['params'])
 

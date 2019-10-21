@@ -30,40 +30,40 @@ bangpy_path = os.environ['BANGPY']
 models_path = os.environ['BANG_MODELS']
 
 
-def dat_filename(job_name):
+def dat_filename(basename):
     """Returns filename for .dat file
     """
-    return f'{job_name}.dat'
+    return f'{basename}.dat'
 
 
-def dat_filepath(job_name, model, runs_path=None, runs_prefix='run_'):
+def dat_filepath(basename, model, runs_path=None, runs_prefix='run_'):
     """Returns filepath to .dat file
 
     parameters
     ----------
-    job_name : str
+    basename : str
     model : str
     runs_path : str
         see model_path()
     runs_prefix : str
         see model_path()
     """
-    filename = dat_filename(job_name)
+    filename = dat_filename(basename)
     m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
     return os.path.join(m_path, filename)
 
 
-def chk_filename(job_name, chk_i):
+def chk_filename(basename, chk_i):
     """Returns filename for checkpoint (chk) file
     """
-    return f'{job_name}_hdf5_chk_{chk_i:04d}'
+    return f'{basename}_hdf5_chk_{chk_i:04d}'
 
 
-def chk_filepath(job_name, model, chk_i, output_dir='output',
+def chk_filepath(basename, model, chk_i, output_dir='output',
                  runs_path=None, runs_prefix='run_', o_path=None):
     """Returns filepath to checkpoint file
     """
-    filename = chk_filename(job_name, chk_i=chk_i)
+    filename = chk_filename(basename, chk_i=chk_i)
     if o_path is None:
         o_path = output_path(model, output_dir=output_dir, runs_path=runs_path,
                              runs_prefix=runs_prefix)
