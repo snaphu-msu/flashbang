@@ -125,12 +125,9 @@ def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
         pickle profile to file for faster loading next time
     verbose : bool (optional)
     """
-    def reload_chk():
-        return load_chk(basename, model=model, chk_i=chk_i,
-                        output_dir=output_dir, runs_path=runs_path,
-                        runs_prefix=runs_prefix, o_path=o_path)
     profile = {}
     loaded_successfully = False
+
     if not reload:
         try:
             profile = load_profile(basename, chk_i=chk_i, model=model,
@@ -141,7 +138,9 @@ def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
             pass
 
     if len(profile.keys()) == 0:
-        chk = reload_chk()
+        chk = load_chk(basename, model=model, chk_i=chk_i,
+                       output_dir=output_dir, runs_path=runs_path,
+                       runs_prefix=runs_prefix, o_path=o_path)
         ray = chk.ray([0, 0, 0], [xmax, 0, 0])
         profile['x'] = ray['t'] * xmax
 
@@ -210,6 +209,9 @@ def load_chk(basename, chk_i, model, output_dir='output',
     filepath = paths.chk_filepath(basename, model=model, chk_i=chk_i,
                                   output_dir=output_dir, runs_path=runs_path,
                                   runs_prefix=runs_prefix, o_path=o_path)
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(f'checkpoint {chk_i:04d} file does not exist: {filepath}')
+
     return yt.load(filepath)
 
 
