@@ -86,9 +86,8 @@ class Simulation:
         # TODO:
         #       - autoload chk_i
         #       - check if var exists in profile
-        #       - use config ylabels
-        def get_ylabel(key):
-            return self.config['plotting']['ylabels'][key]
+        def get_label(key):
+            return self.config['plotting']['labels'][key]
 
         fig, ax = plt.subplots()
         profile = self.profiles[chk_i]
@@ -99,7 +98,8 @@ class Simulation:
         if x_log:
             ax.set_xscale('log')
 
-        ax.set_ylabel(get_ylabel(var))
+        ax.set_ylabel(get_label(var))
+        ax.set_xlabel(get_label('x'))
 
     def plot_dat(self, var, y_log=True, display=True):
         """Plots quantity from dat file
