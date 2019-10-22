@@ -88,17 +88,16 @@ class Simulation:
     def plot(self, chk_i, var, y_log=True, x_log=True):
         """Plot given profile
         """
-        # TODO:
-        #       - check if var exists in profile
-
         try:
             profile = self.profiles[chk_i]
         except KeyError:
             self.load_profile(chk_i)
             profile = self.profiles[chk_i]
 
+        y_profile = profile[var]
+
         fig, ax = plt.subplots()
-        ax.plot(profile['x'], profile[var])
+        ax.plot(profile['x'], y_profile)
 
         if y_log:
             ax.set_yscale('log')
