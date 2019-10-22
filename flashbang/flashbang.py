@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.widgets import Slider
 import multiprocessing as mp
 
 # bangpy
@@ -106,6 +107,42 @@ class Simulation:
 
         ax.set_ylabel(self.get_label(var))
         ax.set_xlabel(self.get_label('x'))
+
+    def plot_slider(self, var, y_log=True, x_log=True):
+        a_min = 0  # the minimial value of the paramater a
+        a_max = self.chk_idxs[-1]  # the maximal value of the paramater a
+        a_init = a_max
+
+        fig = plt.figure(figsize=(8, 4))
+
+        x = np.linspace(0, 2 * np.pi, 500)
+
+        profile_ax = plt.axes([0.1, 0.2, 0.8, 0.65])
+        slider_ax = plt.axes([0.1, 0.05, 0.8, 0.05])
+        plt.axes(profile_ax)  # select sin_ax
+        sin_plot, = plt.plot(self.profiles[a_init]['x'], self.profiles[a_init][var])
+
+        plt.ylabel(self.get_label(var))
+        plt.xlabel(self.get_label('x'))
+
+        if y_log:
+            plt.yscale('log')
+        if x_log:
+            plt.xscale('log')
+
+        a_slider = Slider(slider_ax, 'chk', a_min, a_max, valinit=a_init, valstep=1)
+
+        def update(chk):
+            profile = self.profiles[chk]
+            y_profile = profile[var]
+            sin_plot.set_ydata(y_profile)
+            sin_plot.set_xdata(profile['x'])
+            fig.canvas.draw_idle()  # redraw the plot
+
+        a_slider.on_changed(update)
+
+        # plt.show()
+        return a_slider
 
     def plot_dat(self, var, y_log=True, display=True):
         """Plots quantity from dat file
