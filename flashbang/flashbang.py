@@ -84,13 +84,17 @@ class Simulation:
         """Plot given variable
         """
         # TODO:
-        #       - autoload chk_i
         #       - check if var exists in profile
         def get_label(key):
             return self.config['plotting']['labels'][key]
 
+        try:
+            profile = self.profiles[chk_i]
+        except KeyError:
+            self.load_profile(chk_i)
+            profile = self.profiles[chk_i]
+
         fig, ax = plt.subplots()
-        profile = self.profiles[chk_i]
         ax.plot(profile['x'], profile[var])
 
         if y_log:
