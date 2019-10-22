@@ -85,8 +85,8 @@ class Simulation:
         """
         return self.config['plotting']['labels'][key]
 
-    def plot(self, chk_i, var, y_log=True, x_log=True):
-        """Plot given profile
+    def plot_profile(self, chk_i, var, y_log=True, x_log=True):
+        """Plot given profile variable
         """
         try:
             profile = self.profiles[chk_i]
