@@ -44,7 +44,7 @@ class Simulation:
         self.dat = load_save.load_dat(self.basename, model=self.model,
                                       cols_dict=self.config['dat_columns'])
 
-    def load_all_profiles(self, reload=False, save=True, multithread=True):
+    def load_all_profiles(self, reload=False, save=True, multithread=False):
         """Load profiles for all available checkpoints
 
         parameters
@@ -86,6 +86,9 @@ class Simulation:
         # TODO:
         #       - autoload chk_i
         #       - check if var exists in profile
+        #       - use config ylabels
+        def get_ylabel(key):
+            return self.config['plotting']['ylabels'][key]
 
         fig, ax = plt.subplots()
         profile = self.profiles[chk_i]
@@ -95,6 +98,8 @@ class Simulation:
             ax.set_yscale('log')
         if x_log:
             ax.set_xscale('log')
+
+        ax.set_ylabel(get_ylabel(var))
 
     def plot_dat(self, var, y_log=True, display=True):
         """Plots quantity from dat file
