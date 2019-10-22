@@ -80,13 +80,16 @@ class Simulation:
                                     params=self.config['profile']['params'],
                                     reload=reload, save=save, verbose=self.verbose)
 
+    def get_label(self, key):
+        """Return formatted string for plot label
+        """
+        return self.config['plotting']['labels'][key]
+
     def plot(self, chk_i, var, y_log=True, x_log=True):
-        """Plot given variable
+        """Plot given profile
         """
         # TODO:
         #       - check if var exists in profile
-        def get_label(key):
-            return self.config['plotting']['labels'][key]
 
         try:
             profile = self.profiles[chk_i]
@@ -102,8 +105,8 @@ class Simulation:
         if x_log:
             ax.set_xscale('log')
 
-        ax.set_ylabel(get_label(var))
-        ax.set_xlabel(get_label('x'))
+        ax.set_ylabel(self.get_label(var))
+        ax.set_xlabel(self.get_label('x'))
 
     def plot_dat(self, var, y_log=True, display=True):
         """Plots quantity from dat file
