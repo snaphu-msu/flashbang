@@ -84,10 +84,19 @@ class Simulation:
     def get_label(self, key):
         """Return formatted string for plot label
         """
-        return self.config['plotting']['labels'][key]
+        return self.config['plotting']['labels'].get(key, key)
 
     def plot_profile(self, chk_i, var, y_log=True, x_log=True):
         """Plot given profile variable
+
+        parameters
+        ----------
+        chk_i : int
+            checkpoint ID to plot
+        var : str
+            variable to plot on y-axis (from Simulation.profile)
+        y_log : bool
+        x_log : bool
         """
         try:
             profile = self.profiles[chk_i]
@@ -109,6 +118,14 @@ class Simulation:
         ax.set_xlabel(self.get_label('x'))
 
     def plot_slider(self, var, y_log=True, x_log=True):
+        """Plot interactive slider of profile for given variable
+
+        parameters
+        ----------
+        var : str
+        y_log : bool
+        x_log : bool
+        """
         a_min = 0  # the minimial value of the paramater a
         a_max = self.chk_idxs[-1]  # the maximal value of the paramater a
         a_init = a_max
