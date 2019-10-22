@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import multiprocessing as mp
 
 # bangpy
 from . import paths
@@ -43,17 +44,25 @@ class Simulation:
         self.dat = load_save.load_dat(self.basename, model=self.model,
                                       cols_dict=self.config['dat_columns'])
 
-    def load_all_profiles(self, reload=False, save=True):
+    def load_all_profiles(self, reload=False, save=True, multithread=True):
         """Load profiles for all available checkpoints
 
         parameters
         ----------
         reload : bool
         save : bool
+        multithread : bool
         """
-        # TODO: parallelize (refer to burst_pipeline in pyburst)
-        for chk_i in self.chk_idxs:
-            self.load_profile(chk_i, reload=reload, save=save)
+        if multithread:
+            args = []
+            for chk_i in self.chk_idxs:
+                args.append((chk_i, reload, save))
+
+            with mp.Pool(processes=4) as pool:
+                pool.starmap(self.load_profile, args)
+        else:
+            for chk_i in self.chk_idxs:
+                self.load_profile(chk_i, reload=reload, save=save)
 
     def load_profile(self, chk_i, reload=False, save=True):
         """Load checkpoint data file
