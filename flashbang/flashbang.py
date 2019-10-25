@@ -8,10 +8,8 @@ import multiprocessing as mp
 from . import paths
 from . import load_save
 
-# TODO:
-#   - plotly slider of profiles
 
-
+# noinspection PyTypeChecker
 class Simulation:
     def __init__(self, model, basename=None, runs_path=None, config='default',
                  xmax=1e12, dim=1, output_dir='output', verbose=True,
