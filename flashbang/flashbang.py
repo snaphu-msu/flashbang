@@ -11,7 +11,7 @@ from . import load_save
 
 # noinspection PyTypeChecker
 class Simulation:
-    def __init__(self, model, basename=None, runs_path=None, config='default',
+    def __init__(self, basename, model, runs_path=None, config='default',
                  xmax=1e12, dim=1, output_dir='output', verbose=True,
                  load_dat=False, load_profiles=False):
         self.verbose = verbose
