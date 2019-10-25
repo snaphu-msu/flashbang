@@ -15,7 +15,7 @@ from . import load_save
 class Simulation:
     def __init__(self, model, basename=None, runs_path=None, config='default',
                  xmax=1e12, dim=1, output_dir='output', verbose=True,
-                 load_all=True):
+                 load_dat=False, load_profiles=False):
         self.verbose = verbose
         self.runs_path = runs_path
         self.path = paths.model_path(model=model, runs_path=runs_path)
@@ -28,12 +28,14 @@ class Simulation:
 
         self.config = load_save.load_config(name=config, verbose=self.verbose)
         self.dat = None
+        self.chk_idxs = None
         self.profiles = {}
 
-        self.chk_idxs = load_save.find_chk(path=self.output_path)
-
-        if load_all:
+        self.update_chks()
+        if load_dat:
             self.load_dat()
+        if load_profiles:
+            self.load_all_profiles()
 
     def printv(self, string):
         if self.verbose:
@@ -44,6 +46,11 @@ class Simulation:
         """
         self.dat = load_save.load_dat(self.basename, model=self.model,
                                       cols_dict=self.config['dat_columns'])
+
+    def update_chks(self):
+        """Update the checkpoint files available
+        """
+        self.chk_idxs = load_save.find_chk(path=self.output_path)
 
     def load_all_profiles(self, reload=False, save=True, multithread=False):
         """Load profiles for all available checkpoints
@@ -126,6 +133,7 @@ class Simulation:
         y_log : bool
         x_log : bool
         """
+        # TODO: make object-oriented (see chrome tab)
         a_min = 0  # the minimial value of the paramater a
         a_max = self.chk_idxs[-1]  # the maximal value of the paramater a
         a_init = a_max
