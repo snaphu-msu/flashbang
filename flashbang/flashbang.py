@@ -131,41 +131,35 @@ class Simulation:
         y_log : bool
         x_log : bool
         """
-        # TODO: make object-oriented (see chrome tab)
-        a_min = 0  # the minimial value of the paramater a
-        a_max = self.chk_idxs[-1]  # the maximal value of the paramater a
+        a_min = 0
+        a_max = self.chk_idxs[-1]
         a_init = a_max
 
-        fig = plt.figure(figsize=(8, 4))
+        fig = plt.figure()
+        profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
+        slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
+        profile_ax.set_xlabel(self.get_label('x'))
+        profile_ax.set_ylabel(self.get_label(var))
 
-        x = np.linspace(0, 2 * np.pi, 500)
-
-        profile_ax = plt.axes([0.1, 0.2, 0.8, 0.65])
-        slider_ax = plt.axes([0.1, 0.05, 0.8, 0.05])
-        plt.axes(profile_ax)  # select sin_ax
-        sin_plot, = plt.plot(self.profiles[a_init]['x'], self.profiles[a_init][var])
-
-        plt.ylabel(self.get_label(var))
-        plt.xlabel(self.get_label('x'))
+        line, = profile_ax.plot(self.profiles[a_init]['x'], self.profiles[a_init][var])
 
         if y_log:
-            plt.yscale('log')
+            profile_ax.set_yscale('log')
         if x_log:
-            plt.xscale('log')
+            profile_ax.set_xscale('log')
 
-        a_slider = Slider(slider_ax, 'chk', a_min, a_max, valinit=a_init, valstep=1)
+        slider = Slider(slider_ax, 'chk', a_min, a_max, valinit=a_init, valstep=1)
 
         def update(chk):
             profile = self.profiles[chk]
             y_profile = profile[var]
-            sin_plot.set_ydata(y_profile)
-            sin_plot.set_xdata(profile['x'])
-            fig.canvas.draw_idle()  # redraw the plot
 
-        a_slider.on_changed(update)
+            line.set_ydata(y_profile)
+            line.set_xdata(profile['x'])
+            fig.canvas.draw_idle()
 
-        # plt.show()
-        return a_slider
+        slider.on_changed(update)
+        return fig
 
     def plot_dat(self, var, y_log=True, display=True):
         """Plots quantity from dat file
