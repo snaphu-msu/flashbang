@@ -238,13 +238,41 @@ def find_chk(path, match_str='hdf5_chk_', n_digits=4):
     return np.sort(chks)
 
 
+def reduce_snec_profile(profile_dict):
+    """Reduces given profile dictionary into a 2D nparray
+        Returns: profile_array, time, mass_grid
+
+    parameters
+    ----------
+    profile_dict : {}
+        Dictionary containing profile data, as returned from load_snec_xg()
+    """
+    time = np.array(list(profile_dict.keys()))
+    n_time = len(time)
+    
+    mass_grid = profile_dict[time[0]][:, 0]
+    n_mass = len(mass_grid)
+    
+    profile_array = np.zeros((n_time, n_mass))
+    
+    for i, key in enumerate(time):
+        profile_array[i, :] = profile_dict[key][:, 1]
+    
+    return profile_array, time, mass_grid
+    
+
 def load_snec_xg(filepath, verbose=True):
     """Loads mass tracers from SNEC output .xg file, returns as dict
     """    
-    printv(f'Loading: {filepath}')
+    printv(f'Loading: {filepath}', verbose)
+    n_lines = fast_line_count(filepath)
+
     profile = {}
     with open(filepath, 'r') as rf:
+        count = 0
         for line in rf:
+            # if verbose:
+            sys.stdout.write(f'\r{100 * count/n_lines:.1f}%')
             cols = line.split()
 
             # Beginning of time data - make key for this time
@@ -259,7 +287,10 @@ def load_snec_xg(filepath, verbose=True):
             # End of time data (blank line) -- make list into array
             else:
                 profile[time] = np.array(profile[time])
+            count += 1
 
+    if verbose:
+        sys.stdout.write('\n')
     return profile
 
 
