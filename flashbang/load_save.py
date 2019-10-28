@@ -236,3 +236,28 @@ def find_chk(path, match_str='hdf5_chk_', n_digits=4):
             chks += [int(file[-n_digits:])]
 
     return np.sort(chks)
+
+
+def load_snec_xg(filepath):
+    """Loads mass tracers from SNEC output .xg file, returns as dict
+    """    
+    profile = {}
+    with open(filepath, 'r') as rf:
+        for line in rf:
+            cols = line.split()
+
+            # Beginning of time data - make key for this time
+            if 'Time' in line:
+                time = float(cols[-1])
+                profile[time] = []
+
+            # In time data -- build x,y arrays
+            elif len(cols) == 2:
+                profile[time].append(np.fromstring(line, sep=' '))
+
+            # End of time data (blank line) -- make list into array
+            else:
+                profile[time] = np.array(profile[time])
+
+    return profile
+
