@@ -238,9 +238,10 @@ def find_chk(path, match_str='hdf5_chk_', n_digits=4):
     return np.sort(chks)
 
 
-def load_snec_xg(filepath):
+def load_snec_xg(filepath, verbose=True):
     """Loads mass tracers from SNEC output .xg file, returns as dict
     """    
+    printv(f'Loading: {filepath}')
     profile = {}
     with open(filepath, 'r') as rf:
         for line in rf:
@@ -261,3 +262,19 @@ def load_snec_xg(filepath):
 
     return profile
 
+
+def fast_line_count(filepath):
+    """Efficiently find the number of lines in a file
+    """
+    lines = 0
+    buf_size = 1024 * 1024
+
+    with open(filepath, 'rb') as f:
+        read_f = f.raw.read
+        buf = read_f(buf_size)
+
+        while buf:
+            lines += buf.count(b'\n')
+            buf = read_f(buf_size)
+
+    return lines
