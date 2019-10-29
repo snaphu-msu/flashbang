@@ -1,17 +1,27 @@
+import os
+import numpy as np
+
+# flashbang
 from . import load_save
 
 # TODO:
 #   1. load stir traj file
 #   2. build snec traj
-#       - For each time, join mass profiles
+#       - extract mass grid from stir traj's
+#       - For each mass, join profiles in time
 #   3. patch stir and snec
 #   4. save files
 
 
-def load_traj(path='/Users/zac/projects/codes/traj_code/traj_s12.0_1024'):
+def load_stir_traj(tracer_i, basename='stir2_oct8_s12.0_alpha1.25',
+                   prefix='_tracer', extension='.dat',
+                   path='/Users/zac/projects/codes/traj_code/traj_s12.0_1024'):
     """Load STIR trajectory from file
+        Returns: 2D np.array
     """
-    pass
+    filename = f'{basename}{prefix}{tracer_i}{extension}'
+    filepath = os.path.join(path, filename)
+    return np.loadtxt(filepath, skiprows=2)
 
 
 def load_snec_profile(path='/Users/zac/projects/codes/traj_code/snec'):
