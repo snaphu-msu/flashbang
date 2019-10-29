@@ -5,9 +5,9 @@ import numpy as np
 from . import load_save
 
 # TODO:
-#   1. load stir traj file
+#   - load snec profile array
+#   - extract mass grid from stir traj's
 #   2. build snec traj
-#       - extract mass grid from stir traj's
 #       - For each mass, join profiles in time
 #   3. patch stir and snec
 #   4. save files
@@ -24,10 +24,12 @@ def load_stir_traj(tracer_i, basename='stir2_oct8_s12.0_alpha1.25',
     return np.loadtxt(filepath, skiprows=2)
 
 
-def load_snec_profile(path='/Users/zac/projects/codes/traj_code/snec'):
+def load_snec_profile(var, path='/Users/zac/projects/codes/traj_code/snec'):
     """Load precomputed SNEC profiles from file
     """
-    pass
+    filename = f'{var}.npy'
+    filepath = os.path.join(path, filename)
+    return np.load(filepath)
 
 
 def load_snec_time_grid():
