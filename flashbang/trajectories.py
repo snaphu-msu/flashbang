@@ -1,12 +1,20 @@
 import os
+import sys
 import numpy as np
+from scipy.interpolate import interp1d
+from astropy import units
 
 # TODO:
-#   2. build snec traj
+#   1. Load stir tracer
+#   2. build snec tracer
 #       - For each mass, join profiles in time
 #       - subtract t=0 stir offset
+#       - interpolate onto stir mass grid
 #   3. patch stir and snec
 #   4. save files
+
+# Global variables:
+g2msun = units.g.to(units.Msun)
 
 
 def load_stir_traj(tracer_i, basename='stir2_oct8_s12.0_alpha1.25',
@@ -26,6 +34,32 @@ def load_snec_profile(var, path='/Users/zac/projects/data/snec/mass13/Data'):
     filename = f'{var}.npy'
     filepath = os.path.join(path, filename)
     return np.load(filepath)
+
+
+def map_snec_grid(var, mass_grid):
+    """Interpolate snec profile onto stir tracer mass grid
+
+    parameters
+    ----------
+    var : str
+        profile variable to map (e.g., radius)
+    mass_grid : []
+        1D mass grid to map onto
+    """
+    snec_mass_grid = g2msun * load_snec_profile('mass_grid')
+    snec_profile = load_snec_profile(f'sub_{var}')
+
+    n_time = len(snec_profile[:, 0])
+    n_mass = len(mass_grid)
+    mapped = np.full((n_time, n_mass), np.nan)
+
+    for i in range(n_time):
+        sys.stdout.write(f'\rMapping timestep: {i+1}/{n_time}')
+        snec_func = interp1d(snec_mass_grid, snec_profile[i, :])
+        mapped[i, :] = snec_func(mass_grid)
+
+    sys.stdout.write('\n')
+    return mapped
 
 
 def extract_stir_mass_grid(n_traj=100):
