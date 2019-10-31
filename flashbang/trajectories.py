@@ -1,15 +1,10 @@
 import os
 import numpy as np
 
-# flashbang
-from . import load_save
-
 # TODO:
-#   - extract mass grid from stir traj's
 #   2. build snec traj
 #       - For each mass, join profiles in time
-#       - subtract t=0 offset
-#       - get every 0.01 s
+#       - subtract t=0 stir offset
 #   3. patch stir and snec
 #   4. save files
 
@@ -33,10 +28,17 @@ def load_snec_profile(var, path='/Users/zac/projects/data/snec/mass13/Data'):
     return np.load(filepath)
 
 
-def extract_stir_mass_grid(n_traj):
+def extract_stir_mass_grid(n_traj=100):
     """Obtain mass grid from stir trajectory file headers
     """
-    pass
+    mass_grid = []
+    for i in range(n_traj):
+        filepath = stir_traj_filepath(tracer_i=i)
+        with open(filepath, 'r') as f:
+            line = f.readline()
+            mass_grid += [float(line.split()[3])]
+
+    return np.array(mass_grid)
 
 
 def stir_traj_filepath(tracer_i, basename='stir2_oct8_s12.0_alpha1.25',
