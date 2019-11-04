@@ -8,8 +8,6 @@ from astropy import units
 from .strings import printv
 
 # TODO:
-#   1. build snec tracers
-#       - subtract t=0 stir offset
 #   2. Load stir tracer
 #   3. patch stir and snec
 #   4. save files
@@ -59,6 +57,26 @@ def build_snec_tracers(t_end=20, dt=0.01, n_traj=100,
         for j, var in enumerate(var_list):
             tracers[i, :, j+1] = map_profiles[var][:, i]
 
+    return tracers
+
+
+def load_all_stir_tracers(n_tracers, basename='stir2_oct8_s12.0_alpha1.25',
+                          prefix='_tracer', extension='.dat',
+                          path='/Users/zac/projects/codes/traj_code/data/traj_s12.0_1024'):
+    """Load all stir tracers and return as single array
+    """
+    t0 = load_stir_traj(0, basename=basename, prefix=prefix, extension=extension,
+                        path=path)
+    n_time, n_var = t0.shape
+    tracers = np.full([n_tracers, n_time, n_var], np.nan)
+
+    for i in range(n_tracers):
+        sys.stdout.write(f'\rloading stir tracer: {i+1}/{n_tracers}')
+        tracer = load_stir_traj(i, basename=basename, prefix=prefix, extension=extension,
+                                path=path)
+        tracers[i, :, :] = tracer
+
+    sys.stdout.write('\n')
     return tracers
 
 
