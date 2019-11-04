@@ -8,16 +8,26 @@ from astropy import units
 from .strings import printv
 
 # TODO:
-#   1. Load stir tracer
-#   2. build snec tracer
-#       - For each mass, join profiles in time
+#   1. build snec tracers
 #       - subtract t=0 stir offset
-#       - interpolate onto stir mass grid
+#   2. Load stir tracer
 #   3. patch stir and snec
 #   4. save files
 
 # Global variables:
 g2msun = units.g.to(units.Msun)
+
+
+def join_tracers(snec_tracers, mass_i, n_skip=1):
+    """Join stir and snec tracer
+    """
+    stir_tracer = load_stir_traj(mass_i)
+    snec_tracer = np.array(snec_tracers[mass_i, n_skip:, :])
+
+    t_offset = stir_tracer[-1, 0]
+    snec_tracer[:, 0] += t_offset  # shift to stir time
+
+    return np.concatenate([stir_tracer, snec_tracer])
 
 
 def build_snec_tracers(t_end=20, dt=0.01, n_traj=100,
