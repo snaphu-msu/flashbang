@@ -8,16 +8,36 @@ from astropy import units
 from .strings import printv
 
 # TODO:
-#   2. Load stir tracer
-#   3. patch stir and snec
 #   4. save files
 
 # Global variables:
 g2msun = units.g.to(units.Msun)
 
 
+def pipeline(n_tracers=100, n_skip=1, basename='concat_stir_snec',
+             path='/Users/zac/projects/codes/traj_code/data/concat',
+             snec_tracers=None):
+    """Join and save tracers
+    """
+    if snec_tracers is None:
+        snec_tracers = build_snec_tracers()
+
+    for i in range(n_tracers):
+        sys.stdout.write(f'\rJoin tracer {i+1}/{n_tracers}')
+        tracer = join_tracers(snec_tracers, mass_i=i, n_skip=n_skip)
+
+        filename = f'{basename}_tracer{i}.dat'
+        filepath = os.path.join(path, filename)
+        np.savetxt(filepath, tracer, fmt='%.10e', delimiter='    ')
+
+    sys.stdout.write('\n')
+
+
 def join_tracers(snec_tracers, mass_i, n_skip=1):
     """Join stir and snec tracer
+
+    snec_tracers
+        as output by build_snec_tracers
     """
     stir_tracer = load_stir_traj(mass_i)
     snec_tracer = np.array(snec_tracers[mass_i, n_skip:, :])
