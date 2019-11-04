@@ -4,6 +4,9 @@ import numpy as np
 from scipy.interpolate import interp1d
 from astropy import units
 
+# flashbang
+from .strings import printv
+
 # TODO:
 #   1. Load stir tracer
 #   2. build snec tracer
@@ -15,6 +18,38 @@ from astropy import units
 
 # Global variables:
 g2msun = units.g.to(units.Msun)
+
+
+def build_snec_tracers(t_end=20, dt=0.01, n_traj=100,
+                       var_list=('temp', 'rho', 'radius', 'ye'), verbose=True):
+    """Build snec mass tracers to append to stir tracers
+    """
+    # Get reduced snec time grid
+    full_time_grid = load_snec_profile('time_grid')
+    sub_idxs = subset_idxs(t_end=t_end, dt=dt)
+    time_grid = full_time_grid[sub_idxs]
+
+    mass_grid = extract_stir_mass_grid(n_traj=n_traj)
+
+    # map snec profiles onto stir mass grid
+    map_profiles = dict.fromkeys(var_list)
+    for var in var_list:
+        map_profiles[var] = map_snec_grid(var, mass_grid=mass_grid)
+
+    n_time = len(time_grid)
+    n_mass = len(mass_grid)
+    n_vars = len(var_list) + 1  # one extra for time
+
+    tracers = np.full([n_mass, n_time, n_vars], np.nan)
+
+    printv('Building mass tracers from mapped profiles', verbose)
+    for i in range(n_mass):
+        tracers[i, :, 0] = time_grid
+
+        for j, var in enumerate(var_list):
+            tracers[i, :, j+1] = map_profiles[var][:, i]
+
+    return tracers
 
 
 def load_stir_traj(tracer_i, basename='stir2_oct8_s12.0_alpha1.25',
@@ -46,6 +81,7 @@ def map_snec_grid(var, mass_grid):
     mass_grid : []
         1D mass grid to map onto
     """
+    print(f'Mapping var={var} profile from snec onto stir mass grid')
     snec_mass_grid = g2msun * load_snec_profile('mass_grid')
     snec_profile = load_snec_profile(f'sub_{var}')
 
@@ -54,11 +90,9 @@ def map_snec_grid(var, mass_grid):
     mapped = np.full((n_time, n_mass), np.nan)
 
     for i in range(n_time):
-        sys.stdout.write(f'\rMapping timestep: {i+1}/{n_time}')
         snec_func = interp1d(snec_mass_grid, snec_profile[i, :])
         mapped[i, :] = snec_func(mass_grid)
 
-    sys.stdout.write('\n')
     return mapped
 
 
