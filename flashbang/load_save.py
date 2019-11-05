@@ -167,6 +167,9 @@ def save_profile(profile, basename, chk_i, model, runs_path=None,
     runs_prefix : str (optional)
     verbose : bool (optional)
     """
+    temp_path = paths.temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    try_mkdir(temp_path, skip=True, verbose=verbose)
+
     filepath = paths.profile_filepath(basename, model=model, chk_i=chk_i,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
     printv(f'Saving: {filepath}', verbose)
