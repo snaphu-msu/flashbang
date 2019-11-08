@@ -91,7 +91,7 @@ class Simulation:
         """
         return self.config['plotting']['labels'].get(key, key)
 
-    def plot_profile(self, chk_i, var, y_log=True, x_log=True):
+    def plot_profile(self, chk_i, var, x_var='x', y_log=True, x_log=True):
         """Plot given profile variable
 
         parameters
@@ -100,6 +100,8 @@ class Simulation:
             checkpoint ID to plot
         var : str
             variable to plot on y-axis (from Simulation.profile)
+        x_var : str
+            variable to plot on x-axis
         y_log : bool
         x_log : bool
         """
@@ -112,7 +114,7 @@ class Simulation:
         y_profile = profile[var]
 
         fig, ax = plt.subplots()
-        ax.plot(profile['x'], y_profile)
+        ax.plot(profile[x_var], y_profile)
 
         if y_log:
             ax.set_yscale('log')
@@ -120,7 +122,7 @@ class Simulation:
             ax.set_xscale('log')
 
         ax.set_ylabel(self.get_label(var))
-        ax.set_xlabel(self.get_label('x'))
+        ax.set_xlabel(self.get_label(x_var))
 
     def plot_slider(self, var, x_var='x', y_log=True, x_log=True):
         """Plot interactive slider of profile for given variable
