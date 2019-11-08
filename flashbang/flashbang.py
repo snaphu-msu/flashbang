@@ -7,6 +7,8 @@ import multiprocessing as mp
 # bangpy
 from . import paths
 from . import load_save
+from . import tools
+from . import plot_tools
 
 
 # noinspection PyTypeChecker
@@ -91,6 +93,37 @@ class Simulation:
         """
         return self.config['plotting']['labels'].get(key, key)
 
+    def plot_profiles(self, chk_i, var_list, x_var='x', y_log=True, x_log=True,
+                      max_cols=2, sub_figsize=(6,5)):
+        """Plot one or more profile variables
+
+        parameters
+        ----------
+        chk_i : int
+            checkpoint ID to plot
+        var_list : str | [str]
+            variable(s) to plot on y-axis (from Simulation.profile)
+        x_var : str
+            variable to plot on x-axis
+        y_log : bool
+        x_log : bool
+        max_cols : bool
+        sub_figsize : tuple
+        """
+        var_list = tools.ensure_sequence(var_list)
+        n_var = len(var_list)
+        fig, ax = plot_tools.setup_subplots(n_var, max_cols=max_cols,
+                                            sub_figsize=sub_figsize, squeeze=False)
+
+        for i, var in enumerate(var_list):
+            row = int(np.floor(i / max_cols))
+            col = i % max_cols
+
+            self.plot_profile(chk_i, var=var, x_var=x_var, y_log=y_log, x_log=x_log,
+                              ax=ax[row, col])
+
+        return fig
+
     def plot_profile(self, chk_i, var, x_var='x', y_log=True, x_log=True,
                      ax=None):
         """Plot given profile variable
@@ -117,7 +150,7 @@ class Simulation:
 
         if ax is None:
             fig, ax = plt.subplots()
-            
+
         ax.plot(profile[x_var], y_profile)
 
         if y_log:
