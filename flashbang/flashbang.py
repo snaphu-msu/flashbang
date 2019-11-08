@@ -159,7 +159,7 @@ class Simulation:
             fig.canvas.draw_idle()
 
         slider.on_changed(update)
-        return fig
+        return fig, slider
 
     def plot_dat(self, var, y_log=True, display=True):
         """Plots quantity from dat file
