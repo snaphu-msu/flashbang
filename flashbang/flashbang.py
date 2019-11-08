@@ -122,12 +122,13 @@ class Simulation:
         ax.set_ylabel(self.get_label(var))
         ax.set_xlabel(self.get_label('x'))
 
-    def plot_slider(self, var, y_log=True, x_log=True):
+    def plot_slider(self, var, x_var='x', y_log=True, x_log=True):
         """Plot interactive slider of profile for given variable
 
         parameters
         ----------
         var : str
+        x_var : str
         y_log : bool
         x_log : bool
         """
@@ -138,10 +139,10 @@ class Simulation:
         fig = plt.figure()
         profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
         slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
-        profile_ax.set_xlabel(self.get_label('x'))
+        profile_ax.set_xlabel(self.get_label(x_var))
         profile_ax.set_ylabel(self.get_label(var))
 
-        line, = profile_ax.plot(self.profiles[a_init]['x'], self.profiles[a_init][var])
+        line, = profile_ax.plot(self.profiles[a_init][x_var], self.profiles[a_init][var])
 
         if y_log:
             profile_ax.set_yscale('log')
@@ -155,7 +156,7 @@ class Simulation:
             y_profile = profile[var]
 
             line.set_ydata(y_profile)
-            line.set_xdata(profile['x'])
+            line.set_xdata(profile[x_var])
             fig.canvas.draw_idle()
 
         slider.on_changed(update)
