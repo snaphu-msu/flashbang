@@ -120,8 +120,7 @@ class Simulation:
             col = i % max_cols
 
             self.plot_profile(chk_i, var=var, x_var=x_var, y_log=y_log, x_log=x_log,
-                              ax=ax[row, col], legend=True if i==0 else False)
-
+                              ax=ax[row, col], legend=True if i == 0 else False)
         return fig
 
     def plot_profile(self, chk_i, var, x_var='x', y_log=True, x_log=True,
@@ -130,8 +129,8 @@ class Simulation:
 
         parameters
         ----------
-        chk_i : int
-            checkpoint ID to plot
+        chk_i : int | [int]
+            checkpoint(s) to plot
         var : str
             variable to plot on y-axis (from Simulation.profile)
         x_var : str
@@ -141,18 +140,18 @@ class Simulation:
         ax : pyplot.axis
         legend : bool
         """
-        try:
-            profile = self.profiles[chk_i]
-        except KeyError:
-            self.load_profile(chk_i)
-            profile = self.profiles[chk_i]
+        chk_i = tools.ensure_sequence(chk_i)
 
-        y_profile = profile[var]
+        for i in chk_i:
+            if i not in self.profiles.keys():
+                self.load_profile(i)
 
         if ax is None:
             fig, ax = plt.subplots()
 
-        ax.plot(profile[x_var], y_profile, label=f'{chk_i}')
+        for i in chk_i:
+            profile = self.profiles[i]
+            ax.plot(profile[x_var], profile[var], label=f'{i}')
 
         if y_log:
             ax.set_yscale('log')
