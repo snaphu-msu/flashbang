@@ -125,7 +125,7 @@ class Simulation:
         return fig
 
     def plot_profile(self, chk_i, var, x_var='x', y_log=True, x_log=True,
-                     ax=None):
+                     ax=None, legend=True):
         """Plot given profile variable
 
         parameters
@@ -139,6 +139,7 @@ class Simulation:
         y_log : bool
         x_log : bool
         ax : pyplot.axis
+        legend : bool
         """
         try:
             profile = self.profiles[chk_i]
@@ -151,12 +152,14 @@ class Simulation:
         if ax is None:
             fig, ax = plt.subplots()
 
-        ax.plot(profile[x_var], y_profile)
+        ax.plot(profile[x_var], y_profile, label=f'{chk_i}')
 
         if y_log:
             ax.set_yscale('log')
         if x_log:
             ax.set_xscale('log')
+        if legend:
+            ax.legend()
 
         ax.set_ylabel(self.get_label(var))
         ax.set_xlabel(self.get_label(x_var))
