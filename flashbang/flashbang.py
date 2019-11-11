@@ -120,7 +120,7 @@ class Simulation:
             col = i % max_cols
 
             self.plot_profile(chk_i, var=var, x_var=x_var, y_log=y_log, x_log=x_log,
-                              ax=ax[row, col])
+                              ax=ax[row, col], legend=True if i==0 else False)
 
         return fig
 
