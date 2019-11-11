@@ -110,6 +110,7 @@ class Simulation:
         max_cols : bool
         sub_figsize : tuple
         """
+        chk_i = tools.ensure_sequence(chk_i)
         var_list = tools.ensure_sequence(var_list)
         n_var = len(var_list)
         fig, ax = plot_tools.setup_subplots(n_var, max_cols=max_cols,
