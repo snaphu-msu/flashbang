@@ -50,7 +50,8 @@ class Simulation:
     def update_chks(self):
         """Update the checkpoint files available
         """
-        self.chk_idxs = load_save.find_chk(path=self.output_path)
+        self.chk_idxs = load_save.find_chk(path=self.output_path,
+                                           match_str=f'{self.basename}_hdf5_chk_')
 
     def load_all_profiles(self, reload=False, save=True):
         """Load profiles for all available checkpoints
