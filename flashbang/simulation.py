@@ -39,13 +39,15 @@ class Simulation:
 
         self.update_chks()
         self.n_chk = len(self.chk_idxs)
+        self.trans_idxs = np.full(self.n_chk, -1)
         self.trans_r = np.full(self.n_chk, np.nan)
-        self.trans_idxs = np.full(self.n_chk, np.nan)
 
         if load_dat:
             self.load_dat()
         if load_profiles:
             self.load_all_profiles(reload=reload)
+            self.find_trans_idxs()
+            self.get_trans_r()
 
     def printv(self, string):
         if self.verbose:
@@ -103,6 +105,17 @@ class Simulation:
 
             max_idx = len(dens_reverse) - 1
             self.trans_idxs[i] = max_idx - trans_idx  # flip back
+
+    def get_trans_r(self):
+        """Gets radii at transition zones
+        """
+        if np.any(self.trans_idxs < 0):
+            self.find_trans_idxs()
+
+        self.printv('Getting transition zone radii')
+        for i, trans_idx in enumerate(self.trans_idxs):
+            profile = self.profiles[i]
+            self.trans_r[i] = profile['x'][trans_idx]
 
     def get_label(self, key):
         """Return formatted string for plot label
