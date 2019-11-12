@@ -1,7 +1,7 @@
 import sys
 import multiprocessing as mp
 
-from flashbang import flashbang, load_save
+from flashbang import simulation, load_save
 
 # =================================================================
 # Script callable from terminal to extract model profiles
@@ -11,7 +11,7 @@ from flashbang import flashbang, load_save
 
 
 def main(basename, model, multithread=True, reload=False, save=True):
-    simulation = flashbang.Simulation(basename=basename, model=model)
+    simulation = simulation.Simulation(basename=basename, model=model)
     params = simulation.config['profile']['params']
 
     if multithread:
