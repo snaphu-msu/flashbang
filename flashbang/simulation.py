@@ -168,7 +168,7 @@ class Simulation:
         return fig
 
     def plot_profile(self, chk_i, var, x_var='x', y_log=True, x_log=True,
-                     ax=None, legend=True):
+                     ax=None, legend=True, trans=True):
         """Plot given profile variable
 
         parameters
@@ -183,6 +183,7 @@ class Simulation:
         x_log : bool
         ax : pyplot.axis
         legend : bool
+        trans : bool
         """
         chk_i = tools.ensure_sequence(chk_i)
 
@@ -195,7 +196,16 @@ class Simulation:
 
         for i in chk_i:
             profile = self.profiles[i]
-            ax.plot(profile[x_var], profile[var], label=f'{i}')
+            y = profile[var]
+            y_max = np.max(y)
+            y_min = np.min(y)
+
+            ax.plot(profile[x_var], y, label=f'{i}')
+
+            if trans:
+                x_trans = {'dens': self.trans_dens,
+                           'x': self.trans_r[i]}.get(x_var)
+                ax.vlines(x_trans, y_min, y_max, ls='--')
 
         if y_log:
             ax.set_yscale('log')
