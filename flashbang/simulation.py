@@ -137,7 +137,7 @@ class Simulation:
         return self.config['plotting']['labels'].get(key, key)
 
     def plot_profiles(self, chk_i, var_list, x_var='x', y_log=True, x_log=True,
-                      max_cols=2, sub_figsize=(6,5)):
+                      max_cols=2, sub_figsize=(6, 5), trans=True):
         """Plot one or more profile variables
 
         parameters
@@ -152,6 +152,7 @@ class Simulation:
         x_log : bool
         max_cols : bool
         sub_figsize : tuple
+        trans : bool
         """
         chk_i = tools.ensure_sequence(chk_i)
         var_list = tools.ensure_sequence(var_list)
@@ -164,8 +165,34 @@ class Simulation:
             col = i % max_cols
 
             self.plot_profile(chk_i, var=var, x_var=x_var, y_log=y_log, x_log=x_log,
-                              ax=ax[row, col], legend=True if i == 0 else False)
+                              ax=ax[row, col], legend=True if i == 0 else False,
+                              trans=trans)
         return fig
+
+    def _plot_trans_line(self, x_var, y, ax, i, trans):
+        """Add transition line to axis
+
+        parameters
+        ----------
+        x_var : str
+            variable on x-axis
+        y : []
+            array of y-axis values
+        ax : plt.axis
+            pyplot axis to plot on
+        i : int
+            checkpoint index
+        trans : bool
+            whether to plot transition line
+        """
+        if trans:
+            y_max = np.max(y)
+            y_min = np.min(y)
+
+            x_trans = {'dens': self.trans_dens,
+                       'x': self.trans_r[i]}.get(x_var)
+
+            ax.vlines(x_trans, y_min, y_max, ls='--')
 
     def plot_profile(self, chk_i, var, x_var='x', y_log=True, x_log=True,
                      ax=None, legend=True, trans=True):
@@ -197,15 +224,9 @@ class Simulation:
         for i in chk_i:
             profile = self.profiles[i]
             y = profile[var]
-            y_max = np.max(y)
-            y_min = np.min(y)
 
             ax.plot(profile[x_var], y, label=f'{i}')
-
-            if trans:
-                x_trans = {'dens': self.trans_dens,
-                           'x': self.trans_r[i]}.get(x_var)
-                ax.vlines(x_trans, y_min, y_max, ls='--')
+            self._plot_trans_line(x_var, y=y, ax=ax, i=i, trans=trans)
 
         if y_log:
             ax.set_yscale('log')
@@ -242,7 +263,7 @@ class Simulation:
         ax.set_ylabel('$X$')
         ax.set_xlabel(self.get_label(x_var))
 
-    def plot_slider(self, var, x_var='x', y_log=True, x_log=True):
+    def plot_slider(self, var, x_var='x', y_log=True, x_log=True, trans=True):
         """Plot interactive slider of profile for given variable
 
         parameters
@@ -251,6 +272,7 @@ class Simulation:
         x_var : str
         y_log : bool
         x_log : bool
+        trans : bool
         """
         a_min = 0
         a_init = 0
