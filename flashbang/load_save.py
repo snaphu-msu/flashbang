@@ -145,7 +145,7 @@ def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
         profile['x'] = ray['t'] * xmax
 
         for v in params:
-            profile[v.strip()] = ray[v]
+            profile[v.strip()] = np.array(ray[v])
 
     if save and not loaded_successfully:
         save_profile(profile, basename=basename, chk_i=chk_i, model=model,
