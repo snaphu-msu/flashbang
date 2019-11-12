@@ -2,7 +2,6 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
-import multiprocessing as mp
 
 # bangpy
 from . import paths
@@ -10,12 +9,18 @@ from . import load_save
 from . import tools
 from . import plot_tools
 
+# TODO:
+#   - add docstring parameters
+
 
 # noinspection PyTypeChecker
 class Simulation:
     def __init__(self, basename, model, runs_path=None, config='default',
                  xmax=1e12, dim=1, output_dir='output', verbose=True,
-                 load_dat=False, load_profiles=False, reload=False):
+                 load_dat=False, load_profiles=False, reload=False,
+                 trans_dens=6e7):
+        """Represents a 1D flash simulation
+        """
         self.verbose = verbose
         self.runs_path = runs_path
         self.path = paths.model_path(model=model, runs_path=runs_path)
@@ -25,6 +30,7 @@ class Simulation:
         self.basename = basename
         self.dim = dim
         self.xmax = xmax
+        self.trans_dens = trans_dens
 
         self.config = load_save.load_config(name=config, verbose=self.verbose)
         self.dat = None
@@ -32,6 +38,10 @@ class Simulation:
         self.profiles = {}
 
         self.update_chks()
+        self.n_chk = len(self.chk_idxs)
+        self.trans_r = np.full(self.n_chk, np.nan)
+        self.trans_idxs = np.full(self.n_chk, np.nan)
+
         if load_dat:
             self.load_dat()
         if load_profiles:
@@ -79,6 +89,20 @@ class Simulation:
                                     xmax=self.xmax, o_path=self.output_path,
                                     params=self.config['profile']['params'],
                                     reload=reload, save=save, verbose=self.verbose)
+
+    def find_trans_idxs(self):
+        """Finds idx for zone closest to the helmholtz transition density,
+                for each chk profile
+        """
+        self.printv('Finding helmholtz transition zones')
+
+        for i, chk in enumerate(self.chk_idxs):
+            profile = self.profiles[chk]
+            dens_reverse = np.flip(profile['dens'])  # need monotonically-increasing
+            trans_idx = tools.find_nearest_idx(dens_reverse, self.trans_dens)
+
+            max_idx = len(dens_reverse) - 1
+            self.trans_idxs[i] = max_idx - trans_idx  # flip back
 
     def get_label(self, key):
         """Return formatted string for plot label
