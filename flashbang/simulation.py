@@ -169,7 +169,7 @@ class Simulation:
                               trans=trans)
         return fig
 
-    def _plot_trans_line(self, x_var, y, ax, i, trans):
+    def _plot_trans_line(self, x_var, y, ax, chk_i, trans):
         """Add transition line to axis
 
         parameters
@@ -180,7 +180,7 @@ class Simulation:
             array of y-axis values
         ax : plt.axis
             pyplot axis to plot on
-        i : int
+        chk_i : int
             checkpoint index
         trans : bool
             whether to plot transition line
@@ -190,7 +190,7 @@ class Simulation:
             y_min = np.min(y)
 
             x_trans = {'dens': self.trans_dens,
-                       'x': self.trans_r[i]}.get(x_var)
+                       'x': self.trans_r[chk_i]}.get(x_var)
 
             ax.vlines(x_trans, y_min, y_max, ls='--')
 
@@ -226,7 +226,7 @@ class Simulation:
             y = profile[var]
 
             ax.plot(profile[x_var], y, label=f'{i}')
-            self._plot_trans_line(x_var, y=y, ax=ax, i=i, trans=trans)
+            self._plot_trans_line(x_var, y=y, ax=ax, chk_i=i, trans=trans)
 
         if y_log:
             ax.set_yscale('log')
@@ -240,7 +240,7 @@ class Simulation:
 
     def plot_composition(self, chk_i, var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
                          x_var='x', y_log=False, x_log=True, ax=None, legend=True,
-                         ylims=(1e-5, 2)):
+                         ylims=(1e-5, 2), trans=True):
         """Plots composition profile
         """
         if chk_i not in self.profiles.keys():
@@ -253,6 +253,8 @@ class Simulation:
         for key in var_list:
             ax.plot(profile[x_var], profile[key], label=f'{key}')
 
+        self._plot_trans_line(x_var, y=ylims, ax=ax, chk_i=chk_i, trans=trans)
+        
         if y_log:
             ax.set_yscale('log')
         if x_log:
