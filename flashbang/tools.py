@@ -16,3 +16,11 @@ def ensure_sequence(x):
         return [x, ]
 
 
+def find_nearest_idx(array, value):
+    """Return the nearest array idx to the given value
+    """
+    idx = np.searchsorted(array, value)
+    if np.abs(value - array[idx - 1]) < np.abs(value - array[idx]):
+        return idx - 1
+    else:
+        return idx
