@@ -10,7 +10,7 @@ from flashbang import flashbang, load_save
 # =================================================================
 
 
-def main(basename, model, multithread=False, reload=False, save=True):
+def main(basename, model, multithread=True, reload=False, save=True):
     simulation = flashbang.Simulation(basename=basename, model=model)
     params = simulation.config['profile']['params']
 
