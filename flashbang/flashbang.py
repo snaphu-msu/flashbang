@@ -15,7 +15,7 @@ from . import plot_tools
 class Simulation:
     def __init__(self, basename, model, runs_path=None, config='default',
                  xmax=1e12, dim=1, output_dir='output', verbose=True,
-                 load_dat=False, load_profiles=False):
+                 load_dat=False, load_profiles=False, reload=False):
         self.verbose = verbose
         self.runs_path = runs_path
         self.path = paths.model_path(model=model, runs_path=runs_path)
@@ -35,7 +35,7 @@ class Simulation:
         if load_dat:
             self.load_dat()
         if load_profiles:
-            self.load_all_profiles()
+            self.load_all_profiles(reload=reload)
 
     def printv(self, string):
         if self.verbose:
