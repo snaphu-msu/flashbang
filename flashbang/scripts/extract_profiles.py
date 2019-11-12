@@ -11,18 +11,18 @@ from flashbang import simulation, load_save
 
 
 def main(basename, model, multithread=True, reload=False, save=True):
-    simulation = simulation.Simulation(basename=basename, model=model)
-    params = simulation.config['profile']['params']
+    sim = simulation.Simulation(basename=basename, model=model)
+    params = sim.config['profile']['params']
 
     if multithread:
         args = []
-        for chk_i in simulation.chk_idxs:
+        for chk_i in sim.chk_idxs:
             args.append((basename, chk_i, model, reload, save, params))
 
         with mp.Pool(processes=4) as pool:
             pool.starmap(extract_profiles, args)
     else:
-        for chk_i in simulation.chk_idxs:
+        for chk_i in sim.chk_idxs:
             extract_profiles(basename, chk_i, model=model, reload=reload,
                              save=save, params=params)
 
