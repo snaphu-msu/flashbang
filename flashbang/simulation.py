@@ -1,4 +1,5 @@
 import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
@@ -49,8 +50,10 @@ class Simulation:
             self.find_trans_idxs()
             self.get_trans_r()
 
-    def printv(self, string):
-        if self.verbose:
+    def printv(self, string, verbose=None):
+        if verbose is None:
+            verbose = self.verbose
+        if verbose:
             print(string)
 
     def load_dat(self):
@@ -73,8 +76,19 @@ class Simulation:
         reload : bool
         save : bool
         """
+        self.printv(f'Loading chk profiles from: {self.output_path}')
+
+        verbose_setting = self.verbose  # verbosity hack
+        self.verbose = False
+
         for chk_i in self.chk_idxs:
+            if verbose_setting:
+                sys.stdout.write(f'\rchk: {chk_i}/{self.chk_idxs[-1]}')
             self.load_profile(chk_i, reload=reload, save=save)
+
+        if verbose_setting:
+            sys.stdout.write('\n')
+        self.verbose = verbose_setting
 
     def load_profile(self, chk_i, reload=False, save=True):
         """Load checkpoint data file
