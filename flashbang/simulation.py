@@ -166,7 +166,7 @@ class Simulation:
         if ax is None:
             fig, ax = plt.subplots()
         ax.set_ylim(ylims)
-        
+
         profile = self.profiles[chk_i]
         for key in var_list:
             ax.plot(profile[x_var], profile[key], label=f'{key}')
@@ -192,8 +192,8 @@ class Simulation:
         x_log : bool
         """
         a_min = 0
+        a_init = 0
         a_max = self.chk_idxs[-1]
-        a_init = a_max
 
         fig = plt.figure()
         profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
