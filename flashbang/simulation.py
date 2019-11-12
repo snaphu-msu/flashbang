@@ -192,7 +192,7 @@ class Simulation:
             x_trans = {'dens': self.trans_dens,
                        'x': self.trans_r[chk_i]}.get(x_var)
 
-            ax.vlines(x_trans, y_min, y_max, ls='--')
+            ax.plot([x_trans, x_trans], [y_min, y_max], ls='--', color='k')
 
     def plot_profile(self, chk_i, var, x_var='x', y_log=True, x_log=True,
                      ax=None, legend=True, trans=True):
@@ -254,7 +254,7 @@ class Simulation:
             ax.plot(profile[x_var], profile[key], label=f'{key}')
 
         self._plot_trans_line(x_var, y=ylims, ax=ax, chk_i=chk_i, trans=trans)
-        
+
         if y_log:
             ax.set_yscale('log')
         if x_log:
@@ -276,9 +276,9 @@ class Simulation:
         x_log : bool
         trans : bool
         """
-        a_min = 0
-        a_init = 0
-        a_max = self.chk_idxs[-1]
+        j_min = 0
+        j_init = 0
+        j_max = self.chk_idxs[-1]
 
         fig = plt.figure()
         profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
@@ -286,21 +286,36 @@ class Simulation:
         profile_ax.set_xlabel(self.get_label(x_var))
         profile_ax.set_ylabel(self.get_label(var))
 
-        line, = profile_ax.plot(self.profiles[a_init][x_var], self.profiles[a_init][var])
+        init_profile = self.profiles[j_init]
+        line, = profile_ax.plot(init_profile[x_var], init_profile[var])
+
+        self._plot_trans_line(x_var=x_var, y=init_profile[var], ax=profile_ax,
+                              chk_i=j_init, trans=trans)
 
         if y_log:
             profile_ax.set_yscale('log')
         if x_log:
             profile_ax.set_xscale('log')
 
-        slider = Slider(slider_ax, 'chk', a_min, a_max, valinit=a_init, valstep=1)
+        slider = Slider(slider_ax, 'chk', j_min, j_max, valinit=j_init, valstep=1)
 
         def update(chk):
-            profile = self.profiles[chk]
+            idx = int(chk)
+            profile = self.profiles[idx]
             y_profile = profile[var]
 
             line.set_ydata(y_profile)
             line.set_xdata(profile[x_var])
+
+            if trans:
+                y_max = np.max(y_profile)
+                y_min = np.min(y_profile)
+                x_trans = {'dens': self.trans_dens,
+                           'x': self.trans_r[idx]}.get(x_var)
+
+                profile_ax.lines[1].set_ydata([y_min, y_max])
+                profile_ax.lines[1].set_xdata([x_trans, x_trans])
+
             fig.canvas.draw_idle()
 
         slider.on_changed(update)
