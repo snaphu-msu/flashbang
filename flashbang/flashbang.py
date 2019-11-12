@@ -52,25 +52,16 @@ class Simulation:
         """
         self.chk_idxs = load_save.find_chk(path=self.output_path)
 
-    def load_all_profiles(self, reload=False, save=True, multithread=False):
+    def load_all_profiles(self, reload=False, save=True):
         """Load profiles for all available checkpoints
 
         parameters
         ----------
         reload : bool
         save : bool
-        multithread : bool
         """
-        if multithread:
-            args = []
-            for chk_i in self.chk_idxs:
-                args.append((chk_i, reload, save))
-
-            with mp.Pool(processes=4) as pool:
-                pool.starmap(self.load_profile, args)
-        else:
-            for chk_i in self.chk_idxs:
-                self.load_profile(chk_i, reload=reload, save=save)
+        for chk_i in self.chk_idxs:
+            self.load_profile(chk_i, reload=reload, save=save)
 
     def load_profile(self, chk_i, reload=False, save=True):
         """Load checkpoint data file
