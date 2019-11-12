@@ -156,6 +156,31 @@ class Simulation:
         ax.set_ylabel(self.get_label(var))
         ax.set_xlabel(self.get_label(x_var))
 
+    def plot_composition(self, chk_i, var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
+                         x_var='x', y_log=False, x_log=True, ax=None, legend=True,
+                         ylims=(1e-5, 2)):
+        """Plots composition profile
+        """
+        if chk_i not in self.profiles.keys():
+            self.load_profile(chk_i)
+        if ax is None:
+            fig, ax = plt.subplots()
+        ax.set_ylim(ylims)
+        
+        profile = self.profiles[chk_i]
+        for key in var_list:
+            ax.plot(profile[x_var], profile[key], label=f'{key}')
+
+        if y_log:
+            ax.set_yscale('log')
+        if x_log:
+            ax.set_xscale('log')
+        if legend:
+            ax.legend()
+
+        ax.set_ylabel('$X$')
+        ax.set_xlabel(self.get_label(x_var))
+
     def plot_slider(self, var, x_var='x', y_log=True, x_log=True):
         """Plot interactive slider of profile for given variable
 
