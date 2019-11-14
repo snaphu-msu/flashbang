@@ -291,7 +291,7 @@ class Simulation:
         trans : bool
         """
         j_max = self.chk_idxs[-1]
-        j_min = 0
+        j_min = self.chk_idxs[0]
         j_init = j_max
 
         fig = plt.figure()
