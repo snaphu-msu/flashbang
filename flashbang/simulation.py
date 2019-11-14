@@ -12,6 +12,7 @@ from . import plot_tools
 
 # TODO:
 #   - add docstring parameters
+#   - rename chk_i to chk, use chk_i for actual index
 
 
 # noinspection PyTypeChecker
@@ -189,9 +190,10 @@ class Simulation:
         if trans:
             y_max = np.max(y)
             y_min = np.min(y)
-
+            
+            idx = np.where(self.chk_idxs == chk_i)[0][0]
             x_trans = {'dens': self.trans_dens,
-                       'x': self.trans_r[chk_i]}.get(x_var)
+                       'x': self.trans_r[idx]}.get(x_var)
 
             ax.plot([x_trans, x_trans], [y_min, y_max], ls='--', color='k')
 
