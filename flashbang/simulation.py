@@ -128,7 +128,8 @@ class Simulation:
 
         self.printv('Getting transition zone radii')
         for i, trans_idx in enumerate(self.trans_idxs):
-            profile = self.profiles[i]
+            chk_i = self.chk_idxs[i]
+            profile = self.profiles[chk_i]
             self.trans_r[i] = profile['x'][trans_idx]
 
     def get_label(self, key):
