@@ -171,6 +171,28 @@ class Simulation:
                               trans=trans)
         return fig
 
+    def _get_trans_xy(self, chk_i, x_var, y):
+        """Return x, y points of transition line, for given x-axis variable
+
+        parameters
+        ----------
+        chk_i : int
+        x_var : str
+        y     : []
+        """
+        idx = np.where(self.chk_idxs == chk_i)[0][0]
+        y_max = np.max(y)
+        y_min = np.min(y)
+
+        x_map = {
+                 'dens': self.trans_dens,
+                 'x': self.trans_r[idx]
+                 }.get(x_var)
+
+        x = [x_map, x_map]
+        y = [y_min, y_max]
+        return x, y
+
     def _plot_trans_line(self, x_var, y, ax, chk_i, trans):
         """Add transition line to axis
 
@@ -188,14 +210,8 @@ class Simulation:
             whether to plot transition line
         """
         if trans:
-            y_max = np.max(y)
-            y_min = np.min(y)
-            
-            idx = np.where(self.chk_idxs == chk_i)[0][0]
-            x_trans = {'dens': self.trans_dens,
-                       'x': self.trans_r[idx]}.get(x_var)
-
-            ax.plot([x_trans, x_trans], [y_min, y_max], ls='--', color='k')
+            x, y = self._get_trans_xy(chk_i=chk_i, x_var=x_var, y=y)
+            ax.plot(x, y, ls='--', color='k')
 
     def plot_profile(self, chk_i, var, x_var='x', y_log=True, x_log=True,
                      ax=None, legend=True, trans=True, title=True,
@@ -251,6 +267,8 @@ class Simulation:
 
         ax.set_ylabel(self.get_label(var))
         ax.set_xlabel(self.get_label(x_var))
+
+        return fig
 
     def plot_composition(self, chk_i, var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
                          x_var='x', y_log=False, x_log=True, ax=None, legend=True,
@@ -322,13 +340,9 @@ class Simulation:
             line.set_xdata(profile[x_var])
 
             if trans:
-                y_max = np.max(y_profile)
-                y_min = np.min(y_profile)
-                x_trans = {'dens': self.trans_dens,
-                           'x': self.trans_r[idx]}.get(x_var)
-
-                profile_ax.lines[1].set_ydata([y_min, y_max])
-                profile_ax.lines[1].set_xdata([x_trans, x_trans])
+                x, y = self._get_trans_xy(chk_i=idx, x_var=x_var, y=y_profile)
+                profile_ax.lines[1].set_xdata(x)
+                profile_ax.lines[1].set_ydata(y)
 
             fig.canvas.draw_idle()
 
