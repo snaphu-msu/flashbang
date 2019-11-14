@@ -195,7 +195,7 @@ class Simulation:
             ax.plot([x_trans, x_trans], [y_min, y_max], ls='--', color='k')
 
     def plot_profile(self, chk_i, var, x_var='x', y_log=True, x_log=True,
-                     ax=None, legend=True, trans=True):
+                     ax=None, legend=True, trans=True, title=True):
         """Plot given profile variable
 
         parameters
@@ -211,6 +211,7 @@ class Simulation:
         ax : pyplot.axis
         legend : bool
         trans : bool
+        title : bool
         """
         chk_i = tools.ensure_sequence(chk_i)
 
@@ -234,6 +235,10 @@ class Simulation:
             ax.set_xscale('log')
         if legend:
             ax.legend()
+        if title:
+            dt = self.config['plotting']['scales']['chk_dt']
+            time = dt * chk_i[0]
+            ax.set_title(f't={time:.3f} s')
 
         ax.set_ylabel(self.get_label(var))
         ax.set_xlabel(self.get_label(x_var))
@@ -276,9 +281,9 @@ class Simulation:
         x_log : bool
         trans : bool
         """
-        j_min = 0
-        j_init = 0
         j_max = self.chk_idxs[-1]
+        j_min = 0
+        j_init = j_max
 
         fig = plt.figure()
         profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
