@@ -13,6 +13,7 @@ from . import plot_tools
 # TODO:
 #   - add docstring parameters
 #   - rename chk_i to chk, use chk_i for actual index
+#   - generalised axis plotting
 
 
 # noinspection PyTypeChecker
@@ -213,7 +214,7 @@ class Simulation:
             x, y = self._get_trans_xy(chk_i=chk_i, x_var=x_var, y=y)
             ax.plot(x, y, ls='--', color='k')
 
-    def plot_profile(self, chk_i, var, x_var='x', y_log=True, x_log=True,
+    def plot_profile(self, chk_i, var, x_var='x', yscale=None, x_log=True,
                      ax=None, legend=True, trans=True, title=True,
                      ylims=None, xlims=None, figsize=(8, 6)):
         """Plot given profile variable
@@ -226,7 +227,7 @@ class Simulation:
             variable to plot on y-axis (from Simulation.profile)
         x_var : str
             variable to plot on x-axis
-        y_log : bool
+        yscale : str
         x_log : bool
         ax : pyplot.axis
         legend : bool
@@ -252,8 +253,8 @@ class Simulation:
             ax.plot(profile[x_var], y, label=f'{i}')
             self._plot_trans_line(x_var, y=y, ax=ax, chk_i=i, trans=trans)
 
-        if y_log:
-            ax.set_yscale('log')
+        if yscale is None:
+            yscale = self.config['plotting']['y_scales'].get(var, 'log')
         if x_log:
             ax.set_xscale('log')
         if legend:
@@ -263,6 +264,7 @@ class Simulation:
             time = dt * chk_i[0]
             ax.set_title(f't={time:.3f} s')
 
+        ax.set_yscale(yscale)
         ax.set_xlim(xlims)
         ax.set_ylim(ylims)
 
