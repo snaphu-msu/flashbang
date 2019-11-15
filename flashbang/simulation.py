@@ -214,7 +214,7 @@ class Simulation:
             x, y = self._get_trans_xy(chk_i=chk_i, x_var=x_var, y=y)
             ax.plot(x, y, ls='--', color='k')
 
-    def plot_profile(self, chk_i, var, x_var='x', yscale=None, x_log=True,
+    def plot_profile(self, chk_i, var, x_var='x', y_scale=None, x_log=True,
                      ax=None, legend=True, trans=True, title=True,
                      ylims=None, xlims=None, figsize=(8, 6)):
         """Plot given profile variable
@@ -227,7 +227,7 @@ class Simulation:
             variable to plot on y-axis (from Simulation.profile)
         x_var : str
             variable to plot on x-axis
-        yscale : str
+        y_scale : str
         x_log : bool
         ax : pyplot.axis
         legend : bool
@@ -253,8 +253,8 @@ class Simulation:
             ax.plot(profile[x_var], y, label=f'{i}')
             self._plot_trans_line(x_var, y=y, ax=ax, chk_i=i, trans=trans)
 
-        if yscale is None:
-            yscale = self.config['plotting']['y_scales'].get(var, 'log')
+        if y_scale is None:
+            y_scale = self.config['plotting']['y_scales'].get(var, 'log')
         if x_log:
             ax.set_xscale('log')
         if legend:
@@ -264,7 +264,7 @@ class Simulation:
             time = dt * chk_i[0]
             ax.set_title(f't={time:.3f} s')
 
-        ax.set_yscale(yscale)
+        ax.set_yscale(y_scale)
         ax.set_xlim(xlims)
         ax.set_ylim(ylims)
 
@@ -274,7 +274,7 @@ class Simulation:
         return fig
 
     def plot_composition(self, chk_i, var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
-                         x_var='x', y_log=True, x_log=True, ax=None, legend=True,
+                         x_var='x', y_scale='log', x_scale='log', ax=None, legend=True,
                          ylims=(1e-5, 2), trans=True, figsize=(8, 6)):
         """Plots composition profile
         """
@@ -290,13 +290,11 @@ class Simulation:
 
         self._plot_trans_line(x_var, y=ylims, ax=ax, chk_i=chk_i, trans=trans)
 
-        if y_log:
-            ax.set_yscale('log')
-        if x_log:
-            ax.set_xscale('log')
         if legend:
             ax.legend()
 
+        ax.set_xscale(x_scale)
+        ax.set_yscale(y_scale)
         ax.set_ylabel('$X$')
         ax.set_xlabel(self.get_label(x_var))
 
