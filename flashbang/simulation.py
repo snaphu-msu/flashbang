@@ -298,7 +298,8 @@ class Simulation:
         ax.set_ylabel('$X$')
         ax.set_xlabel(self.get_label(x_var))
 
-    def plot_slider(self, var, x_var='x', y_log=True, x_log=True, trans=True):
+    def plot_slider(self, var, x_var='x', y_log=True, x_log=True, trans=True,
+                    figsize=(8, 6)):
         """Plot interactive slider of profile for given variable
 
         parameters
@@ -308,12 +309,13 @@ class Simulation:
         y_log : bool
         x_log : bool
         trans : bool
+        figsize : []
         """
         j_max = self.chk_idxs[-1]
         j_min = self.chk_idxs[0]
         j_init = j_max
 
-        fig = plt.figure()
+        fig = plt.figure(figsize=figsize)
         profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
         slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
         profile_ax.set_xlabel(self.get_label(x_var))
