@@ -248,8 +248,11 @@ class Simulation:
             if i not in self.profiles.keys():
                 self.load_profile(i)
 
-        if ax is None:
-            fig, ax = plt.subplots(figsize=figsize)
+        fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
+        self._set_ax_title(ax, chk_i=chk_i[0], title=title)
+        self._set_ax_scales(ax, var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
+        self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
+        self._set_ax_labels(ax, x_var=x_var, y_var=var)
 
         for i in chk_i:
             profile = self.profiles[i]
@@ -261,23 +264,22 @@ class Simulation:
         if legend:
             ax.legend()
 
-        self._set_ax_title(ax, chk_i=chk_i[0], title=title)
-        self._set_ax_scales(ax, var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
-        self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
-        self._set_ax_labels(ax, x_var=x_var, y_var=var)
-
         return fig
 
     def plot_composition(self, chk_i, var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
                          x_var='x', y_scale='log', x_scale=None, ax=None, legend=True,
                          ylims=(1e-5, 2), xlims=None, trans=True, figsize=(8, 6),
-                         title=True):
+                         title=True, fig=None):
         """Plots composition profile
         """
         if chk_i not in self.profiles.keys():
             self.load_profile(chk_i)
-        if ax is None:
-            fig, ax = plt.subplots(figsize=figsize)
+
+        fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
+        self._set_ax_scales(ax, var_list[0], x_var=x_var, y_scale=y_scale, x_scale=x_scale)
+        self._set_ax_title(ax, chk_i=chk_i, title=title)
+        self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
+        self._set_ax_labels(ax, x_var=x_var, y_var='$X$')
 
         profile = self.profiles[chk_i]
         for key in var_list:
@@ -287,11 +289,6 @@ class Simulation:
 
         if legend:
             ax.legend()
-
-        self._set_ax_scales(ax, var_list[0], x_var=x_var, y_scale=y_scale, x_scale=x_scale)
-        self._set_ax_title(ax, chk_i=chk_i, title=title)
-        self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
-        self._set_ax_labels(ax, x_var=x_var, y_var='$X$')
 
         return fig
 
@@ -424,3 +421,13 @@ class Simulation:
         ax.set_xlabel(self.get_label(x_var))
         ax.set_ylabel(self.get_label(y_var))
 
+    def _setup_fig_ax(self, ax, figsize):
+        """Sets up fig, ax
+        """
+        c = self.config['plotting']  # TODO: default settings from config
+        fig = None
+
+        if ax is None:
+            fig, ax = plt.subplots(figsize=figsize)
+
+        return fig, ax
