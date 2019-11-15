@@ -136,11 +136,6 @@ class Simulation:
             profile = self.profiles[chk_i]
             self.trans_r[i] = profile['x'][trans_idx]
 
-    def get_label(self, key):
-        """Return formatted string for plot label
-        """
-        return self.config['plotting']['labels'].get(key, key)
-
     def plot_profiles(self, chk_i, var_list, x_var='x', y_scale=None, x_scale=None,
                       max_cols=2, sub_figsize=(6, 5), trans=True):
         """Plot one or more profile variables
@@ -173,51 +168,6 @@ class Simulation:
                               x_scale=x_scale, ax=ax[row, col], trans=trans,
                               legend=True if i == 0 else False)
         return fig
-
-    def _get_trans_xy(self, chk_i, x_var, y):
-        """Return x, y points of transition line, for given x-axis variable
-
-        parameters
-        ----------
-        chk_i : int
-        x_var : str
-        y     : []
-        """
-        idx = np.where(self.chk_idxs == chk_i)[0][0]
-        y_max = np.max(y)
-        y_min = np.min(y)
-
-        # y_min = 0  # TODO: automagic this
-        # y_max = 20
-
-        x_map = {
-                 'dens': self.trans_dens,
-                 'x': self.trans_r[idx]
-                 }.get(x_var)
-
-        x = [x_map, x_map]
-        y = [y_min, y_max]
-        return x, y
-
-    def _plot_trans_line(self, x_var, y, ax, chk_i, trans):
-        """Add transition line to axis
-
-        parameters
-        ----------
-        x_var : str
-            variable on x-axis
-        y : []
-            array of y-axis values
-        ax : plt.axis
-            pyplot axis to plot on
-        chk_i : int
-            checkpoint index
-        trans : bool
-            whether to plot transition line
-        """
-        if trans:
-            x, y = self._get_trans_xy(chk_i=chk_i, x_var=x_var, y=y)
-            ax.plot(x, y, ls='--', color='k')
 
     def plot_profile(self, chk_i, var, x_var='x', y_scale=None, x_scale=None,
                      ax=None, legend=True, trans=True, title=True,
@@ -361,6 +311,56 @@ class Simulation:
 
         if display:
             plt.show(block=False)
+
+    def get_label(self, key):
+        """Return formatted string for plot label
+        """
+        return self.config['plotting']['labels'].get(key, key)
+
+    def _get_trans_xy(self, chk_i, x_var, y):
+        """Return x, y points of transition line, for given x-axis variable
+
+        parameters
+        ----------
+        chk_i : int
+        x_var : str
+        y     : []
+        """
+        idx = np.where(self.chk_idxs == chk_i)[0][0]
+        y_max = np.max(y)
+        y_min = np.min(y)
+
+        # y_min = 0  # TODO: automagic this
+        # y_max = 20
+
+        x_map = {
+                 'dens': self.trans_dens,
+                 'x': self.trans_r[idx]
+                 }.get(x_var)
+
+        x = [x_map, x_map]
+        y = [y_min, y_max]
+        return x, y
+
+    def _plot_trans_line(self, x_var, y, ax, chk_i, trans):
+        """Add transition line to axis
+
+        parameters
+        ----------
+        x_var : str
+            variable on x-axis
+        y : []
+            array of y-axis values
+        ax : plt.axis
+            pyplot axis to plot on
+        chk_i : int
+            checkpoint index
+        trans : bool
+            whether to plot transition line
+        """
+        if trans:
+            x, y = self._get_trans_xy(chk_i=chk_i, x_var=x_var, y=y)
+            ax.plot(x, y, ls='--', color='k')
 
     def _set_ax_scales(self, ax, var, x_var, y_scale, x_scale):
         """Set axis scales (linear, log)
