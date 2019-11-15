@@ -300,7 +300,7 @@ class Simulation:
         return fig
 
     def plot_slider(self, var, x_var='x', y_scale=None, x_scale=None, trans=True,
-                    figsize=(8, 6), title=True):
+                    figsize=(8, 6), title=True, xlims=None, ylims=None):
         """Plot interactive slider of profile for given variable
 
         parameters
@@ -312,6 +312,8 @@ class Simulation:
         trans : bool
         figsize : []
         title : bool
+        xlims : [2]
+        ylims : [2]
         """
         j_max = self.chk_idxs[-1]
         j_min = self.chk_idxs[0]
@@ -328,6 +330,7 @@ class Simulation:
 
         self._set_ax_scales(profile_ax, var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_title(profile_ax, chk_i=j_init, title=title)
+        self._set_ax_lims(profile_ax, xlims=xlims, ylims=ylims)
 
         self._plot_trans_line(x_var=x_var, y=init_profile[var], ax=profile_ax,
                               chk_i=j_init, trans=trans)
