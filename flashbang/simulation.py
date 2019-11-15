@@ -139,7 +139,7 @@ class Simulation:
         """
         return self.config['plotting']['labels'].get(key, key)
 
-    def plot_profiles(self, chk_i, var_list, x_var='x', y_log=True, x_log=True,
+    def plot_profiles(self, chk_i, var_list, x_var='x', y_scale=None, x_scale='log',
                       max_cols=2, sub_figsize=(6, 5), trans=True):
         """Plot one or more profile variables
 
@@ -151,8 +151,8 @@ class Simulation:
             variable(s) to plot on y-axis (from Simulation.profile)
         x_var : str
             variable to plot on x-axis
-        y_log : bool
-        x_log : bool
+        y_scale : bool
+        x_scale : bool
         max_cols : bool
         sub_figsize : tuple
         trans : bool
@@ -167,9 +167,9 @@ class Simulation:
             row = int(np.floor(i / max_cols))
             col = i % max_cols
 
-            self.plot_profile(chk_i, var=var, x_var=x_var, y_log=y_log, x_log=x_log,
-                              ax=ax[row, col], legend=True if i == 0 else False,
-                              trans=trans)
+            self.plot_profile(chk_i, var=var, x_var=x_var, y_scale=y_scale,
+                              x_scale=x_scale, ax=ax[row, col], trans=trans,
+                              legend=True if i == 0 else False)
         return fig
 
     def _get_trans_xy(self, chk_i, x_var, y):
@@ -214,7 +214,7 @@ class Simulation:
             x, y = self._get_trans_xy(chk_i=chk_i, x_var=x_var, y=y)
             ax.plot(x, y, ls='--', color='k')
 
-    def plot_profile(self, chk_i, var, x_var='x', y_scale=None, x_log=True,
+    def plot_profile(self, chk_i, var, x_var='x', y_scale=None, x_scale='log',
                      ax=None, legend=True, trans=True, title=True,
                      ylims=None, xlims=None, figsize=(8, 6)):
         """Plot given profile variable
@@ -228,7 +228,7 @@ class Simulation:
         x_var : str
             variable to plot on x-axis
         y_scale : str
-        x_log : bool
+        x_scale : bool
         ax : pyplot.axis
         legend : bool
         trans : bool
@@ -255,8 +255,6 @@ class Simulation:
 
         if y_scale is None:
             y_scale = self.config['plotting']['y_scales'].get(var, 'log')
-        if x_log:
-            ax.set_xscale('log')
         if legend:
             ax.legend()
         if title:   # TODO: account for different zero points/starting times
@@ -264,6 +262,7 @@ class Simulation:
             time = dt * chk_i[0]
             ax.set_title(f't={time:.3f} s')
 
+        ax.set_xscale(x_scale)
         ax.set_yscale(y_scale)
         ax.set_xlim(xlims)
         ax.set_ylim(ylims)
@@ -298,7 +297,7 @@ class Simulation:
         ax.set_ylabel('$X$')
         ax.set_xlabel(self.get_label(x_var))
 
-    def plot_slider(self, var, x_var='x', y_log=True, x_log=True, trans=True,
+    def plot_slider(self, var, x_var='x', y_scale='log', x_scale='log', trans=True,
                     figsize=(8, 6)):
         """Plot interactive slider of profile for given variable
 
@@ -306,8 +305,8 @@ class Simulation:
         ----------
         var : str
         x_var : str
-        y_log : bool
-        x_log : bool
+        y_scale : str
+        x_scale : str
         trans : bool
         figsize : []
         """
@@ -327,10 +326,11 @@ class Simulation:
         self._plot_trans_line(x_var=x_var, y=init_profile[var], ax=profile_ax,
                               chk_i=j_init, trans=trans)
 
-        if y_log:
-            profile_ax.set_yscale('log')
-        if x_log:
-            profile_ax.set_xscale('log')
+        if y_scale is None:
+            y_scale = self.config['plotting']['y_scales'].get(var, 'log')
+
+        profile_ax.set_xscale(x_scale)
+        profile_ax.set_yscale(y_scale)
 
         slider = Slider(slider_ax, 'chk', j_min, j_max, valinit=j_init, valstep=1)
 
@@ -352,15 +352,13 @@ class Simulation:
         slider.on_changed(update)
         return fig, slider
 
-    def plot_dat(self, var, y_log=True, display=True):
+    def plot_dat(self, var, y_scale='log', display=True):
         """Plots quantity from dat file
         """
         fig, ax = plt.subplots()
-        if y_log:
-            ax.set_yscale('log')
-
         ax.plot(self.dat['time'], self.dat[var])
 
+        ax.set_yscale(y_scale)
         ax.set_xlabel('$t$ (s)')
         ax.set_ylabel(var)
 
