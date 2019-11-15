@@ -140,7 +140,7 @@ class Simulation:
         """
         return self.config['plotting']['labels'].get(key, key)
 
-    def plot_profiles(self, chk_i, var_list, x_var='x', y_scale=None, x_scale='log',
+    def plot_profiles(self, chk_i, var_list, x_var='x', y_scale=None, x_scale=None,
                       max_cols=2, sub_figsize=(6, 5), trans=True):
         """Plot one or more profile variables
 
@@ -296,7 +296,7 @@ class Simulation:
         ax.set_ylabel('$X$')
         ax.set_xlabel(self.get_label(x_var))
 
-    def plot_slider(self, var, x_var='x', y_scale='log', x_scale='log', trans=True,
+    def plot_slider(self, var, x_var='x', y_scale=None, x_scale=None, trans=True,
                     figsize=(8, 6)):
         """Plot interactive slider of profile for given variable
 
@@ -363,10 +363,10 @@ class Simulation:
     def _set_ax_scales(self, ax, var, x_var, y_scale, x_scale):
         """Sets axis scales (linear, log)
         """
-        if y_scale is None:
-            y_scale = self.config['plotting']['ax_scales'].get(var, 'log')
         if x_scale is None:
             x_scale = self.config['plotting']['ax_scales'].get(x_var, 'log')
+        if y_scale is None:
+            y_scale = self.config['plotting']['ax_scales'].get(var, 'log')
 
         ax.set_xscale(x_scale)
         ax.set_yscale(y_scale)
