@@ -264,9 +264,7 @@ class Simulation:
         self._set_ax_title(ax, chk_i=chk_i[0], title=title)
         self._set_ax_scales(ax, var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
-
-        ax.set_ylabel(self.get_label(var))
-        ax.set_xlabel(self.get_label(x_var))
+        self._set_ax_labels(ax, x_var=x_var, y_var=var)
 
         return fig
 
@@ -293,9 +291,7 @@ class Simulation:
         self._set_ax_scales(ax, var_list[0], x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_title(ax, chk_i=chk_i, title=title)
         self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
-
-        ax.set_ylabel('$X$')
-        ax.set_xlabel(self.get_label(x_var))
+        self._set_ax_labels(ax, x_var=x_var, y_var='$X$')
 
         return fig
 
@@ -322,8 +318,6 @@ class Simulation:
         fig = plt.figure(figsize=figsize)
         profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
         slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
-        profile_ax.set_xlabel(self.get_label(x_var))
-        profile_ax.set_ylabel(self.get_label(var))
 
         init_profile = self.profiles[j_init]
         line, = profile_ax.plot(init_profile[x_var], init_profile[var])
@@ -331,6 +325,7 @@ class Simulation:
         self._set_ax_scales(profile_ax, var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_title(profile_ax, chk_i=j_init, title=title)
         self._set_ax_lims(profile_ax, xlims=xlims, ylims=ylims)
+        self._set_ax_labels(profile_ax, x_var=x_var, y_var=var)
 
         self._plot_trans_line(x_var=x_var, y=init_profile[var], ax=profile_ax,
                               chk_i=j_init, trans=trans)
@@ -365,8 +360,7 @@ class Simulation:
         ax.plot(self.dat['time'], self.dat[var])
 
         ax.set_yscale(y_scale)
-        ax.set_xlabel('$t$ (s)')
-        ax.set_ylabel(var)
+        self._set_ax_labels(ax, x_var='$t$ (s)', y_var=var)
 
         if display:
             plt.show(block=False)
@@ -417,3 +411,16 @@ class Simulation:
         c = self.config['plotting']  # TODO: something with auto-lims in future
         ax.set_ylim(ylims)
         ax.set_xlim(xlims)
+
+    def _set_ax_labels(self, ax, x_var, y_var):
+        """Set axis labels
+
+        parameters
+        ----------
+        ax : plt.axis
+        x_var : str
+        y_var : str
+        """
+        ax.set_xlabel(self.get_label(x_var))
+        ax.set_ylabel(self.get_label(y_var))
+
