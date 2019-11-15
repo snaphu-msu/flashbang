@@ -273,13 +273,13 @@ class Simulation:
 
     def plot_composition(self, chk_i, var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
                          x_var='x', y_log=False, x_log=True, ax=None, legend=True,
-                         ylims=(1e-5, 2), trans=True):
+                         ylims=(1e-5, 2), trans=True, figsize=(8, 6)):
         """Plots composition profile
         """
         if chk_i not in self.profiles.keys():
             self.load_profile(chk_i)
         if ax is None:
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=figsize)
         ax.set_ylim(ylims)
 
         profile = self.profiles[chk_i]
