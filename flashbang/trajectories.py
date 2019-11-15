@@ -101,14 +101,14 @@ def load_all_stir_tracers(n_tracers, basename='stir2_oct8_s12.0_alpha1.25',
 
 
 def load_stir_traj(tracer_i, basename='stir2_oct8_s12.0_alpha1.25',
-                   prefix='_tracer', extension='.dat',
+                   prefix='_tracer', extension='.dat', skiprows=2,
                    path='/Users/zac/projects/codes/traj_code/data/traj_s12.0_1024'):
     """Load STIR trajectory from file
         Returns: 2D np.array
     """
     filepath = stir_traj_filepath(tracer_i, basename=basename, prefix=prefix,
                                   extension=extension, path=path)
-    return np.loadtxt(filepath, skiprows=2)
+    return np.loadtxt(filepath, skiprows=skiprows)
 
 
 def load_snec_profile(var, path='/Users/zac/projects/data/snec/mass13/Data'):
