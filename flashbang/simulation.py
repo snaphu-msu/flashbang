@@ -257,11 +257,8 @@ class Simulation:
 
         if legend:
             ax.legend()
-        if title:   # TODO: account for different zero points/starting times
-            dt = self.config['plotting']['scales']['chk_dt']
-            time = dt * chk_i[0]
-            ax.set_title(f't={time:.3f} s')
 
+        self._set_ax_title(ax, chk_i=chk_i[0], title=title)
         self._set_ax_scales(ax, var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
 
         ax.set_xlim(xlims)
@@ -274,14 +271,14 @@ class Simulation:
 
     def plot_composition(self, chk_i, var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
                          x_var='x', y_scale='log', x_scale=None, ax=None, legend=True,
-                         ylims=(1e-5, 2), trans=True, figsize=(8, 6)):
+                         ylims=(1e-5, 2), xlims=None, trans=True, figsize=(8, 6),
+                         title=True):
         """Plots composition profile
         """
         if chk_i not in self.profiles.keys():
             self.load_profile(chk_i)
         if ax is None:
             fig, ax = plt.subplots(figsize=figsize)
-        ax.set_ylim(ylims)
 
         profile = self.profiles[chk_i]
         for key in var_list:
@@ -293,9 +290,14 @@ class Simulation:
             ax.legend()
 
         self._set_ax_scales(ax, var_list[0], x_var=x_var, y_scale=y_scale, x_scale=x_scale)
+        self._set_ax_title(ax, chk_i=chk_i, title=title)
 
+        ax.set_ylim(ylims)
+        ax.set_xlim(xlims)
         ax.set_ylabel('$X$')
         ax.set_xlabel(self.get_label(x_var))
+
+        return fig
 
     def plot_slider(self, var, x_var='x', y_scale=None, x_scale=None, trans=True,
                     figsize=(8, 6)):
@@ -363,6 +365,14 @@ class Simulation:
 
     def _set_ax_scales(self, ax, var, x_var, y_scale, x_scale):
         """Sets axis scales (linear, log)
+
+        parameters
+        ----------
+        ax : plt.axis
+        var : str
+        x_var : str
+        y_scale : str
+        x_scale : str
         """
         if x_scale is None:
             x_scale = self.config['plotting']['ax_scales'].get(x_var, 'log')
@@ -371,3 +381,18 @@ class Simulation:
 
         ax.set_xscale(x_scale)
         ax.set_yscale(y_scale)
+
+    def _set_ax_title(self, ax, chk_i, title):
+        """Set axis title
+
+        parameters
+        ----------
+        ax : plt.axis
+        chk_i : int
+        title : bool
+        """
+        # TODO: account for different zero points/starting times
+        if title:
+            dt = self.config['plotting']['scales']['chk_dt']
+            time = dt * chk_i
+            ax.set_title(f't={time:.3f} s')
