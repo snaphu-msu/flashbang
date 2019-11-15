@@ -22,7 +22,7 @@ class Simulation:
     def __init__(self, basename, model, runs_path=None, config='default',
                  xmax=1e12, dim=1, output_dir='output', verbose=True,
                  load_dat=False, load_profiles=False, reload=False,
-                 trans_dens=6e7):
+                 trans_dens=6e7, trans_low=1e7):
         """Represents a 1D flash simulation
         """
         self.verbose = verbose
@@ -35,6 +35,7 @@ class Simulation:
         self.dim = dim
         self.xmax = xmax
         self.trans_dens = trans_dens
+        self.trans_low = trans_low
 
         self.config = load_save.load_config(name=config, verbose=self.verbose)
         self.dat = None
