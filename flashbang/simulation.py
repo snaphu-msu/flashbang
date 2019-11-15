@@ -187,6 +187,9 @@ class Simulation:
         y_max = np.max(y)
         y_min = np.min(y)
 
+        # y_min = 0  # TODO: automagic this
+        # y_max = 20
+
         x_map = {
                  'dens': self.trans_dens,
                  'x': self.trans_r[idx]
@@ -260,9 +263,7 @@ class Simulation:
 
         self._set_ax_title(ax, chk_i=chk_i[0], title=title)
         self._set_ax_scales(ax, var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
-
-        ax.set_xlim(xlims)
-        ax.set_ylim(ylims)
+        self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
 
         ax.set_ylabel(self.get_label(var))
         ax.set_xlabel(self.get_label(x_var))
@@ -291,9 +292,8 @@ class Simulation:
 
         self._set_ax_scales(ax, var_list[0], x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_title(ax, chk_i=chk_i, title=title)
+        self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
 
-        ax.set_ylim(ylims)
-        ax.set_xlim(xlims)
         ax.set_ylabel('$X$')
         ax.set_xlabel(self.get_label(x_var))
 
@@ -332,6 +332,8 @@ class Simulation:
         self._plot_trans_line(x_var=x_var, y=init_profile[var], ax=profile_ax,
                               chk_i=j_init, trans=trans)
 
+        # profile_ax.plot([1e5, 1e9], [2e7, 2e7])
+
         slider = Slider(slider_ax, 'chk', j_min, j_max, valinit=j_init, valstep=1)
 
         def update(chk):
@@ -354,7 +356,7 @@ class Simulation:
         return fig, slider
 
     def plot_dat(self, var, y_scale='log', display=True):
-        """Plots quantity from dat file
+        """Plot quantity from dat file
         """
         fig, ax = plt.subplots()
         ax.plot(self.dat['time'], self.dat[var])
@@ -367,7 +369,7 @@ class Simulation:
             plt.show(block=False)
 
     def _set_ax_scales(self, ax, var, x_var, y_scale, x_scale):
-        """Sets axis scales (linear, log)
+        """Set axis scales (linear, log)
 
         parameters
         ----------
@@ -399,3 +401,16 @@ class Simulation:
             dt = self.config['plotting']['scales']['chk_dt']
             time = dt * chk_i
             ax.set_title(f't={time:.3f} s')
+
+    def _set_ax_lims(self, ax, xlims, ylims):
+        """Set x and y axis limits
+
+        parameters
+        ----------
+        ax : plt.axis
+        xlims : []
+        ylims : []
+        """
+        c = self.config['plotting']  # TODO: something with auto-lims in future
+        ax.set_ylim(ylims)
+        ax.set_xlim(xlims)
