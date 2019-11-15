@@ -215,7 +215,7 @@ class Simulation:
 
     def plot_profile(self, chk_i, var, x_var='x', y_log=True, x_log=True,
                      ax=None, legend=True, trans=True, title=True,
-                     ylims=None, xlims=None):
+                     ylims=None, xlims=None, figsize=(8, 6)):
         """Plot given profile variable
 
         parameters
@@ -234,6 +234,7 @@ class Simulation:
         title : bool
         ylims : []
         xlims : []
+        figsize : []
         """
         chk_i = tools.ensure_sequence(chk_i)
 
@@ -242,7 +243,7 @@ class Simulation:
                 self.load_profile(i)
 
         if ax is None:
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=figsize)
 
         for i in chk_i:
             profile = self.profiles[i]
@@ -257,7 +258,7 @@ class Simulation:
             ax.set_xscale('log')
         if legend:
             ax.legend()
-        if title:
+        if title:   # TODO: account for different zero points/starting times
             dt = self.config['plotting']['scales']['chk_dt']
             time = dt * chk_i[0]
             ax.set_title(f't={time:.3f} s')
