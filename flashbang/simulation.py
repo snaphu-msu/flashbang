@@ -137,7 +137,7 @@ class Simulation:
             self.trans_r[i] = profile['x'][trans_idx]
 
     def plot_profiles(self, chk_i, var_list, x_var='x', y_scale=None, x_scale=None,
-                      max_cols=2, sub_figsize=(6, 5), trans=True):
+                      max_cols=2, sub_figsize=(6, 5), trans=True, legend=False):
         """Plot one or more profile variables
 
         parameters
@@ -150,6 +150,7 @@ class Simulation:
             variable to plot on x-axis
         y_scale : bool
         x_scale : bool
+        legend : bool
         max_cols : bool
         sub_figsize : tuple
         trans : bool
@@ -166,11 +167,11 @@ class Simulation:
 
             self.plot_profile(chk_i, var=var, x_var=x_var, y_scale=y_scale,
                               x_scale=x_scale, ax=ax[row, col], trans=trans,
-                              legend=True if i == 0 else False)
+                              legend=legend if i == 0 else False)
         return fig
 
     def plot_profile(self, chk_i, var, x_var='x', y_scale=None, x_scale=None,
-                     ax=None, legend=True, trans=True, title=True,
+                     ax=None, legend=False, trans=True, title=True,
                      ylims=None, xlims=None, figsize=(8, 6)):
         """Plot given profile variable
 
@@ -219,7 +220,7 @@ class Simulation:
     def plot_composition(self, chk_i, var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
                          x_var='x', y_scale='log', x_scale=None, ax=None, legend=True,
                          ylims=(1e-5, 2), xlims=None, trans=True, figsize=(8, 6),
-                         title=True, fig=None):
+                         title=True):
         """Plots composition profile
         """
         if chk_i not in self.profiles.keys():
