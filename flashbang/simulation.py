@@ -407,8 +407,10 @@ class Simulation:
         ylims : []
         """
         c = self.config['plotting']  # TODO: something with auto-lims in future
-        ax.set_ylim(ylims)
-        ax.set_xlim(xlims)
+        if ylims is not None:
+            ax.set_ylim(ylims)
+        if xlims is not None:
+            ax.set_xlim(xlims)
 
     def _set_ax_labels(self, ax, x_var, y_var):
         """Set axis labels
