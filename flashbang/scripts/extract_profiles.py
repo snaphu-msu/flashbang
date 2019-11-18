@@ -10,8 +10,9 @@ from flashbang import simulation, load_save
 # =================================================================
 
 
-def main(basename, model, multithread=True, reload=False, save=True):
-    sim = simulation.Simulation(basename=basename, model=model)
+def main(basename, model, multithread=True, reload=False, save=True,
+         config='default'):
+    sim = simulation.Simulation(basename=basename, model=model, config=config)
     params = sim.config['profile']['params']
 
     if multithread:
