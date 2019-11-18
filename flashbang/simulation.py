@@ -209,7 +209,7 @@ class Simulation:
             profile = self.profiles[i]
             y = profile[var]
 
-            ax.plot(profile[x_var], y, label=f'{i}')
+            ax.plot(profile[x_var], y, ls='-', marker='', label=f'{i}')
             self._plot_trans_line(x_var, y=y, ax=ax, chk_i=i, trans=trans)
 
         if legend:
@@ -268,7 +268,7 @@ class Simulation:
         slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
 
         init_profile = self.profiles[j_init]
-        line, = profile_ax.plot(init_profile[x_var], init_profile[var])
+        line, = profile_ax.plot(init_profile[x_var], init_profile[var], ls='-', marker='')
 
         self._set_ax_scales(profile_ax, var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_title(profile_ax, chk_i=j_init, title=title)
@@ -277,8 +277,6 @@ class Simulation:
 
         self._plot_trans_line(x_var=x_var, y=init_profile[var], ax=profile_ax,
                               chk_i=j_init, trans=trans)
-
-        # profile_ax.plot([1e5, 1e9], [2e7, 2e7])
 
         slider = Slider(slider_ax, 'chk', j_min, j_max, valinit=j_init, valstep=1)
 
