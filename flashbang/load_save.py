@@ -90,11 +90,17 @@ def extract_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
                                   runs_prefix=runs_prefix)
 
     printv(f'Loading dat file: {filepath}', verbose=verbose)
+    idxs = []
+    keys = []
 
-    dat = {}
     for key, idx_1 in cols_dict.items():
-        index = idx_1 - 1
-        dat[key] = np.loadtxt(filepath, usecols=index)
+        idxs += [idx_1 - 1]
+        keys += [key]
+
+    dat_raw = np.loadtxt(filepath, usecols=idxs)
+    dat = {}
+    for i, key in enumerate(keys):
+        dat[key] = dat_raw[:, i]
 
     return dat
 
