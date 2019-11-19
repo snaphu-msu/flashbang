@@ -60,6 +60,12 @@ def dat_filepath(basename, model, runs_path=None, runs_prefix='run_'):
     return os.path.join(m_path, filename)
 
 
+def dat_temp_filename(basename):
+    """Return filename for temporary (cached) dat file
+    """
+    return f'{basename}_dat.pickle'
+
+
 def chk_filename(basename, chk_i):
     """Returns filename for checkpoint (chk) file
     """
