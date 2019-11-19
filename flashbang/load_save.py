@@ -185,13 +185,13 @@ def get_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
     verbose : bool (optional)
     """
     profile = {}
-    loaded_successfully = False
+    profile_exists = False
 
     if not reload:
         try:
             profile = load_profile(basename, chk_i=chk_i, model=model, runs_path=runs_path,
                                    runs_prefix=runs_prefix, verbose=verbose)
-            loaded_successfully = True
+            profile_exists = True
         except FileNotFoundError:
             pass
 
@@ -200,7 +200,7 @@ def get_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
                                   output_dir=output_dir, runs_path=runs_path,
                                   runs_prefix=runs_prefix, o_path=o_path, params=params)
 
-    if save and not loaded_successfully:
+    if save and not profile_exists:
         save_profile(profile, basename=basename, chk_i=chk_i, model=model,
                      runs_path=runs_path, runs_prefix=runs_prefix, verbose=verbose)
     return profile
