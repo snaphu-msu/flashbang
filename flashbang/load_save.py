@@ -100,6 +100,30 @@ def load_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
     return dat
 
 
+def save_dat(dat, basename, model, runs_path=None,
+             runs_prefix='run_', verbose=True):
+    """Saves extracted .dat properties to file, for faster loading
+
+    parameters
+    ----------
+    dat : {}
+        dictionary of arrays, as extracted by load_dat
+    basename : str
+    model : str
+    runs_path : str (optional)
+    runs_prefix : str (optional)
+    verbose : bool (optional)
+    """
+    # TODO: make temp_try_mkdir()
+    temp_path = paths.temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    try_mkdir(temp_path, skip=True, verbose=verbose)
+
+    filepath = paths.dat_temp_filepath(basename, model=model, runs_path=runs_path,
+                                       runs_prefix=runs_prefix)
+    printv(f'Saving: {filepath}', verbose)
+    pickle.dump(dat, open(filepath, 'wb'))
+
+
 def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
                     runs_path=None, runs_prefix='run_', o_path=None,
                     params=('temp', 'dens', 'pres'), reload=False,
@@ -178,7 +202,7 @@ def save_profile(profile, basename, chk_i, model, runs_path=None,
 
 def load_profile(basename, chk_i, model, runs_path=None,
                  runs_prefix='run_', verbose=True):
-    """Saves profile to file for faster loading
+    """Loads profile from pre-extracted file (see: save_profile)
 
     parameters
     ----------
