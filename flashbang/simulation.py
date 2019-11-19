@@ -16,6 +16,9 @@ from . import plot_tools
 #   - rename var to y_var
 #   - generalised axis plotting
 #       - save/show plot
+#   - add attr:
+#       - runs_prefix
+#       - save
 
 
 # noinspection PyTypeChecker
@@ -49,7 +52,7 @@ class Simulation:
         self.trans_r = np.full(self.n_chk, np.nan)
 
         if load_dat:
-            self.load_dat()
+            self.load_dat(reload=reload)
         if load_profiles:
             self.load_all_profiles(reload=reload)
             self.find_trans_idxs()
@@ -61,11 +64,12 @@ class Simulation:
         if verbose:
             print(string)
 
-    def load_dat(self):
+    def load_dat(self, reload=False, save=True):
         """Load .dat file
         """
-        self.dat = load_save.extract_dat(self.basename, model=self.model,
-                                         cols_dict=self.config['dat_columns'])
+        self.dat = load_save.get_dat(self.basename, model=self.model, runs_path=self.runs_path,
+                                     cols_dict=self.config['dat_columns'], reload=reload,
+                                     save=save)
 
     def update_chks(self):
         """Update the checkpoint files available
