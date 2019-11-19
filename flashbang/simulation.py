@@ -21,7 +21,7 @@ class Simulation:
                  xmax=1e12, output_dir='output', verbose=True,
                  load_all=True, reload=False, save=True,
                  trans_dens=6e7, trans_low=1e7, runs_prefix='run_'):
-        """Represents a 1D flash simulation
+        """Object representing a 1D flash simulation
         """
         # TODO: docstring parameters
         self.verbose = verbose
@@ -109,7 +109,7 @@ class Simulation:
                                     reload=reload, save=save, verbose=self.verbose)
 
     def find_trans_idxs(self):
-        """Finds idx for zone closest to the helmholtz transition density,
+        """Find idx for zone closest to the helmholtz transition density,
                 for each chk profile
         """
         self.printv('Finding helmholtz transition zones')
@@ -123,7 +123,7 @@ class Simulation:
             self.trans_idxs[i] = max_idx - trans_idx  # flip back
 
     def get_trans_r(self):
-        """Gets radii at transition zones
+        """Get radii at transition zones
         """
         if np.any(self.trans_idxs < 0):
             self.find_trans_idxs()
@@ -215,11 +215,11 @@ class Simulation:
 
         return fig
 
-    def plot_composition(self, chk, y_var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
-                         x_var='x', y_scale='log', x_scale=None, ax=None, legend=True,
-                         ylims=(1e-5, 2), xlims=None, trans=True, figsize=(8, 6),
-                         title=True):
-        """Plots composition profile
+    def plot_composition(self, chk, x_var='x', y_scale='log', x_scale=None,
+                         y_var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
+                         ax=None, legend=True, ylims=(1e-5, 2), xlims=None,
+                         trans=True, figsize=(8, 6), title=True):
+        """Plot composition profile
         """
         if chk not in self.profiles.keys():
             self.load_profile(chk)
@@ -421,7 +421,7 @@ class Simulation:
         ax.set_ylabel(self.get_label(y_var))
 
     def _setup_fig_ax(self, ax, figsize):
-        """Sets up fig, ax
+        """Setup fig, ax, checking if ax already provided
         """
         c = self.config['plotting']  # TODO: default settings from config
         fig = None
