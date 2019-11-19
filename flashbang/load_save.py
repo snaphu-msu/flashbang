@@ -129,6 +129,24 @@ def save_dat(dat, basename, model, runs_path=None,
     pickle.dump(dat, open(filepath, 'wb'))
 
 
+def load_dat(basename, model, runs_path=None,
+             runs_prefix='run_', verbose=True):
+    """Loads profile from pre-extracted file (see: save_profile)
+
+    parameters
+    ----------
+    basename : str
+    model : str
+    runs_path : str (optional)
+    runs_prefix : str (optional)
+    verbose : bool (optional)
+    """
+    filepath = paths.dat_temp_filepath(basename, model=model, runs_path=runs_path,
+                                       runs_prefix=runs_prefix)
+    printv(f'Loading: {filepath}', verbose)
+    return pickle.load(open(filepath, 'rb'))
+
+
 def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
                     runs_path=None, runs_prefix='run_', o_path=None,
                     params=('temp', 'dens', 'pres'), reload=False,
