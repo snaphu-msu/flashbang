@@ -66,6 +66,15 @@ def dat_temp_filename(basename):
     return f'{basename}_dat.pickle'
 
 
+def dat_temp_filepath(basename, model, runs_path=None,
+                      runs_prefix='run_'):
+    """Returns filepath to pickled dat file
+    """
+    path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    filename = dat_temp_filename(basename)
+    return os.path.join(path, filename)
+
+
 def chk_filename(basename, chk_i):
     """Returns filename for checkpoint (chk) file
     """
