@@ -299,10 +299,10 @@ class Simulation:
         slider.on_changed(update)
         return fig, slider
 
-    def plot_dat(self, var, y_scale='log', display=True):
+    def plot_dat(self, var, y_scale='log', display=True, ax=None, figsize=(8, 6)):
         """Plot quantity from dat file
         """
-        fig, ax = plt.subplots()
+        fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
         ax.plot(self.dat['time'], self.dat[var])
 
         ax.set_yscale(y_scale)
