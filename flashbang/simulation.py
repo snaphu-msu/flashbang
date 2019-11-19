@@ -63,8 +63,8 @@ class Simulation:
     def load_dat(self):
         """Load .dat file
         """
-        self.dat = load_save.load_dat(self.basename, model=self.model,
-                                      cols_dict=self.config['dat_columns'])
+        self.dat = load_save.extract_dat(self.basename, model=self.model,
+                                         cols_dict=self.config['dat_columns'])
 
     def update_chks(self):
         """Update the checkpoint files available

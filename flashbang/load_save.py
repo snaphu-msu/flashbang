@@ -71,8 +71,8 @@ def load_config(name='default', verbose=True):
     return config
 
 
-def load_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
-             verbose=True):
+def extract_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
+                verbose=True):
     """Loads .dat file and returns as dict of quantities
 
     parameters
