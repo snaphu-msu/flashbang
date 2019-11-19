@@ -86,13 +86,12 @@ def extract_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
     verbose : bool
     """
     # TODO: allow pickle saving/loading
-    model_path = paths.model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    filename = paths.dat_filename(basename)
-    filepath = os.path.join(model_path, filename)
+    filepath = paths.dat_filepath(basename=basename, model=model, runs_path=runs_path,
+                                  runs_prefix=runs_prefix)
 
     printv(f'Loading dat file: {filepath}', verbose=verbose)
-    dat = {}
 
+    dat = {}
     for key, idx_1 in cols_dict.items():
         index = idx_1 - 1
         dat[key] = np.loadtxt(filepath, usecols=index)
