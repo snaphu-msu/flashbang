@@ -216,7 +216,7 @@ class Simulation:
         return fig
 
     def plot_composition(self, chk, x_var='x', y_scale='log', x_scale=None,
-                         y_var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
+                         y_var_list=('neut', 'prot', 'he4', 'o16', 'si28', 'fe54', 'fe56'),
                          ax=None, legend=True, ylims=(1e-5, 2), xlims=None,
                          trans=True, figsize=(8, 6), title=True):
         """Plot composition profile
