@@ -83,7 +83,7 @@ def load_config(name='default', verbose=True):
 
 def extract_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
                 verbose=True):
-    """Loads .dat file and returns as dict of quantities
+    """Load .dat file and returns as dict of quantities
 
     parameters
     ----------
@@ -117,7 +117,7 @@ def extract_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
 
 def save_dat(dat, basename, model, runs_path=None,
              runs_prefix='run_', verbose=True):
-    """Saves extracted .dat properties to file, for faster loading
+    """Save extracted .dat properties to file, for faster loading
 
     parameters
     ----------
@@ -140,7 +140,7 @@ def save_dat(dat, basename, model, runs_path=None,
 
 def load_dat(basename, model, runs_path=None,
              runs_prefix='run_', verbose=True):
-    """Loads profile from pre-extracted file (see: save_profile)
+    """Load profile from pre-extracted file (see: save_profile)
 
     parameters
     ----------
@@ -160,7 +160,7 @@ def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
                     runs_path=None, runs_prefix='run_', o_path=None,
                     params=('temp', 'dens', 'pres'), reload=False,
                     save=True, verbose=True):
-    """Extracts and returns profile dict from checkpoint file
+    """Extract and returns profile dict from checkpoint file
 
     parameters
     ----------
@@ -211,7 +211,7 @@ def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
 
 def save_profile(profile, basename, chk_i, model, runs_path=None,
                  runs_prefix='run_', verbose=True):
-    """Saves profile to file for faster loading
+    """Save profile to file for faster loading
 
     parameters
     ----------
@@ -234,7 +234,7 @@ def save_profile(profile, basename, chk_i, model, runs_path=None,
 
 def load_profile(basename, chk_i, model, runs_path=None,
                  runs_prefix='run_', verbose=True):
-    """Loads profile from pre-extracted file (see: save_profile)
+    """Load profile from pre-extracted file (see: save_profile)
 
     parameters
     ----------
@@ -253,7 +253,7 @@ def load_profile(basename, chk_i, model, runs_path=None,
 
 def load_chk(basename, chk_i, model, output_dir='output',
              runs_path=None, runs_prefix='run_', o_path=None):
-    """Loads checkpoint file for given model
+    """Load checkpoint file for given model
 
     parameters
     ----------
@@ -275,7 +275,7 @@ def load_chk(basename, chk_i, model, output_dir='output',
 
 
 def find_chk(path, match_str='hdf5_chk_', n_digits=4):
-    """Returns list of checkpoint (chk) files available in given directory
+    """Return list of checkpoint (chk) files available in given directory
         returns as nparray of checkpoint numbers
 
     parameters
@@ -298,7 +298,7 @@ def find_chk(path, match_str='hdf5_chk_', n_digits=4):
 
 
 def reduce_snec_profile(profile_dict):
-    """Reduces given profile dictionary into a 2D nparray
+    """Reduce given profile dictionary into a 2D nparray
         Returns: profile_array, time, mass_grid
 
     parameters
@@ -321,7 +321,7 @@ def reduce_snec_profile(profile_dict):
     
 
 def load_snec_xg(filepath, verbose=True):
-    """Loads mass tracers from SNEC output .xg file, returns as dict
+    """Load mass tracers from SNEC output .xg file, returns as dict
     """    
     printv(f'Loading: {filepath}', verbose)
     n_lines = fast_line_count(filepath)
@@ -354,7 +354,7 @@ def load_snec_xg(filepath, verbose=True):
 
 
 def ensure_temp_dir_exists(model, runs_path=None, runs_prefix='run_', verbose=True):
-    """Ensures temp directory exists (create if not)
+    """Ensure temp directory exists (create if not)
     """
     temp_path = paths.temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
     try_mkdir(temp_path, skip=True, verbose=verbose)
