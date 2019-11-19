@@ -119,12 +119,11 @@ def save_dat(dat, basename, model, runs_path=None,
     runs_prefix : str (optional)
     verbose : bool (optional)
     """
-    # TODO: make temp_try_mkdir()
-    temp_path = paths.temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    try_mkdir(temp_path, skip=True, verbose=verbose)
-
+    ensure_temp_dir_exists(model, runs_path=runs_path, runs_prefix=runs_prefix,
+                           verbose=verbose)
     filepath = paths.dat_temp_filepath(basename, model=model, runs_path=runs_path,
                                        runs_prefix=runs_prefix)
+
     printv(f'Saving: {filepath}', verbose)
     pickle.dump(dat, open(filepath, 'wb'))
 
@@ -214,11 +213,11 @@ def save_profile(profile, basename, chk_i, model, runs_path=None,
     runs_prefix : str (optional)
     verbose : bool (optional)
     """
-    temp_path = paths.temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    try_mkdir(temp_path, skip=True, verbose=verbose)
-
+    ensure_temp_dir_exists(model, runs_path=runs_path, runs_prefix=runs_prefix,
+                           verbose=verbose)
     filepath = paths.profile_filepath(basename, model=model, chk_i=chk_i,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
+
     printv(f'Saving: {filepath}', verbose)
     pickle.dump(profile, open(filepath, 'wb'))
 
@@ -342,6 +341,13 @@ def load_snec_xg(filepath, verbose=True):
     if verbose:
         sys.stdout.write('\n')
     return profile
+
+
+def ensure_temp_dir_exists(model, runs_path=None, runs_prefix='run_', verbose=True):
+    """Ensures temp directory exists (create if not)
+    """
+    temp_path = paths.temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    try_mkdir(temp_path, skip=True, verbose=verbose)
 
 
 def fast_line_count(filepath):
