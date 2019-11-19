@@ -1,4 +1,4 @@
-"""Functions for loading/saving files
+"""Functions for loading/saving/reducing flash data
 
 General terminology
 -------------------
@@ -9,6 +9,7 @@ General terminology
     extract: Extract and reduce data from raw output files
     save: Save pre-extracted data to file
     load: Load pre-extracted data from file
+    get: Get reduced data by first attempting 'load', then fall back on 'extract'
 """
 import os
 import numpy as np
@@ -156,11 +157,13 @@ def load_dat(basename, model, runs_path=None,
     return pickle.load(open(filepath, 'rb'))
 
 
-def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
-                    runs_path=None, runs_prefix='run_', o_path=None,
-                    params=('temp', 'dens', 'pres'), reload=False,
-                    save=True, verbose=True):
-    """Extract and returns profile dict from checkpoint file
+def get_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
+                runs_path=None, runs_prefix='run_', o_path=None,
+                params=('temp', 'dens', 'pres'), reload=False,
+                save=True, verbose=True):
+    """Get reduced radial profile, as contained in checkpoint file
+
+    Returns : dictionary of 1D arrays
 
     parameters
     ----------

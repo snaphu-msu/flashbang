@@ -15,6 +15,7 @@ from . import plot_tools
 #   - rename chk_i to chk, use chk_i for actual index
 #   - rename var to y_var
 #   - generalised axis plotting
+#       - save/show plot
 
 
 # noinspection PyTypeChecker
@@ -104,7 +105,7 @@ class Simulation:
         reload : bool
         save : bool
         """
-        self.profiles[chk_i] = load_save.extract_profile(
+        self.profiles[chk_i] = load_save.get_profile(
                                     self.basename, chk_i=chk_i, model=self.model,
                                     xmax=self.xmax, o_path=self.output_path,
                                     params=self.config['profile']['params'],
