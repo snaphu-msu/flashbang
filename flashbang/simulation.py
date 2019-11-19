@@ -22,7 +22,7 @@ from . import plot_tools
 class Simulation:
     def __init__(self, basename, model, runs_path=None, config='default',
                  xmax=1e12, dim=1, output_dir='output', verbose=True,
-                 load_dat=True, load_profiles=False, reload=False, save=True,
+                 load_all=True, reload=False, save=True,
                  trans_dens=6e7, trans_low=1e7, runs_prefix='run_'):
         """Represents a 1D flash simulation
         """
@@ -49,9 +49,8 @@ class Simulation:
         self.trans_idxs = np.full(self.n_chk, -1)
         self.trans_r = np.full(self.n_chk, np.nan)
 
-        if load_dat:
+        if load_all:
             self.load_dat(reload=reload, save=save)
-        if load_profiles:
             self.load_all_profiles(reload=reload, save=save)
             self.find_trans_idxs()
             self.get_trans_r()
