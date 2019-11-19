@@ -1,4 +1,14 @@
 """Functions for loading/saving files
+
+General terminology
+-------------------
+    dat: Time-integrated data found in [model].dat file
+    chk: Checkpoint data found in 'chk' files
+    profile: Radial profile data as extracted from chk files
+
+    extract: Extract and reduce data from raw output files
+    save: Save pre-extracted data to file
+    load: Load pre-extracted data from file
 """
 import os
 import numpy as np
