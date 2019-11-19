@@ -24,9 +24,6 @@ import pickle
 from . import paths
 from .strings import printv
 
-#  TODO:
-#   - pickle .dat file
-
 
 def try_mkdir(path, skip=False, verbose=True):
     """Try to make given directory
@@ -137,7 +134,6 @@ def extract_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
     runs_prefix : str
     verbose : bool
     """
-    # TODO: allow pickle saving/loading
     filepath = paths.dat_filepath(basename=basename, model=model, runs_path=runs_path,
                                   runs_prefix=runs_prefix)
 
