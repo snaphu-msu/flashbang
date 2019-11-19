@@ -82,9 +82,50 @@ def load_config(name='default', verbose=True):
     return config
 
 
+def get_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
+            verbose=True, save=True, reload=False):
+    """Get reduced .dat data, as contained in .dat file
+
+    Returns : dict of 1D quantities
+
+    parameters
+    ----------
+    basename: str
+    model : str
+    cols_dict : {}
+        dictionary with column names and indexes (Note: 1-indexed)
+    runs_path : str
+    runs_prefix : str
+    verbose : bool
+    save : bool
+    reload : bool
+    """
+    dat = {}
+    dat_exists = False
+
+    if not reload:
+        try:
+            dat = load_dat(basename, model=model, runs_path=runs_path,
+                           runs_prefix=runs_prefix, verbose=verbose)
+            dat_exists = True
+        except FileNotFoundError:
+            pass
+
+    if len(dat.keys()) == 0:
+        dat = extract_dat(basename, model=model, runs_path=runs_path, runs_prefix=runs_prefix,
+                          cols_dict=cols_dict)
+
+    if save and not dat_exists:
+        save_dat(dat, basename=basename, model=model, runs_path=runs_path,
+                 runs_prefix=runs_prefix, verbose=verbose)
+    return dat
+
+
 def extract_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
                 verbose=True):
-    """Load .dat file and returns as dict of quantities
+    """Extract and reduce data from .dat file
+
+    Returns : dict of 1D quantities
 
     parameters
     ----------
