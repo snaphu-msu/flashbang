@@ -189,26 +189,53 @@ def get_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
 
     if not reload:
         try:
-            profile = load_profile(basename, chk_i=chk_i, model=model,
-                                   runs_path=runs_path, runs_prefix=runs_prefix,
-                                   verbose=verbose)
+            profile = load_profile(basename, chk_i=chk_i, model=model, runs_path=runs_path,
+                                   runs_prefix=runs_prefix, verbose=verbose)
             loaded_successfully = True
         except FileNotFoundError:
             pass
 
     if len(profile.keys()) == 0:
-        chk = load_chk(basename, model=model, chk_i=chk_i,
-                       output_dir=output_dir, runs_path=runs_path,
-                       runs_prefix=runs_prefix, o_path=o_path)
-        ray = chk.ray([0, 0, 0], [xmax, 0, 0])
-        profile['x'] = ray['t'] * xmax
-
-        for v in params:
-            profile[v.strip()] = np.array(ray[v])
+        profile = extract_profile(basename, chk_i=chk_i, model=model, xmax=xmax,
+                                  output_dir=output_dir, runs_path=runs_path,
+                                  runs_prefix=runs_prefix, o_path=o_path, params=params)
 
     if save and not loaded_successfully:
         save_profile(profile, basename=basename, chk_i=chk_i, model=model,
                      runs_path=runs_path, runs_prefix=runs_prefix, verbose=verbose)
+    return profile
+
+
+def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
+                    runs_path=None, runs_prefix='run_', o_path=None,
+                    params=('temp', 'dens', 'pres')):
+    """Extract and reduce profile data from chk file
+
+    Returns : dictionary of 1D arrays
+
+    parameters
+    ----------
+    basename : str
+    chk_i : int
+    model : str
+    xmax : float (optional)
+        Return profile between radius=0 to xmax
+    output_dir : str (optional)
+    runs_path : str (optional)
+    runs_prefix : str (optional)
+    o_path : str (optional)
+    params : [] (optional)
+        profile parameters to extract and return from chk file
+    """
+    profile = {}
+    chk = load_chk(basename, model=model, chk_i=chk_i, output_dir=output_dir,
+                   runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
+    ray = chk.ray([0, 0, 0], [xmax, 0, 0])
+    profile['x'] = ray['t'] * xmax
+
+    for v in params:
+        profile[v.strip()] = np.array(ray[v])
+
     return profile
 
 
