@@ -12,7 +12,6 @@ from . import plot_tools
 
 # TODO:
 #   - add docstring parameters
-#   - rename chk_i to chk, use chk_i for actual index
 #   - rename var to y_var
 #   - generalised axis plotting
 #       - save/show plot
@@ -43,11 +42,11 @@ class Simulation:
 
         self.config = load_save.load_config(name=config, verbose=self.verbose)
         self.dat = None
-        self.chk_idxs = None
+        self.chk_list = None
         self.profiles = {}
 
-        self.update_chks()
-        self.n_chk = len(self.chk_idxs)
+        self.update_chk_list()
+        self.n_chk = len(self.chk_list)
         self.trans_idxs = np.full(self.n_chk, -1)
         self.trans_r = np.full(self.n_chk, np.nan)
 
@@ -71,10 +70,10 @@ class Simulation:
                                      cols_dict=self.config['dat_columns'], reload=reload,
                                      save=save)
 
-    def update_chks(self):
+    def update_chk_list(self):
         """Update the checkpoint files available
         """
-        self.chk_idxs = load_save.find_chk(path=self.output_path,
+        self.chk_list = load_save.find_chk(path=self.output_path,
                                            match_str=f'{self.basename}_hdf5_chk_')
 
     def load_all_profiles(self, reload=False, save=True):
@@ -90,9 +89,9 @@ class Simulation:
         verbose_setting = self.verbose  # verbosity hack
         self.verbose = False
 
-        for chk in self.chk_idxs:
+        for chk in self.chk_list:
             if verbose_setting:
-                sys.stdout.write(f'\rchk: {chk}/{self.chk_idxs[-1]}')
+                sys.stdout.write(f'\rchk: {chk}/{self.chk_list[-1]}')
             self.load_profile(chk, reload=reload, save=save)
 
         if verbose_setting:
@@ -121,7 +120,7 @@ class Simulation:
         """
         self.printv('Finding helmholtz transition zones')
 
-        for i, chk in enumerate(self.chk_idxs):
+        for i, chk in enumerate(self.chk_list):
             profile = self.profiles[chk]
             dens_reverse = np.flip(profile['dens'])  # need monotonically-increasing
             trans_idx = tools.find_nearest_idx(dens_reverse, self.trans_dens)
@@ -137,7 +136,7 @@ class Simulation:
 
         self.printv('Getting transition zone radii')
         for i, trans_idx in enumerate(self.trans_idxs):
-            chk = self.chk_idxs[i]
+            chk = self.chk_list[i]
             profile = self.profiles[chk]
             self.trans_r[i] = profile['x'][trans_idx]
 
@@ -264,8 +263,8 @@ class Simulation:
         xlims : [2]
         ylims : [2]
         """
-        j_max = self.chk_idxs[-1]
-        j_min = self.chk_idxs[0]
+        j_max = self.chk_list[-1]
+        j_min = self.chk_list[0]
         j_init = j_max
 
         fig = plt.figure(figsize=figsize)
@@ -330,7 +329,7 @@ class Simulation:
         x_var : str
         y     : []
         """
-        idx = np.where(self.chk_idxs == chk)[0][0]
+        idx = np.where(self.chk_list == chk)[0][0]
         y_max = np.max(y)
         y_min = np.min(y)
 
