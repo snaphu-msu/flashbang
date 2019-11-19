@@ -90,27 +90,27 @@ class Simulation:
         verbose_setting = self.verbose  # verbosity hack
         self.verbose = False
 
-        for chk_i in self.chk_idxs:
+        for chk in self.chk_idxs:
             if verbose_setting:
-                sys.stdout.write(f'\rchk: {chk_i}/{self.chk_idxs[-1]}')
-            self.load_profile(chk_i, reload=reload, save=save)
+                sys.stdout.write(f'\rchk: {chk}/{self.chk_idxs[-1]}')
+            self.load_profile(chk, reload=reload, save=save)
 
         if verbose_setting:
             sys.stdout.write('\n')
         self.verbose = verbose_setting
 
-    def load_profile(self, chk_i, reload=False, save=True):
+    def load_profile(self, chk, reload=False, save=True):
         """Load checkpoint data file
 
         parameters
         ----------
-        chk_i : int
+        chk : int
             checkpoint ID to load
         reload : bool
         save : bool
         """
-        self.profiles[chk_i] = load_save.get_profile(
-                                    self.basename, chk_i=chk_i, model=self.model,
+        self.profiles[chk] = load_save.get_profile(
+                                    self.basename, chk=chk, model=self.model,
                                     xmax=self.xmax, o_path=self.output_path,
                                     params=self.config['profile']['params'],
                                     reload=reload, save=save, verbose=self.verbose)
@@ -137,17 +137,17 @@ class Simulation:
 
         self.printv('Getting transition zone radii')
         for i, trans_idx in enumerate(self.trans_idxs):
-            chk_i = self.chk_idxs[i]
-            profile = self.profiles[chk_i]
+            chk = self.chk_idxs[i]
+            profile = self.profiles[chk]
             self.trans_r[i] = profile['x'][trans_idx]
 
-    def plot_profiles(self, chk_i, var_list, x_var='x', y_scale=None, x_scale=None,
+    def plot_profiles(self, chk, var_list, x_var='x', y_scale=None, x_scale=None,
                       max_cols=2, sub_figsize=(6, 5), trans=True, legend=False):
         """Plot one or more profile variables
 
         parameters
         ----------
-        chk_i : int
+        chk : int
             checkpoint ID to plot
         var_list : str | [str]
             variable(s) to plot on y-axis (from Simulation.profile)
@@ -160,7 +160,7 @@ class Simulation:
         sub_figsize : tuple
         trans : bool
         """
-        chk_i = tools.ensure_sequence(chk_i)
+        chk = tools.ensure_sequence(chk)
         var_list = tools.ensure_sequence(var_list)
         n_var = len(var_list)
         fig, ax = plot_tools.setup_subplots(n_var, max_cols=max_cols,
@@ -170,19 +170,19 @@ class Simulation:
             row = int(np.floor(i / max_cols))
             col = i % max_cols
 
-            self.plot_profile(chk_i, var=var, x_var=x_var, y_scale=y_scale,
+            self.plot_profile(chk, var=var, x_var=x_var, y_scale=y_scale,
                               x_scale=x_scale, ax=ax[row, col], trans=trans,
                               legend=legend if i == 0 else False)
         return fig
 
-    def plot_profile(self, chk_i, var, x_var='x', y_scale=None, x_scale=None,
+    def plot_profile(self, chk, var, x_var='x', y_scale=None, x_scale=None,
                      ax=None, legend=False, trans=True, title=True,
                      ylims=None, xlims=None, figsize=(8, 6)):
         """Plot given profile variable
 
         parameters
         ----------
-        chk_i : int | [int]
+        chk : int | [int]
             checkpoint(s) to plot
         var : str
             variable to plot on y-axis (from Simulation.profile)
@@ -198,50 +198,50 @@ class Simulation:
         xlims : []
         figsize : []
         """
-        chk_i = tools.ensure_sequence(chk_i)
+        chk = tools.ensure_sequence(chk)
 
-        for i in chk_i:
+        for i in chk:
             if i not in self.profiles.keys():
                 self.load_profile(i)
 
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
-        self._set_ax_title(ax, chk_i=chk_i[0], title=title)
+        self._set_ax_title(ax, chk=chk[0], title=title)
         self._set_ax_scales(ax, var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
         self._set_ax_labels(ax, x_var=x_var, y_var=var)
 
-        for i in chk_i:
+        for i in chk:
             profile = self.profiles[i]
             y = profile[var]
 
             ax.plot(profile[x_var], y, ls='-', marker='', label=f'{i}')
-            self._plot_trans_line(x_var, y=y, ax=ax, chk_i=i, trans=trans)
+            self._plot_trans_line(x_var, y=y, ax=ax, chk=i, trans=trans)
 
         if legend:
             ax.legend()
 
         return fig
 
-    def plot_composition(self, chk_i, var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
+    def plot_composition(self, chk, var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
                          x_var='x', y_scale='log', x_scale=None, ax=None, legend=True,
                          ylims=(1e-5, 2), xlims=None, trans=True, figsize=(8, 6),
                          title=True):
         """Plots composition profile
         """
-        if chk_i not in self.profiles.keys():
-            self.load_profile(chk_i)
+        if chk not in self.profiles.keys():
+            self.load_profile(chk)
 
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
         self._set_ax_scales(ax, var_list[0], x_var=x_var, y_scale=y_scale, x_scale=x_scale)
-        self._set_ax_title(ax, chk_i=chk_i, title=title)
+        self._set_ax_title(ax, chk=chk, title=title)
         self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
         self._set_ax_labels(ax, x_var=x_var, y_var='$X$')
 
-        profile = self.profiles[chk_i]
+        profile = self.profiles[chk]
         for key in var_list:
             ax.plot(profile[x_var], profile[key], label=f'{key}')
 
-        self._plot_trans_line(x_var, y=ylims, ax=ax, chk_i=chk_i, trans=trans)
+        self._plot_trans_line(x_var, y=ylims, ax=ax, chk=chk, trans=trans)
 
         if legend:
             ax.legend()
@@ -276,12 +276,12 @@ class Simulation:
         line, = profile_ax.plot(init_profile[x_var], init_profile[var], ls='-', marker='')
 
         self._set_ax_scales(profile_ax, var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
-        self._set_ax_title(profile_ax, chk_i=j_init, title=title)
+        self._set_ax_title(profile_ax, chk=j_init, title=title)
         self._set_ax_lims(profile_ax, xlims=xlims, ylims=ylims)
         self._set_ax_labels(profile_ax, x_var=x_var, y_var=var)
 
         self._plot_trans_line(x_var=x_var, y=init_profile[var], ax=profile_ax,
-                              chk_i=j_init, trans=trans)
+                              chk=j_init, trans=trans)
 
         slider = Slider(slider_ax, 'chk', j_min, j_max, valinit=j_init, valstep=1)
 
@@ -292,10 +292,10 @@ class Simulation:
 
             line.set_ydata(y_profile)
             line.set_xdata(profile[x_var])
-            self._set_ax_title(profile_ax, chk_i=idx, title=title)
+            self._set_ax_title(profile_ax, chk=idx, title=title)
 
             if trans:
-                x, y = self._get_trans_xy(chk_i=idx, x_var=x_var, y=y_profile)
+                x, y = self._get_trans_xy(chk=idx, x_var=x_var, y=y_profile)
                 profile_ax.lines[1].set_xdata(x)
                 profile_ax.lines[1].set_ydata(y)
 
@@ -321,16 +321,16 @@ class Simulation:
         """
         return self.config['plotting']['labels'].get(key, key)
 
-    def _get_trans_xy(self, chk_i, x_var, y):
+    def _get_trans_xy(self, chk, x_var, y):
         """Return x, y points of transition line, for given x-axis variable
 
         parameters
         ----------
-        chk_i : int
+        chk : int
         x_var : str
         y     : []
         """
-        idx = np.where(self.chk_idxs == chk_i)[0][0]
+        idx = np.where(self.chk_idxs == chk)[0][0]
         y_max = np.max(y)
         y_min = np.min(y)
 
@@ -346,7 +346,7 @@ class Simulation:
         y = [y_min, y_max]
         return x, y
 
-    def _plot_trans_line(self, x_var, y, ax, chk_i, trans):
+    def _plot_trans_line(self, x_var, y, ax, chk, trans):
         """Add transition line to axis
 
         parameters
@@ -357,13 +357,13 @@ class Simulation:
             array of y-axis values
         ax : plt.axis
             pyplot axis to plot on
-        chk_i : int
+        chk : int
             checkpoint index
         trans : bool
             whether to plot transition line
         """
         if trans:
-            x, y = self._get_trans_xy(chk_i=chk_i, x_var=x_var, y=y)
+            x, y = self._get_trans_xy(chk=chk, x_var=x_var, y=y)
             ax.plot(x, y, ls='--', color='k')
 
     def _set_ax_scales(self, ax, var, x_var, y_scale, x_scale):
@@ -385,19 +385,19 @@ class Simulation:
         ax.set_xscale(x_scale)
         ax.set_yscale(y_scale)
 
-    def _set_ax_title(self, ax, chk_i, title):
+    def _set_ax_title(self, ax, chk, title):
         """Set axis title
 
         parameters
         ----------
         ax : plt.axis
-        chk_i : int
+        chk : int
         title : bool
         """
         # TODO: account for different zero points/starting times
         if title:
             dt = self.config['plotting']['scales']['chk_dt']
-            time = dt * chk_i
+            time = dt * chk
             ax.set_title(f't={time:.3f} s')
 
     def _set_ax_lims(self, ax, xlims, ylims):

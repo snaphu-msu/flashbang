@@ -194,7 +194,7 @@ def load_dat(basename, model, runs_path=None,
     return pickle.load(open(filepath, 'rb'))
 
 
-def get_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
+def get_profile(basename, chk, model, xmax=1e12, output_dir='output',
                 runs_path=None, runs_prefix='run_', o_path=None,
                 params=('temp', 'dens', 'pres'), reload=False,
                 save=True, verbose=True):
@@ -205,7 +205,7 @@ def get_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
     parameters
     ----------
     basename : str
-    chk_i : int
+    chk : int
     model : str
     xmax : float (optional)
         Return profile between radius=0 to xmax
@@ -226,24 +226,24 @@ def get_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
 
     if not reload:
         try:
-            profile = load_profile(basename, chk_i=chk_i, model=model, runs_path=runs_path,
+            profile = load_profile(basename, chk=chk, model=model, runs_path=runs_path,
                                    runs_prefix=runs_prefix, verbose=verbose)
             profile_exists = True
         except FileNotFoundError:
             pass
 
     if len(profile.keys()) == 0:
-        profile = extract_profile(basename, chk_i=chk_i, model=model, xmax=xmax,
+        profile = extract_profile(basename, chk=chk, model=model, xmax=xmax,
                                   output_dir=output_dir, runs_path=runs_path,
                                   runs_prefix=runs_prefix, o_path=o_path, params=params)
 
     if save and not profile_exists:
-        save_profile(profile, basename=basename, chk_i=chk_i, model=model,
+        save_profile(profile, basename=basename, chk=chk, model=model,
                      runs_path=runs_path, runs_prefix=runs_prefix, verbose=verbose)
     return profile
 
 
-def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
+def extract_profile(basename, chk, model, xmax=1e12, output_dir='output',
                     runs_path=None, runs_prefix='run_', o_path=None,
                     params=('temp', 'dens', 'pres')):
     """Extract and reduce profile data from chk file
@@ -253,7 +253,7 @@ def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
     parameters
     ----------
     basename : str
-    chk_i : int
+    chk : int
     model : str
     xmax : float (optional)
         Return profile between radius=0 to xmax
@@ -265,7 +265,7 @@ def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
         profile parameters to extract and return from chk file
     """
     profile = {}
-    chk = load_chk(basename, model=model, chk_i=chk_i, output_dir=output_dir,
+    chk = load_chk(basename, model=model, chk=chk, output_dir=output_dir,
                    runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
     ray = chk.ray([0, 0, 0], [xmax, 0, 0])
     profile['x'] = ray['t'] * xmax
@@ -276,7 +276,7 @@ def extract_profile(basename, chk_i, model, xmax=1e12, output_dir='output',
     return profile
 
 
-def save_profile(profile, basename, chk_i, model, runs_path=None,
+def save_profile(profile, basename, chk, model, runs_path=None,
                  runs_prefix='run_', verbose=True):
     """Save profile to file for faster loading
 
@@ -284,7 +284,7 @@ def save_profile(profile, basename, chk_i, model, runs_path=None,
     ----------
     profile : dict
     basename : str
-    chk_i : int
+    chk : int
     model : str
     runs_path : str (optional)
     runs_prefix : str (optional)
@@ -292,51 +292,51 @@ def save_profile(profile, basename, chk_i, model, runs_path=None,
     """
     ensure_temp_dir_exists(model, runs_path=runs_path, runs_prefix=runs_prefix,
                            verbose=verbose)
-    filepath = paths.profile_filepath(basename, model=model, chk_i=chk_i,
+    filepath = paths.profile_filepath(basename, model=model, chk=chk,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
 
     printv(f'Saving: {filepath}', verbose)
     pickle.dump(profile, open(filepath, 'wb'))
 
 
-def load_profile(basename, chk_i, model, runs_path=None,
+def load_profile(basename, chk, model, runs_path=None,
                  runs_prefix='run_', verbose=True):
     """Load profile from pre-extracted file (see: save_profile)
 
     parameters
     ----------
     basename : str
-    chk_i : int
+    chk : int
     model : str
     runs_path : str (optional)
     runs_prefix : str (optional)
     verbose : bool (optional)
     """
-    filepath = paths.profile_filepath(basename, model=model, chk_i=chk_i,
+    filepath = paths.profile_filepath(basename, model=model, chk=chk,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
     printv(f'Loading: {filepath}', verbose)
     return pickle.load(open(filepath, 'rb'))
 
 
-def load_chk(basename, chk_i, model, output_dir='output',
+def load_chk(basename, chk, model, output_dir='output',
              runs_path=None, runs_prefix='run_', o_path=None):
     """Load checkpoint file for given model
 
     parameters
     ----------
     basename : str
-    chk_i : int
+    chk : int
     model : str
     output_dir : str (optional)
     runs_path : str (optional)
     runs_prefix : str (optional)
     o_path : str (optional)
     """
-    filepath = paths.chk_filepath(basename, model=model, chk_i=chk_i,
+    filepath = paths.chk_filepath(basename, model=model, chk=chk,
                                   output_dir=output_dir, runs_path=runs_path,
                                   runs_prefix=runs_prefix, o_path=o_path)
     if not os.path.exists(filepath):
-        raise FileNotFoundError(f'checkpoint {chk_i:04d} file does not exist: {filepath}')
+        raise FileNotFoundError(f'checkpoint {chk:04d} file does not exist: {filepath}')
 
     return yt.load(filepath)
 
