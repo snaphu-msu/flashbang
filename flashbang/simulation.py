@@ -11,12 +11,10 @@ from . import tools
 from . import plot_tools
 
 # TODO:
-#   - add docstring parameters
 #   - rename var to y_var
 #   - generalised axis plotting
 #       - save/show plot
 #   - add attr:
-#       - runs_prefix
 #       - save
 
 
@@ -24,13 +22,14 @@ from . import plot_tools
 class Simulation:
     def __init__(self, basename, model, runs_path=None, config='default',
                  xmax=1e12, dim=1, output_dir='output', verbose=True,
-                 load_dat=False, load_profiles=False, reload=False,
-                 trans_dens=6e7, trans_low=1e7):
+                 load_dat=True, load_profiles=False, reload=False,
+                 trans_dens=6e7, trans_low=1e7, runs_prefix='run_'):
         """Represents a 1D flash simulation
         """
+        # TODO: docstring parameters
         self.verbose = verbose
         self.runs_path = runs_path
-        self.path = paths.model_path(model=model, runs_path=runs_path)
+        self.path = paths.model_path(model=model, runs_path=runs_path, runs_prefix=runs_prefix)
         self.output_path = os.path.join(self.path, output_dir)
 
         self.model = model
