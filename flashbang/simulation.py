@@ -21,7 +21,7 @@ from . import plot_tools
 # noinspection PyTypeChecker
 class Simulation:
     def __init__(self, basename, model, runs_path=None, config='default',
-                 xmax=1e12, dim=1, output_dir='output', verbose=True,
+                 xmax=1e12, output_dir='output', verbose=True,
                  load_all=True, reload=False, save=True,
                  trans_dens=6e7, trans_low=1e7, runs_prefix='run_'):
         """Represents a 1D flash simulation
@@ -34,7 +34,6 @@ class Simulation:
 
         self.model = model
         self.basename = basename
-        self.dim = dim
         self.xmax = xmax
         self.trans_dens = trans_dens
         self.trans_low = trans_low
