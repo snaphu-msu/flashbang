@@ -11,11 +11,8 @@ from . import tools
 from . import plot_tools
 
 # TODO:
-#   - rename var to y_var
 #   - generalised axis plotting
 #       - save/show plot
-#   - add attr:
-#       - save
 
 
 # noinspection PyTypeChecker
@@ -137,7 +134,7 @@ class Simulation:
             profile = self.profiles[chk]
             self.trans_r[i] = profile['x'][trans_idx]
 
-    def plot_profiles(self, chk, var_list, x_var='x', y_scale=None, x_scale=None,
+    def plot_profiles(self, chk, y_var_list, x_var='x', y_scale=None, x_scale=None,
                       max_cols=2, sub_figsize=(6, 5), trans=True, legend=False):
         """Plot one or more profile variables
 
@@ -145,7 +142,7 @@ class Simulation:
         ----------
         chk : int
             checkpoint ID to plot
-        var_list : str | [str]
+        y_var_list : str | [str]
             variable(s) to plot on y-axis (from Simulation.profile)
         x_var : str
             variable to plot on x-axis
@@ -157,21 +154,21 @@ class Simulation:
         trans : bool
         """
         chk = tools.ensure_sequence(chk)
-        var_list = tools.ensure_sequence(var_list)
-        n_var = len(var_list)
+        y_var_list = tools.ensure_sequence(y_var_list)
+        n_var = len(y_var_list)
         fig, ax = plot_tools.setup_subplots(n_var, max_cols=max_cols,
                                             sub_figsize=sub_figsize, squeeze=False)
 
-        for i, var in enumerate(var_list):
+        for i, y_var in enumerate(y_var_list):
             row = int(np.floor(i / max_cols))
             col = i % max_cols
 
-            self.plot_profile(chk, var=var, x_var=x_var, y_scale=y_scale,
+            self.plot_profile(chk, y_var=y_var, x_var=x_var, y_scale=y_scale,
                               x_scale=x_scale, ax=ax[row, col], trans=trans,
                               legend=legend if i == 0 else False)
         return fig
 
-    def plot_profile(self, chk, var, x_var='x', y_scale=None, x_scale=None,
+    def plot_profile(self, chk, y_var, x_var='x', y_scale=None, x_scale=None,
                      ax=None, legend=False, trans=True, title=True,
                      ylims=None, xlims=None, figsize=(8, 6)):
         """Plot given profile variable
@@ -180,7 +177,7 @@ class Simulation:
         ----------
         chk : int | [int]
             checkpoint(s) to plot
-        var : str
+        y_var : str
             variable to plot on y-axis (from Simulation.profile)
         x_var : str
             variable to plot on x-axis
@@ -202,13 +199,13 @@ class Simulation:
 
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
         self._set_ax_title(ax, chk=chk[0], title=title)
-        self._set_ax_scales(ax, var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
+        self._set_ax_scales(ax, y_var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
-        self._set_ax_labels(ax, x_var=x_var, y_var=var)
+        self._set_ax_labels(ax, x_var=x_var, y_var=y_var)
 
         for i in chk:
             profile = self.profiles[i]
-            y = profile[var]
+            y = profile[y_var]
 
             ax.plot(profile[x_var], y, ls='-', marker='', label=f'{i}')
             self._plot_trans_line(x_var, y=y, ax=ax, chk=i, trans=trans)
@@ -218,7 +215,7 @@ class Simulation:
 
         return fig
 
-    def plot_composition(self, chk, var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
+    def plot_composition(self, chk, y_var_list=('neut', 'prot', 'si28', 'fe54', 'fe56'),
                          x_var='x', y_scale='log', x_scale=None, ax=None, legend=True,
                          ylims=(1e-5, 2), xlims=None, trans=True, figsize=(8, 6),
                          title=True):
@@ -228,13 +225,13 @@ class Simulation:
             self.load_profile(chk)
 
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
-        self._set_ax_scales(ax, var_list[0], x_var=x_var, y_scale=y_scale, x_scale=x_scale)
+        self._set_ax_scales(ax, y_var_list[0], x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_title(ax, chk=chk, title=title)
         self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
         self._set_ax_labels(ax, x_var=x_var, y_var='$X$')
 
         profile = self.profiles[chk]
-        for key in var_list:
+        for key in y_var_list:
             ax.plot(profile[x_var], profile[key], label=f'{key}')
 
         self._plot_trans_line(x_var, y=ylims, ax=ax, chk=chk, trans=trans)
@@ -244,13 +241,13 @@ class Simulation:
 
         return fig
 
-    def plot_slider(self, var, x_var='x', y_scale=None, x_scale=None, trans=True,
+    def plot_slider(self, y_var, x_var='x', y_scale=None, x_scale=None, trans=True,
                     figsize=(8, 6), title=True, xlims=None, ylims=None):
         """Plot interactive slider of profile for given variable
 
         parameters
         ----------
-        var : str
+        y_var : str
         x_var : str
         y_scale : str
         x_scale : str
@@ -269,14 +266,14 @@ class Simulation:
         slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
 
         init_profile = self.profiles[j_init]
-        line, = profile_ax.plot(init_profile[x_var], init_profile[var], ls='-', marker='')
+        line, = profile_ax.plot(init_profile[x_var], init_profile[y_var], ls='-', marker='')
 
-        self._set_ax_scales(profile_ax, var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
+        self._set_ax_scales(profile_ax, y_var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_title(profile_ax, chk=j_init, title=title)
         self._set_ax_lims(profile_ax, xlims=xlims, ylims=ylims)
-        self._set_ax_labels(profile_ax, x_var=x_var, y_var=var)
+        self._set_ax_labels(profile_ax, x_var=x_var, y_var=y_var)
 
-        self._plot_trans_line(x_var=x_var, y=init_profile[var], ax=profile_ax,
+        self._plot_trans_line(x_var=x_var, y=init_profile[y_var], ax=profile_ax,
                               chk=j_init, trans=trans)
 
         slider = Slider(slider_ax, 'chk', j_min, j_max, valinit=j_init, valstep=1)
@@ -284,7 +281,7 @@ class Simulation:
         def update(chk):
             idx = int(chk)
             profile = self.profiles[idx]
-            y_profile = profile[var]
+            y_profile = profile[y_var]
 
             line.set_ydata(y_profile)
             line.set_xdata(profile[x_var])
@@ -300,14 +297,14 @@ class Simulation:
         slider.on_changed(update)
         return fig, slider
 
-    def plot_dat(self, var, y_scale='log', display=True, ax=None, figsize=(8, 6)):
+    def plot_dat(self, y_var, y_scale='log', display=True, ax=None, figsize=(8, 6)):
         """Plot quantity from dat file
         """
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
-        ax.plot(self.dat['time'], self.dat[var])
+        ax.plot(self.dat['time'], self.dat[y_var])
 
         ax.set_yscale(y_scale)
-        self._set_ax_labels(ax, x_var='$t$ (s)', y_var=var)
+        self._set_ax_labels(ax, x_var='$t$ (s)', y_var=y_var)
 
         if display:
             plt.show(block=False)
@@ -362,13 +359,13 @@ class Simulation:
             x, y = self._get_trans_xy(chk=chk, x_var=x_var, y=y)
             ax.plot(x, y, ls='--', color='k')
 
-    def _set_ax_scales(self, ax, var, x_var, y_scale, x_scale):
+    def _set_ax_scales(self, ax, y_var, x_var, y_scale, x_scale):
         """Set axis scales (linear, log)
 
         parameters
         ----------
         ax : plt.axis
-        var : str
+        y_var : str
         x_var : str
         y_scale : str
         x_scale : str
@@ -376,7 +373,7 @@ class Simulation:
         if x_scale is None:
             x_scale = self.config['plotting']['ax_scales'].get(x_var, 'log')
         if y_scale is None:
-            y_scale = self.config['plotting']['ax_scales'].get(var, 'log')
+            y_scale = self.config['plotting']['ax_scales'].get(y_var, 'log')
 
         ax.set_xscale(x_scale)
         ax.set_yscale(y_scale)
