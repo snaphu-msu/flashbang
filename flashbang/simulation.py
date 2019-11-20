@@ -22,8 +22,29 @@ class Simulation:
                  load_all=True, reload=False, save=True,
                  trans_dens=6e7, trans_low=1e7, runs_prefix='run_'):
         """Object representing a 1D flash simulation
+
+        parameters
+        ----------
+        basename : str
+            The label that's used in chk and .dat files, e.g. 'run' for 'run.dat'
+        model : str
+            The label for the model directory, e.g. 'helmNet' for 'run_helmNet/'
+        runs_path : str
+            Override the default place to look for models (bash variable: BANG_MODELS)
+        runs_prefix : str
+            The prefix added to 'model', e.g. 'run_' for 'run_helmNet'
+        config : str
+            Base name of config file to use, e.g. 'default' for 'config/default.ini'
+        xmax : float
+        output_dir : str
+        verbose : bool
+        load_all : bool
+        reload : bool
+        save : bool
+        trans_dens : float
+        trans_low : float
         """
-        # TODO: docstring parameters
+        # TODO: finish parameters doctring
         self.verbose = verbose
         self.runs_path = runs_path
         self.path = paths.model_path(model=model, runs_path=runs_path, runs_prefix=runs_prefix)
