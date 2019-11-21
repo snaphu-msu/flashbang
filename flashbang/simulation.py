@@ -395,11 +395,8 @@ class Simulation:
 
         # TODO:
         #       - rename j_max to chk_max etc.
-        #       - split below off as function
-        fig = plt.figure(figsize=figsize)
-        profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
-        slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
 
+        fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
         self.plot_composition(j_init, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
                               y_var_list=y_var_list, ax=profile_ax, legend=legend,
                               ylims=ylims, xlims=xlims, trans=trans, title=title)
@@ -569,3 +566,13 @@ class Simulation:
             fig, ax = plt.subplots(figsize=figsize)
 
         return fig, ax
+
+    def _setup_slider_fig(self, figsize):
+        """Setup fig, ax for slider
+        """
+        c = self.config['plotting']  # TODO: default settings from config
+        fig = plt.figure(figsize=figsize)
+        profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
+        slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
+
+        return fig, profile_ax, slider_ax
