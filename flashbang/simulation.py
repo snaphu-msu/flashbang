@@ -309,7 +309,7 @@ class Simulation:
         return fig
 
     def plot_slider(self, y_var, x_var='x', y_scale=None, x_scale=None, trans=True,
-                    figsize=(8, 6), title=True, xlims=None, ylims=None):
+                    figsize=(8, 6), title=True, xlims=None, ylims=None, legend=True):
         """Plot interactive slider of profile for given variable
 
         parameters
@@ -324,25 +324,17 @@ class Simulation:
         title : bool
         xlims : [2]
         ylims : [2]
+        legend : bool
         """
         chk_max = self.chk_list[-1]
         chk_min = self.chk_list[0]
         chk_init = chk_max
 
-        fig = plt.figure(figsize=figsize)
-        profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
-        slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
+        fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
 
-        init_profile = self.profiles[chk_init]
-        line, = profile_ax.plot(init_profile[x_var], init_profile[y_var], ls='-', marker='')
-
-        self._set_ax_scales(profile_ax, y_var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
-        self._set_ax_title(profile_ax, chk=chk_init, title=title)
-        self._set_ax_lims(profile_ax, xlims=xlims, ylims=ylims)
-        self._set_ax_labels(profile_ax, x_var=x_var, y_var=y_var)
-
-        self._plot_trans_line(x_var=x_var, y=init_profile[y_var], ax=profile_ax,
-                              chk=chk_init, trans=trans)
+        self.plot_profile(chk_init, y_var=y_var, x_var=x_var, y_scale=y_scale,
+                          x_scale=x_scale, ax=profile_ax, legend=legend, trans=trans,
+                          title=title, ylims=ylims, xlims=xlims, figsize=figsize)
 
         slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_init, valstep=1)
 
@@ -351,8 +343,8 @@ class Simulation:
             profile = self.profiles[idx]
             y_profile = profile[y_var]
 
-            line.set_ydata(y_profile)
-            line.set_xdata(profile[x_var])
+            profile_ax.lines[0].set_ydata(y_profile)
+            profile_ax.lines[0].set_xdata(profile[x_var])
             self._set_ax_title(profile_ax, chk=idx, title=title)
 
             if trans:
