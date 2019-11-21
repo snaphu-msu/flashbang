@@ -290,7 +290,7 @@ class Simulation:
             self.load_profile(chk)
         if y_var_list is None:
             y_var_list = self.config['plotting']['isotopes']
-        
+
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
         self._set_ax_scales(ax, y_var_list[0], x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_title(ax, chk=chk, title=title)
@@ -361,6 +361,68 @@ class Simulation:
                 for i in range(2):
                     profile_ax.lines[i+1].set_xdata(x[i])
                     profile_ax.lines[i+1].set_ydata(y)
+
+            fig.canvas.draw_idle()
+
+        slider.on_changed(update)
+        return fig, slider
+
+    def plot_slider_composition(self, y_var_list=None, x_var='x', y_scale=None, x_scale=None,
+                                trans=True, figsize=(8, 6), title=True, xlims=None,
+                                ylims=(1e-5, 2), legend=True):
+        """Plot interactive slider of isotope composition
+
+        parameters
+        ----------
+        y_var_list : [str]
+        x_var : str
+        y_scale : str
+        x_scale : str
+        trans : bool
+            plot helmholtz transitions
+        figsize : []
+        title : bool
+        xlims : [2]
+        ylims : [2]
+        legend : bool
+        """
+        j_max = self.chk_list[-1]
+        j_min = self.chk_list[0]
+        j_init = j_max
+
+        if y_var_list is None:
+            y_var_list = self.config['plotting']['isotopes']
+
+        # TODO:
+        #       - rename j_max to chk_max etc.
+        #       - split below off as function
+        fig = plt.figure(figsize=figsize)
+        profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
+        slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
+
+        self.plot_composition(j_init, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
+                              y_var_list=y_var_list, ax=profile_ax, legend=legend,
+                              ylims=ylims, xlims=xlims, trans=trans, title=title)
+
+        slider = Slider(slider_ax, 'chk', j_min, j_max, valinit=j_init, valstep=1)
+
+        def update(chk):
+            idx = int(chk)
+            profile = self.profiles[idx]
+
+            for i, key in enumerate(y_var_list):
+                y_profile = profile[key]
+                profile_ax.lines[i].set_xdata(profile[x_var])
+                profile_ax.lines[i].set_ydata(y_profile)
+
+            self._set_ax_title(profile_ax, chk=idx, title=title)
+
+            if trans:
+                # TODO: nicer way to do this
+                x, y = self._get_trans_xy(chk=idx, x_var=x_var, y=ylims)
+                for i in range(2):
+                    profile_ax.lines[-i-1].set_xdata(x[i])
+                    profile_ax.lines[-i-1].set_ydata(y)
 
             fig.canvas.draw_idle()
 
