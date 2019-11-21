@@ -80,6 +80,14 @@ class Simulation:
             self.get_trans_r()
 
     def printv(self, string, verbose=None):
+        """Verbose-aware print
+
+        parameters
+        ----------
+        string : str
+            string to print if verbose=True
+        verbose : bool
+        """
         if verbose is None:
             verbose = self.verbose
         if verbose:
@@ -87,13 +95,18 @@ class Simulation:
 
     def load_dat(self, reload=False, save=True):
         """Load .dat file
+
+        parameters
+        ----------
+        reload : bool
+        save : bool
         """
         self.dat = load_save.get_dat(self.basename, model=self.model, runs_path=self.runs_path,
                                      cols_dict=self.config['dat_columns'], reload=reload,
                                      save=save)
 
     def update_chk_list(self):
-        """Update the checkpoint files available
+        """Update the list of checkpoint files available
         """
         self.chk_list = load_save.find_chk(path=self.output_path,
                                            match_str=f'{self.basename}_hdf5_chk_')
@@ -126,7 +139,7 @@ class Simulation:
         parameters
         ----------
         chk : int
-            checkpoint ID to load
+            checkpoint file to load from (e.g., chk=12 for `run_hdf5_chk_0012`
         reload : bool
         save : bool
         """
@@ -137,8 +150,8 @@ class Simulation:
                                     reload=reload, save=save, verbose=self.verbose)
 
     def find_trans_idxs(self):
-        """Find idx for zone closest to the helmholtz transition density,
-                for each chk profile
+        """Find idxs for zones closest to the helmholtz transition densities
+        for each chk profile
         """
         self.printv('Finding helmholtz transition zones')
 
@@ -174,7 +187,7 @@ class Simulation:
         parameters
         ----------
         chk : int
-            checkpoint ID to plot
+            checkpoint to plot
         y_var_list : str | [str]
             variable(s) to plot on y-axis (from Simulation.profile)
         x_var : str
@@ -252,7 +265,24 @@ class Simulation:
                          y_var_list=('neut', 'prot', 'he4', 'o16', 'si28', 'fe54', 'fe56'),
                          ax=None, legend=True, ylims=(1e-5, 2), xlims=None,
                          trans=True, figsize=(8, 6), title=True):
-        """Plot composition profile
+        """Plot isotope composition profile
+
+        parameters
+        ----------
+        chk : int
+        y_var_list : [str]
+            list of isotopes to plot (see self.config['profile']['params'])
+        x_var : str
+            variable to plot on x-axis
+        y_scale : str
+        x_scale : bool
+        ax : pyplot.axis
+        legend : bool
+        trans : bool
+        title : bool
+        ylims : []
+        xlims : []
+        figsize : []
         """
         if chk not in self.profiles.keys():
             self.load_profile(chk)
@@ -285,6 +315,7 @@ class Simulation:
         y_scale : str
         x_scale : str
         trans : bool
+            plot helmholtz transitions
         figsize : []
         title : bool
         xlims : [2]
@@ -334,6 +365,14 @@ class Simulation:
 
     def plot_dat(self, y_var, y_scale='log', display=True, ax=None, figsize=(8, 6)):
         """Plot quantity from dat file
+
+        parameters
+        ----------
+        y_var : str
+        y_scale : str
+        figsize : []
+        display : bool
+        ax : pyplot.axis
         """
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
         ax.plot(self.dat['time'], self.dat[y_var])
@@ -356,7 +395,8 @@ class Simulation:
         ----------
         chk : int
         x_var : str
-        y     : []
+        y : []
+            1D array of y-values
         """
         idx = np.where(self.chk_list == chk)[0][0]
         y_max = np.max(y)
@@ -381,15 +421,11 @@ class Simulation:
         parameters
         ----------
         x_var : str
-            variable on x-axis
         y : []
-            array of y-axis values
-        ax : plt.axis
-            pyplot axis to plot on
+            1D array of y-values
+        ax : pyplot.axis
         chk : int
-            checkpoint index
         trans : bool
-            whether to plot transition line
         """
         if trans:
             x, y = self._get_trans_xy(chk=chk, x_var=x_var, y=y)
@@ -401,7 +437,7 @@ class Simulation:
 
         parameters
         ----------
-        ax : plt.axis
+        ax : pyplot.axis
         y_var : str
         x_var : str
         y_scale : str
@@ -420,7 +456,7 @@ class Simulation:
 
         parameters
         ----------
-        ax : plt.axis
+        ax : pyplot.axis
         chk : int
         title : bool
         """
@@ -435,7 +471,7 @@ class Simulation:
 
         parameters
         ----------
-        ax : plt.axis
+        ax : pyplot.axis
         xlims : []
         ylims : []
         """
@@ -450,7 +486,7 @@ class Simulation:
 
         parameters
         ----------
-        ax : plt.axis
+        ax : pyplot.axis
         x_var : str
         y_var : str
         """
