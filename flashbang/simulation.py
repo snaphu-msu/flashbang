@@ -143,11 +143,13 @@ class Simulation:
         reload : bool
         save : bool
         """
+        config = self.config['profile']
+        params = config['params'] + config['composition']
+
         self.profiles[chk] = load_save.get_profile(
-                                    self.basename, chk=chk, model=self.model,
-                                    xmax=self.xmax, o_path=self.output_path,
-                                    params=self.config['profile']['params'],
-                                    reload=reload, save=save, verbose=self.verbose)
+                            self.basename, chk=chk, model=self.model, xmax=self.xmax,
+                            o_path=self.output_path, params=params, reload=reload,
+                            save=save, verbose=self.verbose)
 
     def find_trans_idxs(self):
         """Find idxs for zones closest to the helmholtz transition densities
@@ -301,7 +303,7 @@ class Simulation:
         self._plot_trans_line(x_var, y=ylims, ax=ax, chk=chk, trans=trans)
 
         if legend:
-            ax.legend()
+            ax.legend(loc='lower right')
 
         return fig
 
