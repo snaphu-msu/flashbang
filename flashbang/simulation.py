@@ -265,8 +265,7 @@ class Simulation:
         return fig
 
     def plot_composition(self, chk, x_var='x', y_scale='log', x_scale=None,
-                         y_var_list=('neut', 'prot', 'he4', 'o16', 'si28', 'fe54', 'fe56'),
-                         ax=None, legend=True, ylims=(1e-5, 2), xlims=None,
+                         y_var_list=None, ax=None, legend=True, ylims=(1e-5, 2), xlims=None,
                          trans=True, figsize=(8, 6), title=True):
         """Plot isotope composition profile
 
@@ -289,7 +288,9 @@ class Simulation:
         """
         if chk not in self.profiles.keys():
             self.load_profile(chk)
-
+        if y_var_list is None:
+            y_var_list = self.config['plotting']['isotopes']
+        
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
         self._set_ax_scales(ax, y_var_list[0], x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_title(ax, chk=chk, title=title)
