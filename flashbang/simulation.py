@@ -316,9 +316,11 @@ class Simulation:
             self._set_ax_title(profile_ax, chk=idx, title=title)
 
             if trans:
+                # TODO: nicer way to do this
                 x, y = self._get_trans_xy(chk=idx, x_var=x_var, y=y_profile)
-                profile_ax.lines[1].set_xdata(x)
-                profile_ax.lines[1].set_ydata(y)
+                for i in range(2):
+                    profile_ax.lines[i+1].set_xdata(x[i])
+                    profile_ax.lines[i+1].set_ydata(y)
 
             fig.canvas.draw_idle()
 
@@ -358,12 +360,13 @@ class Simulation:
         # y_min = 0  # TODO: automagic this
         # y_max = 20
 
+        # TODO: nicer way to handle both dens and low
         x_map = {
-                 'dens': self.trans_dens,
-                 'x': self.trans_r[idx]
+                 'dens': [self.trans_dens, self.trans_low],
+                 'x': [self.trans_r[idx], self.trans_low_r[idx]],
                  }.get(x_var)
 
-        x = [x_map, x_map]
+        x = [[x_map[0], x_map[0]], [x_map[1], x_map[1]]]
         y = [y_min, y_max]
         return x, y
 
@@ -385,7 +388,8 @@ class Simulation:
         """
         if trans:
             x, y = self._get_trans_xy(chk=chk, x_var=x_var, y=y)
-            ax.plot(x, y, ls='--', color='k')
+            for i in range(2):
+                ax.plot(x[i], y, ls='--', color='k')
 
     def _set_ax_scales(self, ax, y_var, x_var, y_scale, x_scale):
         """Set axis scales (linear, log)
