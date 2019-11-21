@@ -64,7 +64,9 @@ class Simulation:
         self.update_chk_list()
         self.n_chk = len(self.chk_list)
         self.trans_idxs = np.full(self.n_chk, -1)
+        self.trans_low_idxs = np.full(self.n_chk, -1)
         self.trans_r = np.full(self.n_chk, np.nan)
+        self.trans_low_r = np.full(self.n_chk, np.nan)
 
         if load_all:
             self.load_dat(reload=reload, save=save)
@@ -138,22 +140,27 @@ class Simulation:
         for i, chk in enumerate(self.chk_list):
             profile = self.profiles[chk]
             dens_reverse = np.flip(profile['dens'])  # need monotonically-increasing
-            trans_idx = tools.find_nearest_idx(dens_reverse, self.trans_dens)
 
-            max_idx = len(dens_reverse) - 1
-            self.trans_idxs[i] = max_idx - trans_idx  # flip back
+            for j, trans in enumerate([self.trans_dens, self.trans_low]):
+                idx_list = [self.trans_idxs, self.trans_low_idxs][j]
+                trans_idx = tools.find_nearest_idx(dens_reverse, trans)
+
+                max_idx = len(dens_reverse) - 1
+                idx_list[i] = max_idx - trans_idx  # flip back
 
     def get_trans_r(self):
         """Get radii at transition zones
         """
-        if np.any(self.trans_idxs < 0):
+        if np.any(self.trans_idxs < 0) or np.any(self.trans_low_idxs < 0):
             self.find_trans_idxs()
 
         self.printv('Getting transition zone radii')
+
         for i, trans_idx in enumerate(self.trans_idxs):
             chk = self.chk_list[i]
             profile = self.profiles[chk]
             self.trans_r[i] = profile['x'][trans_idx]
+            self.trans_low_r[i] = profile['x'][self.trans_low_idxs[i]]
 
     def plot_profiles(self, chk, y_var_list, x_var='x', y_scale=None, x_scale=None,
                       max_cols=2, sub_figsize=(6, 5), trans=True, legend=False):
