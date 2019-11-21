@@ -17,7 +17,7 @@ from . import plot_tools
 
 # noinspection PyTypeChecker
 class Simulation:
-    def __init__(self, basename, model, runs_path=None, config='default',
+    def __init__(self, model, basename='run', runs_path=None, config='default',
                  xmax=1e12, output_dir='output', verbose=True,
                  load_all=True, reload=False, save=True,
                  trans_dens=6e7, trans_low=1e7, runs_prefix='run_'):
@@ -25,10 +25,10 @@ class Simulation:
 
         parameters
         ----------
-        basename : str
-            The label that's used in chk and .dat files, e.g. 'run' for 'run.dat'
         model : str
             The label for the model directory, e.g. 'helmNet' for 'run_helmNet/'
+        basename : str
+            The label that's used in chk and .dat files, e.g. 'run' for 'run.dat'
         runs_path : str
             Override the default place to look for models (bash variable: BANG_MODELS)
         runs_prefix : str
@@ -37,14 +37,19 @@ class Simulation:
             Base name of config file to use, e.g. 'default' for 'config/default.ini'
         xmax : float
         output_dir : str
-        verbose : bool
+            name of subdirectory containing model output files
         load_all : bool
+            immediately load all model data (chk profiles, dat)
         reload : bool
+            force reload model data from raw files (don't load from temp/)
         save : bool
+            save extracted model data to temporary files (for faster loading)
         trans_dens : float
+            helmholtz transition density (hybridEOS only)
         trans_low : float
+            helmholtz low transition density (hybridEOS only)
+        verbose : bool
         """
-        # TODO: finish parameters doctring
         self.verbose = verbose
         self.runs_path = runs_path
         self.path = paths.model_path(model=model, runs_path=runs_path, runs_prefix=runs_prefix)
@@ -357,8 +362,8 @@ class Simulation:
         y_max = np.max(y)
         y_min = np.min(y)
 
-        # y_min = 0  # TODO: automagic this
-        # y_max = 20
+        y_min = 0  # TODO: automagic this
+        y_max = 20
 
         # TODO: nicer way to handle both dens and low
         x_map = {
