@@ -325,26 +325,26 @@ class Simulation:
         xlims : [2]
         ylims : [2]
         """
-        j_max = self.chk_list[-1]
-        j_min = self.chk_list[0]
-        j_init = j_max
+        chk_max = self.chk_list[-1]
+        chk_min = self.chk_list[0]
+        chk_init = chk_max
 
         fig = plt.figure(figsize=figsize)
         profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
         slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
 
-        init_profile = self.profiles[j_init]
+        init_profile = self.profiles[chk_init]
         line, = profile_ax.plot(init_profile[x_var], init_profile[y_var], ls='-', marker='')
 
         self._set_ax_scales(profile_ax, y_var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
-        self._set_ax_title(profile_ax, chk=j_init, title=title)
+        self._set_ax_title(profile_ax, chk=chk_init, title=title)
         self._set_ax_lims(profile_ax, xlims=xlims, ylims=ylims)
         self._set_ax_labels(profile_ax, x_var=x_var, y_var=y_var)
 
         self._plot_trans_line(x_var=x_var, y=init_profile[y_var], ax=profile_ax,
-                              chk=j_init, trans=trans)
+                              chk=chk_init, trans=trans)
 
-        slider = Slider(slider_ax, 'chk', j_min, j_max, valinit=j_init, valstep=1)
+        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_init, valstep=1)
 
         def update(chk):
             idx = int(chk)
@@ -386,22 +386,19 @@ class Simulation:
         ylims : [2]
         legend : bool
         """
-        j_max = self.chk_list[-1]
-        j_min = self.chk_list[0]
-        j_init = j_max
+        chk_max = self.chk_list[-1]
+        chk_min = self.chk_list[0]
+        chk_init = chk_max
 
         if y_var_list is None:
             y_var_list = self.config['plotting']['isotopes']
 
-        # TODO:
-        #       - rename j_max to chk_max etc.
-
         fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
-        self.plot_composition(j_init, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
+        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_init, valstep=1)
+
+        self.plot_composition(chk_init, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
                               y_var_list=y_var_list, ax=profile_ax, legend=legend,
                               ylims=ylims, xlims=xlims, trans=trans, title=title)
-
-        slider = Slider(slider_ax, 'chk', j_min, j_max, valinit=j_init, valstep=1)
 
         def update(chk):
             idx = int(chk)
