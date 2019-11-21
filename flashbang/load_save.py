@@ -267,7 +267,9 @@ def extract_profile(basename, chk, model, xmax=1e12, output_dir='output',
     profile = {}
     chk = load_chk(basename, model=model, chk=chk, output_dir=output_dir,
                    runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
-    ray = chk.ray([0, 0, 0], [xmax, 0, 0])
+
+    # TODO: bypass using ray
+    ray = chk.ray((0, 0, 0), (xmax, 0, 0))
     profile['x'] = ray['t'] * xmax
 
     for v in params:
