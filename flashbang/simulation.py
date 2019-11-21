@@ -326,11 +326,8 @@ class Simulation:
         ylims : [2]
         legend : bool
         """
-        chk_max = self.chk_list[-1]
-        chk_min = self.chk_list[0]
-        chk_init = chk_max
-
         fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
+        chk_max, chk_min, chk_init = self._get_slider_chk()
 
         self.plot_profile(chk_init, y_var=y_var, x_var=x_var, y_scale=y_scale,
                           x_scale=x_scale, ax=profile_ax, legend=legend, trans=trans,
@@ -378,14 +375,11 @@ class Simulation:
         ylims : [2]
         legend : bool
         """
-        chk_max = self.chk_list[-1]
-        chk_min = self.chk_list[0]
-        chk_init = chk_max
-
         if y_var_list is None:
             y_var_list = self.config['plotting']['isotopes']
 
         fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
+        chk_max, chk_min, chk_init = self._get_slider_chk()
         slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_init, valstep=1)
 
         self.plot_composition(chk_init, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
@@ -565,3 +559,11 @@ class Simulation:
         slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
 
         return fig, profile_ax, slider_ax
+
+    def _get_slider_chk(self):
+        """Return chk_max, chk_min, chk_init
+        """
+        chk_max = self.chk_list[-1]
+        chk_min = self.chk_list[0]
+        chk_init = chk_max
+        return chk_max, chk_min, chk_init
