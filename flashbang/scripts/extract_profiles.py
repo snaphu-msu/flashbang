@@ -14,7 +14,8 @@ def main(basename, model, multithread=True, reload=False, save=True,
          config='default'):
     sim = simulation.Simulation(basename=basename, model=model, config=config,
                                 load_all=False)
-    params = sim.config['profile']['params']
+    conf = sim.config['profile']
+    params = conf['params'] + conf['composition']
 
     if multithread:
         args = []
