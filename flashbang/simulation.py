@@ -11,6 +11,7 @@ from . import tools
 from . import plot_tools
 
 # TODO:
+#   - rename basename to run
 #   - generalised axis plotting
 #       - save/show plot
 
@@ -329,11 +330,11 @@ class Simulation:
         fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
         chk_max, chk_min, chk_init = self._get_slider_chk()
 
+        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_init, valstep=1)
+
         self.plot_profile(chk_init, y_var=y_var, x_var=x_var, y_scale=y_scale,
                           x_scale=x_scale, ax=profile_ax, legend=legend, trans=trans,
                           title=title, ylims=ylims, xlims=xlims, figsize=figsize)
-
-        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_init, valstep=1)
 
         def update(chk):
             idx = int(chk)
@@ -375,11 +376,12 @@ class Simulation:
         ylims : [2]
         legend : bool
         """
+        fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
+        chk_max, chk_min, chk_init = self._get_slider_chk()
+
         if y_var_list is None:
             y_var_list = self.config['plotting']['isotopes']
 
-        fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
-        chk_max, chk_min, chk_init = self._get_slider_chk()
         slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_init, valstep=1)
 
         self.plot_composition(chk_init, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
@@ -390,13 +392,6 @@ class Simulation:
             idx = int(chk)
             profile = self.profiles[idx]
 
-            for i, key in enumerate(y_var_list):
-                y_profile = profile[key]
-                profile_ax.lines[i].set_xdata(profile[x_var])
-                profile_ax.lines[i].set_ydata(y_profile)
-
-            self._set_ax_title(profile_ax, chk=idx, title=title)
-
             if trans:
                 # TODO: nicer way to do this
                 x, y = self._get_trans_xy(chk=idx, x_var=x_var, y=ylims)
@@ -404,6 +399,12 @@ class Simulation:
                     profile_ax.lines[-i-1].set_xdata(x[i])
                     profile_ax.lines[-i-1].set_ydata(y)
 
+            for i, key in enumerate(y_var_list):
+                y_profile = profile[key]
+                profile_ax.lines[i].set_xdata(profile[x_var])
+                profile_ax.lines[i].set_ydata(y_profile)
+
+            self._set_ax_title(profile_ax, chk=idx, title=title)
             fig.canvas.draw_idle()
 
         slider.on_changed(update)
@@ -448,8 +449,8 @@ class Simulation:
         y_max = np.max(y)
         y_min = np.min(y)
 
-        y_min = 0  # TODO: automagic this
-        y_max = 20
+        # y_min = -2e18  # TODO: automagic this
+        # y_max = 2e18
 
         # TODO: nicer way to handle both dens and low
         x_map = {
@@ -461,7 +462,7 @@ class Simulation:
         y = [y_min, y_max]
         return x, y
 
-    def _plot_trans_line(self, x_var, y, ax, chk, trans):
+    def _plot_trans_line(self, x_var, y, ax, chk, trans, linewidth=1):
         """Add transition line to axis
 
         parameters
@@ -476,7 +477,7 @@ class Simulation:
         if trans:
             x, y = self._get_trans_xy(chk=chk, x_var=x_var, y=y)
             for i in range(2):
-                ax.plot(x[i], y, ls='--', color='k')
+                ax.plot(x[i], y, ls='--', color='k', linewidth=linewidth)
 
     def _set_ax_scales(self, ax, y_var, x_var, y_scale, x_scale):
         """Set axis scales (linear, log)
