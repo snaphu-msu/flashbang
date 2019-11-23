@@ -43,6 +43,12 @@ def dat_filename(basename):
     return f'{basename}.dat'
 
 
+def log_filename(basename):
+    """Returns filename for .log file
+    """
+    return f'{basename}.log'
+
+
 def dat_filepath(basename, model, runs_path=None, runs_prefix='run_'):
     """Returns filepath to .dat file
 
@@ -56,6 +62,14 @@ def dat_filepath(basename, model, runs_path=None, runs_prefix='run_'):
         see model_path()
     """
     filename = dat_filename(basename)
+    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    return os.path.join(m_path, filename)
+
+
+def log_filepath(basename, model, runs_path=None, runs_prefix='run_'):
+    """Returns filepath to .log file
+    """
+    filename = log_filename(basename)
     m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
     return os.path.join(m_path, filename)
 
