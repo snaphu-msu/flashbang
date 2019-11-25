@@ -263,9 +263,7 @@ def extract_profile(chk, model, run='run', output_dir='output',
     profile = {}
     chk = load_chk(chk=chk, model=model, run=run, output_dir=output_dir,
                    runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
-    # TODO: rename 'x' to 'r'
     chk_data = chk.all_data()
-    profile['x'] = np.array(chk_data['r'])
 
     for var in params:
         v_padded = var.ljust(str_pad)  # pad to [str_pad] characters

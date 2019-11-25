@@ -177,10 +177,10 @@ class Simulation:
         for i, trans_idx in enumerate(self.trans_idxs):
             chk = self.chk_list[i]
             profile = self.profiles[chk]
-            self.trans_r[i] = profile['x'][trans_idx]
-            self.trans_low_r[i] = profile['x'][self.trans_low_idxs[i]]
+            self.trans_r[i] = profile['r'][trans_idx]
+            self.trans_low_r[i] = profile['r'][self.trans_low_idxs[i]]
 
-    def plot_profiles(self, chk, y_var_list, x_var='x', y_scale=None, x_scale=None,
+    def plot_profiles(self, chk, y_var_list, x_var='r', y_scale=None, x_scale=None,
                       max_cols=2, sub_figsize=(6, 5), trans=True, legend=False):
         """Plot one or more profile variables
 
@@ -214,7 +214,7 @@ class Simulation:
                               legend=legend if i == 0 else False)
         return fig
 
-    def plot_profile(self, chk, y_var, x_var='x', y_scale=None, x_scale=None,
+    def plot_profile(self, chk, y_var, x_var='r', y_scale=None, x_scale=None,
                      ax=None, legend=False, trans=True, title=True,
                      ylims=None, xlims=None, figsize=(8, 6), label=None):
         """Plot given profile variable
@@ -262,7 +262,7 @@ class Simulation:
 
         return fig
 
-    def plot_composition(self, chk, x_var='x', y_scale='log', x_scale=None,
+    def plot_composition(self, chk, x_var='r', y_scale='log', x_scale=None,
                          y_var_list=None, ax=None, legend=True, ylims=(1e-5, 2), xlims=None,
                          trans=True, figsize=(8, 6), title=True):
         """Plot isotope composition profile
@@ -306,7 +306,7 @@ class Simulation:
 
         return fig
 
-    def plot_slider(self, y_var, x_var='x', y_scale=None, x_scale=None, trans=True,
+    def plot_slider(self, y_var, x_var='r', y_scale=None, x_scale=None, trans=True,
                     figsize=(8, 6), title=True, xlims=None, ylims=None, legend=True):
         """Plot interactive slider of profile for given variable
 
@@ -354,7 +354,7 @@ class Simulation:
         slider.on_changed(update)
         return fig, slider
 
-    def plot_slider_composition(self, y_var_list=None, x_var='x', y_scale=None, x_scale=None,
+    def plot_slider_composition(self, y_var_list=None, x_var='r', y_scale=None, x_scale=None,
                                 trans=True, figsize=(8, 6), title=True, xlims=None,
                                 ylims=(1e-5, 2), legend=True):
         """Plot interactive slider of isotope composition
@@ -452,7 +452,7 @@ class Simulation:
         # TODO: nicer way to handle both dens and low
         x_map = {
                  'dens': [self.trans_dens, self.trans_low],
-                 'x': [self.trans_r[idx], self.trans_low_r[idx]],
+                 'r': [self.trans_r[idx], self.trans_low_r[idx]],
                  }.get(x_var)
 
         x = [[x_map[0], x_map[0]], [x_map[1], x_map[1]]]
