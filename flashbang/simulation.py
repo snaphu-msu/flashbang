@@ -11,14 +11,14 @@ from . import tools
 from . import plot_tools
 
 # TODO:
-#   - rename basename to run
+#   - rename run to run
 #   - generalised axis plotting
 #       - save/show plot
 
 
 # noinspection PyTypeChecker
 class Simulation:
-    def __init__(self, model, basename='run', runs_path=None, config='default',
+    def __init__(self, model, run='run', runs_path=None, config='default',
                  xmax=1e12, output_dir='output', verbose=True,
                  load_all=True, reload=False, save=True,
                  trans_dens=6e7, trans_low=1e7, runs_prefix='run_'):
@@ -28,7 +28,7 @@ class Simulation:
         ----------
         model : str
             The label for the model directory, e.g. 'helmNet' for 'run_helmNet/'
-        basename : str
+        run : str
             The label that's used in chk and .dat files, e.g. 'run' for 'run.dat'
         runs_path : str
             Override the default place to look for models (bash variable: BANG_MODELS)
@@ -57,7 +57,7 @@ class Simulation:
         self.output_path = os.path.join(self.path, output_dir)
 
         self.model = model
-        self.basename = basename
+        self.run = run
         self.xmax = xmax
         self.trans_dens = trans_dens
         self.trans_low = trans_low
@@ -102,7 +102,7 @@ class Simulation:
         reload : bool
         save : bool
         """
-        self.dat = load_save.get_dat(self.basename, model=self.model, runs_path=self.runs_path,
+        self.dat = load_save.get_dat(self.run, model=self.model, runs_path=self.runs_path,
                                      cols_dict=self.config['dat_columns'], reload=reload,
                                      save=save)
 
@@ -110,7 +110,7 @@ class Simulation:
         """Update the list of checkpoint files available
         """
         self.chk_list = load_save.find_chk(path=self.output_path,
-                                           match_str=f'{self.basename}_hdf5_chk_')
+                                           match_str=f'{self.run}_hdf5_chk_')
 
     def load_all_profiles(self, reload=False, save=True):
         """Load profiles for all available checkpoints
@@ -148,7 +148,7 @@ class Simulation:
         params = config['params'] + config['composition']
 
         self.profiles[chk] = load_save.get_profile(
-                            self.basename, chk=chk, model=self.model, xmax=self.xmax,
+                            self.run, chk=chk, model=self.model, xmax=self.xmax,
                             o_path=self.output_path, params=params, reload=reload,
                             save=save, verbose=self.verbose)
 

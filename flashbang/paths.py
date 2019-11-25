@@ -37,87 +37,87 @@ def temp_path(model, runs_path=None, runs_prefix='run_'):
     return os.path.join(m_path, 'temp')
 
 
-def dat_filename(basename):
+def dat_filename(run):
     """Returns filename for .dat file
     """
-    return f'{basename}.dat'
+    return f'{run}.dat'
 
 
-def log_filename(basename):
+def log_filename(run):
     """Returns filename for .log file
     """
-    return f'{basename}.log'
+    return f'{run}.log'
 
 
-def dat_filepath(basename, model, runs_path=None, runs_prefix='run_'):
+def dat_filepath(run, model, runs_path=None, runs_prefix='run_'):
     """Returns filepath to .dat file
 
     parameters
     ----------
-    basename : str
+    run : str
     model : str
     runs_path : str
         see model_path()
     runs_prefix : str
         see model_path()
     """
-    filename = dat_filename(basename)
+    filename = dat_filename(run)
     m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
     return os.path.join(m_path, filename)
 
 
-def log_filepath(basename, model, runs_path=None, runs_prefix='run_'):
+def log_filepath(run, model, runs_path=None, runs_prefix='run_'):
     """Returns filepath to .log file
     """
-    filename = log_filename(basename)
+    filename = log_filename(run)
     m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
     return os.path.join(m_path, filename)
 
 
-def dat_temp_filename(basename):
+def dat_temp_filename(run):
     """Return filename for temporary (cached) dat file
     """
-    return f'{basename}_dat.pickle'
+    return f'{run}_dat.pickle'
 
 
-def dat_temp_filepath(basename, model, runs_path=None,
+def dat_temp_filepath(run, model, runs_path=None,
                       runs_prefix='run_'):
     """Returns filepath to pickled dat file
     """
     path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    filename = dat_temp_filename(basename)
+    filename = dat_temp_filename(run)
     return os.path.join(path, filename)
 
 
-def chk_filename(basename, chk):
+def chk_filename(run, chk):
     """Returns filename for checkpoint (chk) file
     """
-    return f'{basename}_hdf5_chk_{chk:04d}'
+    return f'{run}_hdf5_chk_{chk:04d}'
 
 
-def chk_filepath(basename, model, chk, output_dir='output',
+def chk_filepath(run, model, chk, output_dir='output',
                  runs_path=None, runs_prefix='run_', o_path=None):
     """Returns filepath to checkpoint file
     """
-    filename = chk_filename(basename, chk=chk)
+    filename = chk_filename(run, chk=chk)
     if o_path is None:
         o_path = output_path(model, output_dir=output_dir, runs_path=runs_path,
                              runs_prefix=runs_prefix)
     return os.path.join(o_path, filename)
 
 
-def profile_filename(basename, chk):
+def profile_filename(run, chk):
     """Returns filename for pickled profile
     """
-    return f'{basename}_profile_{chk:04d}.pickle'
+    return f'{run}_profile_{chk:04d}.pickle'
 
 
-def profile_filepath(basename, model, chk, runs_path=None,
+def profile_filepath(run, model, chk, runs_path=None,
                      runs_prefix='run_'):
     """Returns filepath to pickled profile
     """
     path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    filename = profile_filename(basename, chk)
+    filename = profile_filename(run, chk)
     return os.path.join(path, filename)
 
 

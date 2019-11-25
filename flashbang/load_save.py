@@ -79,7 +79,7 @@ def load_config(name='default', verbose=True):
     return config
 
 
-def get_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
+def get_dat(run, model, cols_dict, runs_path=None, runs_prefix='run_',
             verbose=True, save=True, reload=False):
     """Get reduced .dat data, as contained in .dat file
 
@@ -87,7 +87,7 @@ def get_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
 
     parameters
     ----------
-    basename: str
+    run: str
     model : str
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
@@ -102,23 +102,23 @@ def get_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
 
     if not reload:
         try:
-            dat = load_dat(basename, model=model, runs_path=runs_path,
+            dat = load_dat(run, model=model, runs_path=runs_path,
                            runs_prefix=runs_prefix, verbose=verbose)
             dat_exists = True
         except FileNotFoundError:
             pass
 
     if len(dat.keys()) == 0:
-        dat = extract_dat(basename, model=model, runs_path=runs_path, runs_prefix=runs_prefix,
+        dat = extract_dat(run, model=model, runs_path=runs_path, runs_prefix=runs_prefix,
                           cols_dict=cols_dict)
 
     if save and not dat_exists:
-        save_dat(dat, basename=basename, model=model, runs_path=runs_path,
+        save_dat(dat, run=run, model=model, runs_path=runs_path,
                  runs_prefix=runs_prefix, verbose=verbose)
     return dat
 
 
-def extract_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
+def extract_dat(run, model, cols_dict, runs_path=None, runs_prefix='run_',
                 verbose=True):
     """Extract and reduce data from .dat file
 
@@ -126,7 +126,7 @@ def extract_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
 
     parameters
     ----------
-    basename: str
+    run: str
     model : str
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
@@ -134,7 +134,7 @@ def extract_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
     runs_prefix : str
     verbose : bool
     """
-    filepath = paths.dat_filepath(basename=basename, model=model, runs_path=runs_path,
+    filepath = paths.dat_filepath(run=run, model=model, runs_path=runs_path,
                                   runs_prefix=runs_prefix)
 
     printv(f'Loading dat file: {filepath}', verbose=verbose)
@@ -153,7 +153,7 @@ def extract_dat(basename, model, cols_dict, runs_path=None, runs_prefix='run_',
     return dat
 
 
-def save_dat(dat, basename, model, runs_path=None,
+def save_dat(dat, run, model, runs_path=None,
              runs_prefix='run_', verbose=True):
     """Save extracted .dat properties to file, for faster loading
 
@@ -161,7 +161,7 @@ def save_dat(dat, basename, model, runs_path=None,
     ----------
     dat : {}
         dictionary of arrays, as extracted by load_dat
-    basename : str
+    run : str
     model : str
     runs_path : str (optional)
     runs_prefix : str (optional)
@@ -169,32 +169,32 @@ def save_dat(dat, basename, model, runs_path=None,
     """
     ensure_temp_dir_exists(model, runs_path=runs_path, runs_prefix=runs_prefix,
                            verbose=verbose)
-    filepath = paths.dat_temp_filepath(basename, model=model, runs_path=runs_path,
+    filepath = paths.dat_temp_filepath(run, model=model, runs_path=runs_path,
                                        runs_prefix=runs_prefix)
 
     printv(f'Saving: {filepath}', verbose)
     pickle.dump(dat, open(filepath, 'wb'))
 
 
-def load_dat(basename, model, runs_path=None,
+def load_dat(run, model, runs_path=None,
              runs_prefix='run_', verbose=True):
     """Load profile from pre-extracted file (see: save_profile)
 
     parameters
     ----------
-    basename : str
+    run : str
     model : str
     runs_path : str (optional)
     runs_prefix : str (optional)
     verbose : bool (optional)
     """
-    filepath = paths.dat_temp_filepath(basename, model=model, runs_path=runs_path,
+    filepath = paths.dat_temp_filepath(run, model=model, runs_path=runs_path,
                                        runs_prefix=runs_prefix)
     printv(f'Loading: {filepath}', verbose)
     return pickle.load(open(filepath, 'rb'))
 
 
-def get_profile(basename, chk, model, xmax=1e12, output_dir='output',
+def get_profile(run, chk, model, xmax=1e12, output_dir='output',
                 runs_path=None, runs_prefix='run_', o_path=None,
                 params=('temp', 'dens', 'pres'), reload=False,
                 save=True, verbose=True):
@@ -204,7 +204,7 @@ def get_profile(basename, chk, model, xmax=1e12, output_dir='output',
 
     parameters
     ----------
-    basename : str
+    run : str
     chk : int
     model : str
     xmax : float (optional)
@@ -226,24 +226,24 @@ def get_profile(basename, chk, model, xmax=1e12, output_dir='output',
 
     if not reload:
         try:
-            profile = load_profile(basename, chk=chk, model=model, runs_path=runs_path,
+            profile = load_profile(run, chk=chk, model=model, runs_path=runs_path,
                                    runs_prefix=runs_prefix, verbose=verbose)
             profile_exists = True
         except FileNotFoundError:
             pass
 
     if len(profile.keys()) == 0:
-        profile = extract_profile(basename, chk=chk, model=model, xmax=xmax,
+        profile = extract_profile(run, chk=chk, model=model, xmax=xmax,
                                   output_dir=output_dir, runs_path=runs_path,
                                   runs_prefix=runs_prefix, o_path=o_path, params=params)
 
     if save and not profile_exists:
-        save_profile(profile, basename=basename, chk=chk, model=model,
+        save_profile(profile, run=run, chk=chk, model=model,
                      runs_path=runs_path, runs_prefix=runs_prefix, verbose=verbose)
     return profile
 
 
-def extract_profile(basename, chk, model, xmax=1e12, output_dir='output',
+def extract_profile(run, chk, model, xmax=1e12, output_dir='output',
                     runs_path=None, runs_prefix='run_', o_path=None,
                     params=('temp', 'dens', 'pres')):
     """Extract and reduce profile data from chk file
@@ -252,7 +252,7 @@ def extract_profile(basename, chk, model, xmax=1e12, output_dir='output',
 
     parameters
     ----------
-    basename : str
+    run : str
     chk : int
     model : str
     xmax : float (optional)
@@ -265,7 +265,7 @@ def extract_profile(basename, chk, model, xmax=1e12, output_dir='output',
         profile parameters to extract and return from chk file
     """
     profile = {}
-    chk = load_chk(basename, model=model, chk=chk, output_dir=output_dir,
+    chk = load_chk(run, model=model, chk=chk, output_dir=output_dir,
                    runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
 
     # TODO: bypass using ray
@@ -278,14 +278,14 @@ def extract_profile(basename, chk, model, xmax=1e12, output_dir='output',
     return profile
 
 
-def save_profile(profile, basename, chk, model, runs_path=None,
+def save_profile(profile, run, chk, model, runs_path=None,
                  runs_prefix='run_', verbose=True):
     """Save profile to file for faster loading
 
     parameters
     ----------
     profile : dict
-    basename : str
+    run : str
     chk : int
     model : str
     runs_path : str (optional)
@@ -294,39 +294,39 @@ def save_profile(profile, basename, chk, model, runs_path=None,
     """
     ensure_temp_dir_exists(model, runs_path=runs_path, runs_prefix=runs_prefix,
                            verbose=verbose)
-    filepath = paths.profile_filepath(basename, model=model, chk=chk,
+    filepath = paths.profile_filepath(run, model=model, chk=chk,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
 
     printv(f'Saving: {filepath}', verbose)
     pickle.dump(profile, open(filepath, 'wb'))
 
 
-def load_profile(basename, chk, model, runs_path=None,
+def load_profile(run, chk, model, runs_path=None,
                  runs_prefix='run_', verbose=True):
     """Load profile from pre-extracted file (see: save_profile)
 
     parameters
     ----------
-    basename : str
+    run : str
     chk : int
     model : str
     runs_path : str (optional)
     runs_prefix : str (optional)
     verbose : bool (optional)
     """
-    filepath = paths.profile_filepath(basename, model=model, chk=chk,
+    filepath = paths.profile_filepath(run, model=model, chk=chk,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
     printv(f'Loading: {filepath}', verbose)
     return pickle.load(open(filepath, 'rb'))
 
 
-def load_chk(basename, chk, model, output_dir='output',
+def load_chk(run, chk, model, output_dir='output',
              runs_path=None, runs_prefix='run_', o_path=None):
     """Load checkpoint file for given model
 
     parameters
     ----------
-    basename : str
+    run : str
     chk : int
     model : str
     output_dir : str (optional)
@@ -334,7 +334,7 @@ def load_chk(basename, chk, model, output_dir='output',
     runs_prefix : str (optional)
     o_path : str (optional)
     """
-    filepath = paths.chk_filepath(basename, model=model, chk=chk,
+    filepath = paths.chk_filepath(run, model=model, chk=chk,
                                   output_dir=output_dir, runs_path=runs_path,
                                   runs_prefix=runs_prefix, o_path=o_path)
     if not os.path.exists(filepath):
@@ -366,13 +366,13 @@ def find_chk(path, match_str='hdf5_chk_', n_digits=4):
     return np.sort(chks)
 
 
-def get_bounce_time(model, basename, runs_path=None, runs_prefix='run_',
+def get_bounce_time(model, run, runs_path=None, runs_prefix='run_',
                     match_str='Bounce', verbose=True):
     """Return bounce time (s)
 
     Assumes the bounce time immediately follows 'match_str'
     """
-    filepath = paths.log_filepath(basename=basename, model=model, runs_path=runs_path,
+    filepath = paths.log_filepath(run=run, model=model, runs_path=runs_path,
                                   runs_prefix=runs_prefix)
     bounce_time = 0.0
     with open(filepath, 'r') as f:
@@ -444,10 +444,10 @@ def load_snec_xg(filepath, verbose=True):
     return profile
 
 
-def print_dat_colnames(model, basename, runs_path=None, runs_prefix='run_'):
+def print_dat_colnames(model, run, runs_path=None, runs_prefix='run_'):
     """Print all column names from .dat file
     """
-    filepath = paths.dat_filepath(basename=basename, model=model, runs_prefix=runs_prefix,
+    filepath = paths.dat_filepath(run=run, model=model, runs_prefix=runs_prefix,
                                   runs_path=runs_path)
     with open(filepath, 'r') as f:
         colnames = f.readline().split()

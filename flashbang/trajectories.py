@@ -14,7 +14,7 @@ from .strings import printv
 g2msun = units.g.to(units.Msun)
 
 
-def pipeline(n_tracers=100, n_skip=1, basename='concat_stir_snec',
+def pipeline(n_tracers=100, n_skip=1, run='concat_stir_snec',
              path='/Users/zac/projects/codes/traj_code/data/concat',
              snec_tracers=None):
     """Join and save tracers
@@ -26,7 +26,7 @@ def pipeline(n_tracers=100, n_skip=1, basename='concat_stir_snec',
         sys.stdout.write(f'\rJoin tracer {i+1}/{n_tracers}')
         tracer = join_tracers(snec_tracers, mass_i=i, n_skip=n_skip)
 
-        filename = f'{basename}_tracer{i}.dat'
+        filename = f'{run}_tracer{i}.dat'
         filepath = os.path.join(path, filename)
         np.savetxt(filepath, tracer, fmt='%.10e', delimiter='    ')
 
@@ -80,19 +80,19 @@ def build_snec_tracers(t_end=20, dt=0.01, n_traj=100,
     return tracers
 
 
-def load_all_stir_tracers(n_tracers, basename='stir2_oct8_s12.0_alpha1.25',
+def load_all_stir_tracers(n_tracers, run='stir2_oct8_s12.0_alpha1.25',
                           prefix='_tracer', extension='.dat',
                           path='/Users/zac/projects/codes/traj_code/data/traj_s12.0_1024'):
     """Load all stir tracers and return as single array
     """
-    t0 = load_stir_traj(0, basename=basename, prefix=prefix, extension=extension,
+    t0 = load_stir_traj(0, run=run, prefix=prefix, extension=extension,
                         path=path)
     n_time, n_var = t0.shape
     tracers = np.full([n_tracers, n_time, n_var], np.nan)
 
     for i in range(n_tracers):
         sys.stdout.write(f'\rloading stir tracer: {i+1}/{n_tracers}')
-        tracer = load_stir_traj(i, basename=basename, prefix=prefix, extension=extension,
+        tracer = load_stir_traj(i, run=run, prefix=prefix, extension=extension,
                                 path=path)
         tracers[i, :, :] = tracer
 
@@ -100,13 +100,13 @@ def load_all_stir_tracers(n_tracers, basename='stir2_oct8_s12.0_alpha1.25',
     return tracers
 
 
-def load_stir_traj(tracer_i, basename='stir2_oct8_s12.0_alpha1.25',
+def load_stir_traj(tracer_i, run='stir2_oct8_s12.0_alpha1.25',
                    prefix='_tracer', extension='.dat', skiprows=2,
                    path='/Users/zac/projects/codes/traj_code/data/traj_s12.0_1024'):
     """Load STIR trajectory from file
         Returns: 2D np.array
     """
-    filepath = stir_traj_filepath(tracer_i, basename=basename, prefix=prefix,
+    filepath = stir_traj_filepath(tracer_i, run=run, prefix=prefix,
                                   extension=extension, path=path)
     return np.loadtxt(filepath, skiprows=skiprows)
 
@@ -157,12 +157,12 @@ def extract_stir_mass_grid(n_traj=100):
     return np.array(mass_grid)
 
 
-def stir_traj_filepath(tracer_i, basename='stir2_oct8_s12.0_alpha1.25',
+def stir_traj_filepath(tracer_i, run='stir2_oct8_s12.0_alpha1.25',
                        prefix='_tracer', extension='.dat',
                        path='/Users/zac/projects/codes/traj_code/data/traj_s12.0_1024'):
     """Returns formatted filepath to stir trajectory file
     """
-    filename = f'{basename}{prefix}{tracer_i}{extension}'
+    filename = f'{run}{prefix}{tracer_i}{extension}'
     return os.path.join(path, filename)
 
 
