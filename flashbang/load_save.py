@@ -366,6 +366,28 @@ def find_chk(path, match_str='hdf5_chk_', n_digits=4):
     return np.sort(chks)
 
 
+def get_bounce_time(model, basename, runs_path=None, runs_prefix='run_',
+                    match_str='Bounce', verbose=True):
+    """Return bounce time (s)
+
+    Assumes the bounce time immediately follows 'match_str'
+    """
+    filepath = paths.log_filepath(basename=basename, model=model, runs_path=runs_path,
+                                  runs_prefix=runs_prefix)
+    bounce_time = 0.0
+    with open(filepath, 'r') as f:
+        for line in f:
+            if match_str in line:
+                terms = line.split()
+                bounce_time = float(terms[1])
+                break
+
+        if bounce_time == 0.0:
+            printv('Bounce time not found! Returning 0.0 s', verbose=verbose)
+
+    return bounce_time
+
+
 def reduce_snec_profile(profile_dict):
     """Reduce given profile dictionary into a 2D nparray
         Returns: profile_array, time, mass_grid
