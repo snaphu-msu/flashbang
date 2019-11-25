@@ -444,6 +444,23 @@ def load_snec_xg(filepath, verbose=True):
     return profile
 
 
+def print_dat_colnames(model, basename, runs_path=None, runs_prefix='run_'):
+    """Print all column names from .dat file
+    """
+    filepath = paths.dat_filepath(basename=basename, model=model, runs_prefix=runs_prefix,
+                                  runs_path=runs_path)
+    with open(filepath, 'r') as f:
+        colnames = f.readline().split()
+
+    count = 1
+    for word in colnames:
+        if str(count) in word:
+            print(f'\n{count}', end=' ')
+            count += 1
+        else:
+            print(word, end=' ')
+
+
 def ensure_temp_dir_exists(model, runs_path=None, runs_prefix='run_', verbose=True):
     """Ensure temp directory exists (create if not)
     """
