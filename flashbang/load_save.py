@@ -263,6 +263,7 @@ def extract_profile(chk, model, run='run', xmax=1e12, output_dir='output',
     params : [] (optional)
         profile parameters to extract and return from chk file
     """
+    str_pad = 4
     profile = {}
     chk = load_chk(chk=chk, model=model, run=run, output_dir=output_dir,
                    runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
@@ -272,7 +273,7 @@ def extract_profile(chk, model, run='run', xmax=1e12, output_dir='output',
     profile['x'] = ray['t'] * xmax
 
     for v in params:
-        profile[v.strip()] = np.array(ray[v])
+        profile[v] = np.array(ray[v.ljust(str_pad)])
 
     return profile
 
