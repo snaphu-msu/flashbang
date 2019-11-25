@@ -11,7 +11,6 @@ from . import tools
 from . import plot_tools
 
 # TODO:
-#   - deprecate xmax
 #   - generalised axis plotting
 #       - save/show plot
 
@@ -19,7 +18,7 @@ from . import plot_tools
 # noinspection PyTypeChecker
 class Simulation:
     def __init__(self, model, run='run', runs_path=None, config='default',
-                 xmax=1e12, output_dir='output', verbose=True,
+                 output_dir='output', verbose=True,
                  load_all=True, reload=False, save=True,
                  trans_dens=6e7, trans_low=1e7, runs_prefix='run_'):
         """Object representing a 1D flash simulation
@@ -36,7 +35,6 @@ class Simulation:
             The prefix added to 'model', e.g. 'run_' for 'run_helmNet'
         config : str
             Base name of config file to use, e.g. 'default' for 'config/default.ini'
-        xmax : float
         output_dir : str
             name of subdirectory containing model output files
         load_all : bool
@@ -58,7 +56,6 @@ class Simulation:
 
         self.model = model
         self.run = run
-        self.xmax = xmax
         self.trans_dens = trans_dens
         self.trans_low = trans_low
 
@@ -149,7 +146,7 @@ class Simulation:
 
         self.profiles[chk] = load_save.get_profile(
                                 chk, model=self.model, run=self.run,
-                                xmax=self.xmax, o_path=self.output_path, params=params,
+                                o_path=self.output_path, params=params,
                                 reload=reload, save=save, verbose=self.verbose)
 
     def find_trans_idxs(self):

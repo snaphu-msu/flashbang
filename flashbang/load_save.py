@@ -192,7 +192,7 @@ def load_dat(model, run='run', runs_path=None, runs_prefix='run_', verbose=True)
     return pickle.load(open(filepath, 'rb'))
 
 
-def get_profile(chk, model, run='run', xmax=1e12, output_dir='output',
+def get_profile(chk, model, run='run', output_dir='output',
                 runs_path=None, runs_prefix='run_', o_path=None,
                 params=('temp', 'dens', 'pres'), reload=False,
                 save=True, verbose=True):
@@ -206,8 +206,6 @@ def get_profile(chk, model, run='run', xmax=1e12, output_dir='output',
     chk : int
     model : str
     run : str
-    xmax : float (optional)
-        Return profile between radius=0 to xmax
     output_dir : str (optional)
     runs_path : str (optional)
     runs_prefix : str (optional)
