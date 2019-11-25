@@ -9,7 +9,8 @@ from flashbang import simulation, load_save
 #   python extract_profiles [run] [model]
 # =================================================================
 
-
+# TODO:
+#   - check for existing tempfiles, only load missing
 def main(model, run, multithread=True, reload=False, save=True,
          config='default'):
     sim = simulation.Simulation(run=run, model=model, config=config, load_all=False)
