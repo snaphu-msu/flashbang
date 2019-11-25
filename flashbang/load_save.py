@@ -369,15 +369,18 @@ def get_bounce_time(model, run='run', runs_path=None, runs_prefix='run_',
     filepath = paths.log_filepath(run=run, model=model, runs_path=runs_path,
                                   runs_prefix=runs_prefix)
     bounce_time = 0.0
+    printv(f'Getting bounce time: {filepath}', verbose)
+
     with open(filepath, 'r') as f:
         for line in f:
             if match_str in line:
                 terms = line.split()
                 bounce_time = float(terms[1])
+                printv(f'Bounce = {bounce_time:.4f} s', verbose)
                 break
 
         if bounce_time == 0.0:
-            printv('Bounce time not found! Returning 0.0 s', verbose=verbose)
+            printv('Bounce time not found! Returning 0.0 s', verbose)
 
     return bounce_time
 
