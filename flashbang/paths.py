@@ -49,7 +49,7 @@ def log_filename(run):
     return f'{run}.log'
 
 
-def dat_filepath(run, model, runs_path=None, runs_prefix='run_'):
+def dat_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
     """Returns filepath to .dat file
 
     parameters
@@ -66,7 +66,7 @@ def dat_filepath(run, model, runs_path=None, runs_prefix='run_'):
     return os.path.join(m_path, filename)
 
 
-def log_filepath(run, model, runs_path=None, runs_prefix='run_'):
+def log_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
     """Returns filepath to .log file
     """
     filename = log_filename(run)
@@ -80,8 +80,7 @@ def dat_temp_filename(run):
     return f'{run}_dat.pickle'
 
 
-def dat_temp_filepath(run, model, runs_path=None,
-                      runs_prefix='run_'):
+def dat_temp_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
     """Returns filepath to pickled dat file
     """
     path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
@@ -89,35 +88,35 @@ def dat_temp_filepath(run, model, runs_path=None,
     return os.path.join(path, filename)
 
 
-def chk_filename(run, chk):
+def chk_filename(chk, run):
     """Returns filename for checkpoint (chk) file
     """
     return f'{run}_hdf5_chk_{chk:04d}'
 
 
-def chk_filepath(run, model, chk, output_dir='output',
+def chk_filepath(chk, model, run='run', output_dir='output',
                  runs_path=None, runs_prefix='run_', o_path=None):
     """Returns filepath to checkpoint file
     """
-    filename = chk_filename(run, chk=chk)
+    filename = chk_filename(chk=chk, run=run)
     if o_path is None:
         o_path = output_path(model, output_dir=output_dir, runs_path=runs_path,
                              runs_prefix=runs_prefix)
     return os.path.join(o_path, filename)
 
 
-def profile_filename(run, chk):
+def profile_filename(chk, run):
     """Returns filename for pickled profile
     """
     return f'{run}_profile_{chk:04d}.pickle'
 
 
-def profile_filepath(run, model, chk, runs_path=None,
+def profile_filepath(chk, model, run='run', runs_path=None,
                      runs_prefix='run_'):
     """Returns filepath to pickled profile
     """
     path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    filename = profile_filename(run, chk)
+    filename = profile_filename(chk, run)
     return os.path.join(path, filename)
 
 

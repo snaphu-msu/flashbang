@@ -11,7 +11,7 @@ from . import tools
 from . import plot_tools
 
 # TODO:
-#   - rename run to run
+#   - deprecate xmax
 #   - generalised axis plotting
 #       - save/show plot
 
@@ -102,9 +102,9 @@ class Simulation:
         reload : bool
         save : bool
         """
-        self.dat = load_save.get_dat(self.run, model=self.model, runs_path=self.runs_path,
-                                     cols_dict=self.config['dat_columns'], reload=reload,
-                                     save=save)
+        self.dat = load_save.get_dat(
+                        model=self.model, run=self.run, runs_path=self.runs_path,
+                        cols_dict=self.config['dat_columns'], reload=reload, save=save)
 
     def update_chk_list(self):
         """Update the list of checkpoint files available
@@ -148,9 +148,9 @@ class Simulation:
         params = config['params'] + config['composition']
 
         self.profiles[chk] = load_save.get_profile(
-                            self.run, chk=chk, model=self.model, xmax=self.xmax,
-                            o_path=self.output_path, params=params, reload=reload,
-                            save=save, verbose=self.verbose)
+                                chk, model=self.model, run=self.run,
+                                xmax=self.xmax, o_path=self.output_path, params=params,
+                                reload=reload, save=save, verbose=self.verbose)
 
     def find_trans_idxs(self):
         """Find idxs for zones closest to the helmholtz transition densities
