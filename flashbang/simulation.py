@@ -11,6 +11,7 @@ from . import tools
 from . import plot_tools
 
 # TODO:
+#   - use rcparams for default values of run, etc.
 #   - generalised axis plotting
 #       - save/show plot
 
@@ -62,6 +63,7 @@ class Simulation:
         self.config = load_save.load_config(name=config, verbose=self.verbose)
         self.dat = None
         self.chk_list = None
+        self.bounce_time = None
         self.profiles = {}
 
         self.update_chk_list()
@@ -72,6 +74,7 @@ class Simulation:
         self.trans_low_r = np.full(self.n_chk, np.nan)
 
         if load_all:
+            self.get_bounce_time()
             self.load_dat(reload=reload, save=save)
             self.load_all_profiles(reload=reload, save=save)
             self.find_trans_idxs()
@@ -90,6 +93,13 @@ class Simulation:
             verbose = self.verbose
         if verbose:
             print(string)
+
+    def get_bounce_time(self):
+        """Get bounce time (s) from log file
+        """
+        self.bounce_time = load_save.get_bounce_time(self.model, run=self.run,
+                                                     runs_path=self.runs_path,
+                                                     verbose=self.verbose)
 
     def load_dat(self, reload=False, save=True):
         """Load .dat file
