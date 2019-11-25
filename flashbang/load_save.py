@@ -232,9 +232,9 @@ def get_profile(chk, model, run='run', xmax=1e12, output_dir='output',
             pass
 
     if len(profile.keys()) == 0:
-        profile = extract_profile(chk, model=model, run=run, xmax=xmax,
-                                  output_dir=output_dir, runs_path=runs_path,
-                                  runs_prefix=runs_prefix, o_path=o_path, params=params)
+        profile = extract_profile(chk, model=model, run=run, output_dir=output_dir,
+                                  runs_path=runs_path, runs_prefix=runs_prefix,
+                                  o_path=o_path, params=params)
 
     if save and not profile_exists:
         save_profile(profile, chk=chk, model=model, run=run,
@@ -242,7 +242,7 @@ def get_profile(chk, model, run='run', xmax=1e12, output_dir='output',
     return profile
 
 
-def extract_profile(chk, model, run='run', xmax=1e12, output_dir='output',
+def extract_profile(chk, model, run='run', output_dir='output',
                     runs_path=None, runs_prefix='run_', o_path=None,
                     params=('temp', 'dens', 'pres')):
     """Extract and reduce profile data from chk file
@@ -254,8 +254,6 @@ def extract_profile(chk, model, run='run', xmax=1e12, output_dir='output',
     chk : int
     model : str
     run : str
-    xmax : float (optional)
-        Return profile between radius=0 to xmax
     output_dir : str (optional)
     runs_path : str (optional)
     runs_prefix : str (optional)
@@ -267,13 +265,13 @@ def extract_profile(chk, model, run='run', xmax=1e12, output_dir='output',
     profile = {}
     chk = load_chk(chk=chk, model=model, run=run, output_dir=output_dir,
                    runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
+    # TODO: rename 'x' to 'r'
+    chk_data = chk.all_data()
+    profile['x'] = np.array(chk_data['r'])
 
-    # TODO: bypass using ray
-    ray = chk.ray((0, 0, 0), (xmax, 0, 0))
-    profile['x'] = ray['t'] * xmax
-
-    for v in params:
-        profile[v] = np.array(ray[v.ljust(str_pad)])
+    for var in params:
+        v_padded = var.ljust(str_pad)  # pad to [str_pad] characters
+        profile[var] = np.array(chk_data[v_padded])
 
     return profile
 
