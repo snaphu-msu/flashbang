@@ -290,7 +290,8 @@ class Simulation:
 
     def plot_composition(self, chk, x_var='r', y_scale='log', x_scale=None,
                          y_var_list=None, ax=None, legend=True, ylims=(1e-5, 2), xlims=None,
-                         trans=True, figsize=(8, 6), title=True, legend_loc='lower left'):
+                         trans=True, figsize=(8, 6), title=True, legend_loc='lower left',
+                         show_ye=True):
         """Plot isotope composition profile
 
         parameters
@@ -310,6 +311,7 @@ class Simulation:
         xlims : []
         figsize : []
         legend_loc : str
+        show_ye : bool
         """
         if chk not in self.profiles.keys():
             self.load_profile(chk)
@@ -325,6 +327,8 @@ class Simulation:
         profile = self.profiles[chk]
         for key in y_var_list:
             ax.plot(profile[x_var], profile[key], label=f'{key}')
+        if show_ye:
+            ax.plot(profile[x_var], profile['ye'], '--', label=f'Ye', color='k')
 
         self._plot_trans_line(x_var, y=ylims, ax=ax, chk=chk, trans=trans)
 
