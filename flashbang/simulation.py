@@ -74,11 +74,7 @@ class Simulation:
         self.trans_low_r = np.full(self.n_chk, np.nan)
 
         if load_all:
-            self.get_bounce_time()
-            self.load_dat(reload=reload, save=save)
-            self.load_all_profiles(reload=reload, save=save)
-            self.find_trans_idxs()
-            self.get_trans_r()
+            self.load_all(reload=reload, save=save)
 
     def printv(self, string, verbose=None):
         """Verbose-aware print
@@ -93,6 +89,15 @@ class Simulation:
             verbose = self.verbose
         if verbose:
             print(string)
+
+    def load_all(self, reload, save):
+        """Load all model data
+        """
+        self.get_bounce_time()
+        self.load_dat(reload=reload, save=save)
+        self.load_all_profiles(reload=reload, save=save)
+        self.find_trans_idxs()
+        self.get_trans_r()
 
     def get_bounce_time(self):
         """Get bounce time (s) from log file
