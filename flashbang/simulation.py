@@ -12,6 +12,7 @@ from . import plot_tools
 
 # TODO:
 #   - use rcparams for default values of run, etc.
+#   - handle trans densities/idxs with a pandas dataframe
 #   - generalised axis plotting
 #       - save/show plot
 
@@ -490,7 +491,6 @@ class Simulation:
         # y_min = -2e18  # TODO: automagic this
         # y_max = 2e18
 
-        # TODO: nicer way to handle both dens and low
         x_map = {
                  'dens': [self.trans_dens, self.trans_low],
                  'r': [self.trans_r[idx], self.trans_low_r[idx]],
