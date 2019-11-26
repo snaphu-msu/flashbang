@@ -259,15 +259,13 @@ def extract_profile(chk, model, run='run', output_dir='output',
     params : [] (optional)
         profile parameters to extract and return from chk file
     """
-    str_pad = 4
     profile = {}
     chk = load_chk(chk=chk, model=model, run=run, output_dir=output_dir,
                    runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
     chk_data = chk.all_data()
 
     for var in params:
-        v_padded = var.ljust(str_pad)  # pad to [str_pad] characters
-        profile[var] = np.array(chk_data[v_padded])
+        profile[var.strip()] = np.array(chk_data[var])
 
     return profile
 
