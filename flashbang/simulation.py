@@ -383,6 +383,9 @@ class Simulation:
         ylims : [2]
         legend : bool
         """
+        # TODO:
+        #   - add Ye line
+        #   - create isotope palette
         fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
         chk_max, chk_min, chk_init = self._get_slider_chk()
 
@@ -517,7 +520,7 @@ class Simulation:
         # TODO: account for different zero points/starting times
         if title:
             dt = self.config['plotting']['scales']['chk_dt']
-            time = dt * chk
+            time = dt * chk - self.bounce_time
             ax.set_title(f't={time:.3f} s')
 
     def _set_ax_lims(self, ax, xlims, ylims):
