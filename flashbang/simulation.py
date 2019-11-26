@@ -387,7 +387,7 @@ class Simulation:
 
     def plot_slider_composition(self, y_var_list=None, x_var='r', y_scale=None, x_scale=None,
                                 trans=True, figsize=(8, 6), title=True, xlims=None,
-                                ylims=(1e-5, 2), legend=True):
+                                ylims=(1e-5, 2), legend=True, show_ye=True):
         """Plot interactive slider of isotope composition
 
         parameters
@@ -403,9 +403,9 @@ class Simulation:
         xlims : [2]
         ylims : [2]
         legend : bool
+        show_ye : bool
         """
         # TODO:
-        #   - add Ye line
         #   - create isotope palette
         fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
         chk_max, chk_min, chk_init = self._get_slider_chk()
@@ -417,7 +417,8 @@ class Simulation:
 
         self.plot_composition(chk_init, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
                               y_var_list=y_var_list, ax=profile_ax, legend=legend,
-                              ylims=ylims, xlims=xlims, trans=trans, title=title)
+                              ylims=ylims, xlims=xlims, trans=trans, title=title,
+                              show_ye=show_ye)
 
         def update(chk):
             idx = int(chk)
@@ -427,13 +428,19 @@ class Simulation:
                 # TODO: nicer way to do this
                 x, y = self._get_trans_xy(chk=idx, x_var=x_var, y=ylims)
                 for i in range(2):
-                    profile_ax.lines[-i-1].set_xdata(x[i])
-                    profile_ax.lines[-i-1].set_ydata(y)
+                    line_idx = -i - 1
+                    profile_ax.lines[line_idx].set_xdata(x[i])
+                    profile_ax.lines[line_idx].set_ydata(y)
 
             for i, key in enumerate(y_var_list):
                 y_profile = profile[key]
                 profile_ax.lines[i].set_xdata(profile[x_var])
                 profile_ax.lines[i].set_ydata(y_profile)
+
+            if show_ye:
+                line_idx = len(y_var_list)
+                profile_ax.lines[line_idx].set_xdata(profile[x_var])
+                profile_ax.lines[line_idx].set_ydata(profile['ye'])
 
             self._set_ax_title(profile_ax, chk=idx, title=title)
             fig.canvas.draw_idle()
