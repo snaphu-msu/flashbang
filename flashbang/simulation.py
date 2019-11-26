@@ -66,12 +66,14 @@ class Simulation:
         self.bounce_time = None
         self.profiles = {}
 
+        self.trans_idxs = None
+        self.trans_low_idxs = None
+        self.trans_r = None
+        self.trans_low_r = None
+        self.n_chk = None
+
         self.update_chk_list()
-        self.n_chk = len(self.chk_list)
-        self.trans_idxs = np.full(self.n_chk, -1)
-        self.trans_low_idxs = np.full(self.n_chk, -1)
-        self.trans_r = np.full(self.n_chk, np.nan)
-        self.trans_low_r = np.full(self.n_chk, np.nan)
+        self._init_arrays()
 
         if load_all:
             self.load_all(reload=reload, save=save)
@@ -89,6 +91,14 @@ class Simulation:
             verbose = self.verbose
         if verbose:
             print(string)
+
+    def _init_arrays(self):
+        """Initialise arrays given the number of chk files
+        """
+        self.trans_idxs = np.full(self.n_chk, -1)
+        self.trans_low_idxs = np.full(self.n_chk, -1)
+        self.trans_r = np.full(self.n_chk, np.nan)
+        self.trans_low_r = np.full(self.n_chk, np.nan)
 
     def load_all(self, reload, save):
         """Load all model data
@@ -123,6 +133,7 @@ class Simulation:
         """
         self.chk_list = load_save.find_chk(path=self.output_path,
                                            match_str=f'{self.run}_hdf5_chk_')
+        self.n_chk = len(self.chk_list)
 
     def load_all_profiles(self, reload=False, save=True):
         """Load profiles for all available checkpoints
