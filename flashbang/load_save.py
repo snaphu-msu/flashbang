@@ -29,34 +29,6 @@ from .strings import printv
 #   - rename dat to dat_table
 
 
-def try_mkdir(path, skip=False, verbose=True):
-    """Try to make given directory
-
-    parameters
-    ----------
-    path: str
-    skip : bool
-        do nothing if directory already exists
-        if skip=false, will ask to overwrite an existing directory
-    verbose : bool
-    """
-    printv(f'Creating directory  {path}', verbose)
-    if os.path.exists(path):
-        if skip:
-            printv('Directory already exists - skipping', verbose)
-        else:
-            print('Directory exists')
-            cont = input('Overwrite (DESTROY)? (y/[n]): ')
-
-            if cont == 'y' or cont == 'Y':
-                subprocess.run(['rm', '-r', path])
-                subprocess.run(['mkdir', path])
-            elif cont == 'n' or cont == 'N':
-                sys.exit()
-    else:
-        subprocess.run(['mkdir', '-p', path], check=True)
-
-
 def load_config(name='default', verbose=True):
     """Load .ini config file and return as dict
 
@@ -463,6 +435,34 @@ def print_dat_colnames(model, run='run', runs_path=None, runs_prefix='run_'):
             count += 1
         else:
             print(word, end=' ')
+
+
+def try_mkdir(path, skip=False, verbose=True):
+    """Try to make given directory
+
+    parameters
+    ----------
+    path: str
+    skip : bool
+        do nothing if directory already exists
+        if skip=false, will ask to overwrite an existing directory
+    verbose : bool
+    """
+    printv(f'Creating directory  {path}', verbose)
+    if os.path.exists(path):
+        if skip:
+            printv('Directory already exists - skipping', verbose)
+        else:
+            print('Directory exists')
+            cont = input('Overwrite (DESTROY)? (y/[n]): ')
+
+            if cont == 'y' or cont == 'Y':
+                subprocess.run(['rm', '-r', path])
+                subprocess.run(['mkdir', path])
+            elif cont == 'n' or cont == 'N':
+                sys.exit()
+    else:
+        subprocess.run(['mkdir', '-p', path], check=True)
 
 
 def ensure_temp_dir_exists(model, runs_path=None, runs_prefix='run_', verbose=True):
