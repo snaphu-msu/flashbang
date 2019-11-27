@@ -77,11 +77,11 @@ def log_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
 def dat_temp_filename(run):
     """Return filename for temporary (cached) dat file
     """
-    return f'{run}_dat.pickle'
+    return f'{run}_dat.feather'
 
 
 def dat_temp_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
-    """Returns filepath to pickled dat file
+    """Returns filepath to reduced dat table
     """
     path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
     filename = dat_temp_filename(run)

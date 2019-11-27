@@ -19,6 +19,9 @@ from . import plot_tools
 #   - generalised axis plotting
 #       - save/show plot
 
+# TODO: chk_table, add columns:
+#   - time
+#   - n_zones
 
 # noinspection PyTypeChecker
 class Simulation:
@@ -66,7 +69,7 @@ class Simulation:
         self.bounce_time = None
         self.profiles = {}
 
-        self.trans = trans
+        self.trans = trans  # TODO: add defaults to config
         self.n_chk = None
 
         self.update_chk_list()

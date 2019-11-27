@@ -13,6 +13,7 @@ General terminology
 """
 import os
 import numpy as np
+import pandas as pd
 import configparser
 import ast
 import subprocess
@@ -23,6 +24,9 @@ import pickle
 # bangpy
 from . import paths
 from .strings import printv
+
+# TODO:
+#   - rename dat to dat_table
 
 
 def try_mkdir(path, skip=False, verbose=True):
@@ -81,9 +85,9 @@ def load_config(name='default', verbose=True):
 
 def get_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
             verbose=True, save=True, reload=False):
-    """Get reduced .dat data, as contained in .dat file
+    """Get reduced set of integrated quantities, as contained in [run].dat file
 
-    Returns : dict of 1D quantities
+    Returns : pandas.DataFrame
 
     parameters
     ----------
@@ -97,25 +101,25 @@ def get_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
     save : bool
     reload : bool
     """
-    dat = {}
+    dat_table = {}
     dat_exists = False
 
     if not reload:
         try:
-            dat = load_dat(model=model, run=run, runs_path=runs_path,
-                           runs_prefix=runs_prefix, verbose=verbose)
+            dat_table = load_dat(model=model, run=run, runs_path=runs_path,
+                                 runs_prefix=runs_prefix, verbose=verbose)
             dat_exists = True
         except FileNotFoundError:
             pass
 
-    if len(dat.keys()) == 0:
-        dat = extract_dat(model, cols_dict=cols_dict, run=run,
-                          runs_path=runs_path, runs_prefix=runs_prefix)
+    if len(dat_table.keys()) == 0:
+        dat_table = extract_dat(model, cols_dict=cols_dict, run=run,
+                                runs_path=runs_path, runs_prefix=runs_prefix)
 
     if save and not dat_exists:
-        save_dat(dat, model=model, run=run, runs_path=runs_path,
+        save_dat(dat_table, model=model, run=run, runs_path=runs_path,
                  runs_prefix=runs_prefix, verbose=verbose)
-    return dat
+    return dat_table
 
 
 def extract_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
@@ -142,15 +146,17 @@ def extract_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
     keys = []
 
     for key, idx_1 in cols_dict.items():
-        idxs += [idx_1 - 1]
+        idxs += [idx_1 - 1]  # change to zero-indexed
         keys += [key]
 
+    # TODO: load directly with pandas
     dat_raw = np.loadtxt(filepath, usecols=idxs)
-    dat = {}
-    for i, key in enumerate(keys):
-        dat[key] = dat_raw[:, i]
+    dat_table = pd.DataFrame()
 
-    return dat
+    for i, key in enumerate(keys):
+        dat_table[key] = dat_raw[:, i]
+
+    return dat_table
 
 
 def save_dat(dat, model, run='run', runs_path=None, runs_prefix='run_', verbose=True):
@@ -158,8 +164,8 @@ def save_dat(dat, model, run='run', runs_path=None, runs_prefix='run_', verbose=
 
     parameters
     ----------
-    dat : {}
-        dictionary of arrays, as extracted by load_dat
+    dat : pd.DataFrame
+        table as extracted by load_dat
     run : str
     model : str
     runs_path : str (optional)
@@ -172,7 +178,7 @@ def save_dat(dat, model, run='run', runs_path=None, runs_prefix='run_', verbose=
                                        runs_prefix=runs_prefix)
 
     printv(f'Saving: {filepath}', verbose)
-    pickle.dump(dat, open(filepath, 'wb'))
+    dat.to_feather(filepath)
 
 
 def load_dat(model, run='run', runs_path=None, runs_prefix='run_', verbose=True):
@@ -189,7 +195,10 @@ def load_dat(model, run='run', runs_path=None, runs_prefix='run_', verbose=True)
     filepath = paths.dat_temp_filepath(model=model, run=run, runs_path=runs_path,
                                        runs_prefix=runs_prefix)
     printv(f'Loading: {filepath}', verbose)
-    return pickle.load(open(filepath, 'rb'))
+    if os.path.exists(filepath):
+        return pd.read_feather(filepath)
+    else:
+        raise FileNotFoundError
 
 
 def get_profile(chk, model, run='run', output_dir='output',
