@@ -11,6 +11,8 @@ from flashbang import simulation, load_save
 
 # TODO:
 #   - check for existing tempfiles, only load missing
+
+
 def main(model, run, multithread=True, reload=False, save=True,
          config='default'):
     sim = simulation.Simulation(run=run, model=model, config=config, load_all=False)
@@ -19,13 +21,13 @@ def main(model, run, multithread=True, reload=False, save=True,
 
     if multithread:
         args = []
-        for chk in sim.chk_list:
+        for chk in sim.chk_table.index:
             args.append((chk, model, run, reload, save, params))
 
         with mp.Pool(processes=4) as pool:
             pool.starmap(extract_profiles, args)
     else:
-        for chk in sim.chk_list:
+        for chk in sim.chk_table.index:
             extract_profiles(chk, model=model, run=run, reload=reload,
                              save=save, params=params)
 
