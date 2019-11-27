@@ -131,7 +131,7 @@ def save_dat(dat, model, run='run', runs_path=None, runs_prefix='run_', verbose=
     parameters
     ----------
     dat : pd.DataFrame
-        table as extracted by load_dat
+        table as returned by extract_dat()
     run : str
     model : str
     runs_path : str (optional)
@@ -220,7 +220,7 @@ def extract_profile(chk, model, run='run', output_dir='output',
                     params=('temp', 'dens', 'pres')):
     """Extract and reduce profile data from chk file
 
-    Returns : dictionary of 1D arrays
+    Returns : pd.DataFrame
 
     parameters
     ----------
@@ -234,10 +234,10 @@ def extract_profile(chk, model, run='run', output_dir='output',
     params : [] (optional)
         profile parameters to extract and return from chk file
     """
-    profile = {}
-    chk = load_chk(chk=chk, model=model, run=run, output_dir=output_dir,
-                   runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
-    chk_data = chk.all_data()
+    profile = pd.DataFrame()
+    chk_raw = load_chk(chk=chk, model=model, run=run, output_dir=output_dir,
+                       runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
+    chk_data = chk_raw.all_data()
 
     for var in params:
         profile[var.strip()] = np.array(chk_data[var])
@@ -251,7 +251,8 @@ def save_profile(profile, chk, model, run='run', runs_path=None,
 
     parameters
     ----------
-    profile : dict
+    profile : pd.DataFrame
+            table as returned by extract_profile()
     chk : int
     model : str
     run : str
@@ -265,7 +266,7 @@ def save_profile(profile, chk, model, run='run', runs_path=None,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
 
     printv(f'Saving: {filepath}', verbose)
-    pickle.dump(profile, open(filepath, 'wb'))
+    profile.to_feather(filepath)
 
 
 def load_profile(chk, model, run='run', runs_path=None,
@@ -284,7 +285,11 @@ def load_profile(chk, model, run='run', runs_path=None,
     filepath = paths.profile_filepath(chk=chk, model=model, run=run,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
     printv(f'Loading: {filepath}', verbose)
-    return pickle.load(open(filepath, 'rb'))
+
+    if os.path.exists(filepath):
+        return pd.read_feather(filepath)
+    else:
+        raise FileNotFoundError
 
 
 def load_chk(chk, model, run='run', output_dir='output',
