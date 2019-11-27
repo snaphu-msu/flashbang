@@ -13,7 +13,6 @@ from . import plot_tools
 
 # TODO:
 #   - Pandas dataframes:
-#       - chk scalars (trans_idx, trans_dens): 1 row for each chk
 #       - chk profiles: 1 table for each chk
 #       - dat table: 1 table
 #   - use rcparams for default values of run, etc.
@@ -26,7 +25,7 @@ class Simulation:
     def __init__(self, model, run='run', runs_path=None, config='default',
                  output_dir='output', verbose=True,
                  load_all=True, reload=False, save=True,
-                 trans_dens=6e7, trans_low=1e7, runs_prefix='run_'):
+                 runs_prefix='run_', trans=None):
         """Object representing a 1D flash simulation
 
         parameters
@@ -49,11 +48,9 @@ class Simulation:
             force reload model data from raw files (don't load from temp/)
         save : bool
             save extracted model data to temporary files (for faster loading)
-        trans_dens : float
-            helmholtz transition density (hybridEOS only)
-        trans_low : float
-            helmholtz low transition density (hybridEOS only)
         verbose : bool
+        trans : {}
+            transition densities to track (g/cm^3), e.g. {'': 6e7, 'low': 1e7}
         """
         self.verbose = verbose
         self.runs_path = runs_path
@@ -62,8 +59,6 @@ class Simulation:
 
         self.model = model
         self.run = run
-        self.trans_dens = trans_dens
-        self.trans_low = trans_low
 
         self.config = load_save.load_config(name=config, verbose=self.verbose)
         self.chk_table = pd.DataFrame()
@@ -71,14 +66,10 @@ class Simulation:
         self.bounce_time = None
         self.profiles = {}
 
-        self.trans_idxs = None
-        self.trans_low_idxs = None
-        self.trans_r = None
-        self.trans_low_r = None
+        self.trans = trans
         self.n_chk = None
 
         self.update_chk_list()
-        self._init_arrays()
 
         if load_all:
             self.load_all(reload=reload, save=save)
@@ -97,14 +88,6 @@ class Simulation:
         if verbose:
             print(string)
 
-    def _init_arrays(self):
-        """Initialise arrays given the number of chk files
-        """
-        self.trans_idxs = np.full(self.n_chk, -1)
-        self.trans_low_idxs = np.full(self.n_chk, -1)
-        self.trans_r = np.full(self.n_chk, np.nan)
-        self.trans_low_r = np.full(self.n_chk, np.nan)
-
     def load_all(self, reload, save):
         """Load all model data
         """
@@ -112,7 +95,6 @@ class Simulation:
         self.load_dat(reload=reload, save=save)
         self.load_all_profiles(reload=reload, save=save)
         self.find_trans_idxs()
-        self.get_trans_r()
 
     def get_bounce_time(self):
         """Get bounce time (s) from log file
@@ -138,6 +120,7 @@ class Simulation:
         """
         self.chk_table['chk'] = load_save.find_chk(path=self.output_path,
                                                    match_str=f'{self.run}_hdf5_chk_')
+        self.chk_table.set_index('chk', inplace=True)
         self.n_chk = len(self.chk_table)
 
     def load_all_profiles(self, reload=False, save=True):
@@ -153,8 +136,9 @@ class Simulation:
         verbose_setting = self.verbose  # verbosity hack
         self.verbose = False
 
-        chk_max = self.chk_table['chk'].iloc[-1]
-        for chk in self.chk_table['chk']:
+        chk_max = self.chk_table.index[-1]
+
+        for chk in self.chk_table.index:
             if verbose_setting:
                 sys.stdout.write(f'\rchk: {chk}/{chk_max}')
             self.load_profile(chk, reload=reload, save=save)
@@ -185,32 +169,20 @@ class Simulation:
         """Find idxs for zones closest to the helmholtz transition densities
         for each chk profile
         """
-        self.printv('Finding helmholtz transition zones')
+        self.printv('Finding transition zones')
 
-        for i, chk in enumerate(self.chk_table['chk']):
-            profile = self.profiles[chk]
-            dens_reverse = np.flip(profile['dens'])  # need monotonically-increasing
+        for key, trans_dens in self.trans.items():
+            idx_list = np.zeros(self.n_chk, dtype=int)
 
-            for j, trans in enumerate([self.trans_dens, self.trans_low]):
-                idx_list = [self.trans_idxs, self.trans_low_idxs][j]
-                trans_idx = tools.find_nearest_idx(dens_reverse, trans)
-
+            for i, chk in enumerate(self.chk_table.index):
+                profile = self.profiles[chk]
+                dens_reverse = np.flip(profile['dens'])  # need monotonically-increasing
                 max_idx = len(dens_reverse) - 1
+
+                trans_idx = tools.find_nearest_idx(dens_reverse, trans_dens)
                 idx_list[i] = max_idx - trans_idx  # flip back
 
-    def get_trans_r(self):
-        """Get radii at transition zones
-        """
-        if np.any(self.trans_idxs < 0) or np.any(self.trans_low_idxs < 0):
-            self.find_trans_idxs()
-
-        self.printv('Getting transition zone radii')
-
-        for i, trans_idx in enumerate(self.trans_idxs):
-            chk = self.chk_table['chk'][i]
-            profile = self.profiles[chk]
-            self.trans_r[i] = profile['r'][trans_idx]
-            self.trans_low_r[i] = profile['r'][self.trans_low_idxs[i]]
+            self.chk_table[f'{key}_i'] = idx_list
 
     def plot_profiles(self, chk, y_var_list, x_var='r', y_scale=None, x_scale=None,
                       max_cols=2, sub_figsize=(6, 5), trans=True, legend=False):
@@ -380,10 +352,9 @@ class Simulation:
             self._set_ax_title(profile_ax, chk=idx, title=title)
 
             if trans:
-                # TODO: nicer way to do this
-                x, y = self._get_trans_xy(chk=idx, x_var=x_var, y=y_profile)
-                for i in range(2):
-                    profile_ax.lines[i+1].set_xdata(x[i])
+                for i, key in enumerate(self.trans):
+                    x, y = self._get_trans_xy(chk=idx, key=key, x_var=x_var, y=y_profile)
+                    profile_ax.lines[i+1].set_xdata(x)
                     profile_ax.lines[i+1].set_ydata(y)
 
             fig.canvas.draw_idle()
@@ -432,10 +403,10 @@ class Simulation:
 
             if trans:
                 # TODO: nicer way to do this
-                x, y = self._get_trans_xy(chk=idx, x_var=x_var, y=ylims)
-                for i in range(2):
+                for i, key in enumerate(self.trans):
+                    x, y = self._get_trans_xy(chk=idx, key=key, x_var=x_var, y=ylims)
                     line_idx = -i - 1
-                    profile_ax.lines[line_idx].set_xdata(x[i])
+                    profile_ax.lines[line_idx].set_xdata(x)
                     profile_ax.lines[line_idx].set_ydata(y)
 
             for i, key in enumerate(y_var_list):
@@ -479,7 +450,7 @@ class Simulation:
         """
         return self.config['plotting']['labels'].get(key, key)
 
-    def _get_trans_xy(self, chk, x_var, y):
+    def _get_trans_xy(self, chk, key, x_var, y):
         """Return x, y points of transition line, for given x-axis variable
 
         parameters
@@ -489,19 +460,18 @@ class Simulation:
         y : []
             1D array of y-values
         """
-        idx = np.where(self.chk_table['chk'] == chk)[0][0]
+        # TODO: rename get_trans_x()
         y_max = np.max(y)
         y_min = np.min(y)
 
         # y_min = -2e18  # TODO: automagic this
         # y_max = 2e18
 
-        x_map = {
-                 'dens': [self.trans_dens, self.trans_low],
-                 'r': [self.trans_r[idx], self.trans_low_r[idx]],
-                 }.get(x_var)
+        profile = self.profiles[chk]
+        trans_idx = self.chk_table.loc[chk, f'{key}_i']
+        x = profile[x_var][trans_idx]
 
-        x = [[x_map[0], x_map[0]], [x_map[1], x_map[1]]]
+        x = [x, x]
         y = [y_min, y_max]
         return x, y
 
@@ -518,9 +488,9 @@ class Simulation:
         trans : bool
         """
         if trans:
-            x, y = self._get_trans_xy(chk=chk, x_var=x_var, y=y)
-            for i in range(2):
-                ax.plot(x[i], y, ls='--', color='k', linewidth=linewidth)
+            for key in self.trans:
+                x, y = self._get_trans_xy(chk=chk, key=key, x_var=x_var, y=y)
+                ax.plot(x, y, ls='--', color='k', linewidth=linewidth)
 
     def _set_ax_scales(self, ax, y_var, x_var, y_scale, x_scale):
         """Set axis scales (linear, log)
@@ -607,7 +577,7 @@ class Simulation:
     def _get_slider_chk(self):
         """Return chk_max, chk_min, chk_init
         """
-        chk_max = self.chk_table['chk'].iloc[-1]
-        chk_min = self.chk_table['chk'].iloc[0]
+        chk_max = self.chk_table.index[-1]
+        chk_min = self.chk_table.index[0]
         chk_init = chk_max
         return chk_max, chk_min, chk_init
