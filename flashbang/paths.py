@@ -106,14 +106,14 @@ def chk_filepath(chk, model, run='run', output_dir='output',
 
 
 def profile_filename(chk, run):
-    """Returns filename for pickled profile
+    """Returns filename for pre-extracted profile
     """
-    return f'{run}_profile_{chk:04d}.pickle'
+    return f'{run}_profile_{chk:04d}feather'
 
 
 def profile_filepath(chk, model, run='run', runs_path=None,
                      runs_prefix='run_'):
-    """Returns filepath to pickled profile
+    """Returns filepath to pre-extracted profile
     """
     path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
     filename = profile_filename(chk, run)
