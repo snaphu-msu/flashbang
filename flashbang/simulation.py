@@ -1,6 +1,7 @@
 import os
 import sys
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 
@@ -11,8 +12,11 @@ from . import tools
 from . import plot_tools
 
 # TODO:
+#   - Pandas dataframes:
+#       - chk scalars (trans_idx, trans_dens): 1 row for each chk
+#       - chk profiles: 1 table for each chk
+#       - dat table: 1 table
 #   - use rcparams for default values of run, etc.
-#   - handle trans densities/idxs with a pandas dataframe
 #   - generalised axis plotting
 #       - save/show plot
 
@@ -62,8 +66,8 @@ class Simulation:
         self.trans_low = trans_low
 
         self.config = load_save.load_config(name=config, verbose=self.verbose)
+        self.chk_table = pd.DataFrame()
         self.dat = None
-        self.chk_list = None
         self.bounce_time = None
         self.profiles = {}
 
@@ -132,9 +136,9 @@ class Simulation:
     def update_chk_list(self):
         """Update the list of checkpoint files available
         """
-        self.chk_list = load_save.find_chk(path=self.output_path,
-                                           match_str=f'{self.run}_hdf5_chk_')
-        self.n_chk = len(self.chk_list)
+        self.chk_table['chk'] = load_save.find_chk(path=self.output_path,
+                                                   match_str=f'{self.run}_hdf5_chk_')
+        self.n_chk = len(self.chk_table)
 
     def load_all_profiles(self, reload=False, save=True):
         """Load profiles for all available checkpoints
@@ -149,9 +153,10 @@ class Simulation:
         verbose_setting = self.verbose  # verbosity hack
         self.verbose = False
 
-        for chk in self.chk_list:
+        chk_max = self.chk_table['chk'].iloc[-1]
+        for chk in self.chk_table['chk']:
             if verbose_setting:
-                sys.stdout.write(f'\rchk: {chk}/{self.chk_list[-1]}')
+                sys.stdout.write(f'\rchk: {chk}/{chk_max}')
             self.load_profile(chk, reload=reload, save=save)
 
         if verbose_setting:
@@ -182,7 +187,7 @@ class Simulation:
         """
         self.printv('Finding helmholtz transition zones')
 
-        for i, chk in enumerate(self.chk_list):
+        for i, chk in enumerate(self.chk_table['chk']):
             profile = self.profiles[chk]
             dens_reverse = np.flip(profile['dens'])  # need monotonically-increasing
 
@@ -202,7 +207,7 @@ class Simulation:
         self.printv('Getting transition zone radii')
 
         for i, trans_idx in enumerate(self.trans_idxs):
-            chk = self.chk_list[i]
+            chk = self.chk_table['chk'][i]
             profile = self.profiles[chk]
             self.trans_r[i] = profile['r'][trans_idx]
             self.trans_low_r[i] = profile['r'][self.trans_low_idxs[i]]
@@ -484,7 +489,7 @@ class Simulation:
         y : []
             1D array of y-values
         """
-        idx = np.where(self.chk_list == chk)[0][0]
+        idx = np.where(self.chk_table['chk'] == chk)[0][0]
         y_max = np.max(y)
         y_min = np.min(y)
 
@@ -602,7 +607,7 @@ class Simulation:
     def _get_slider_chk(self):
         """Return chk_max, chk_min, chk_init
         """
-        chk_max = self.chk_list[-1]
-        chk_min = self.chk_list[0]
+        chk_max = self.chk_table['chk'].iloc[-1]
+        chk_min = self.chk_table['chk'].iloc[0]
         chk_init = chk_max
         return chk_max, chk_min, chk_init
