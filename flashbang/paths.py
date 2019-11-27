@@ -108,7 +108,7 @@ def chk_filepath(chk, model, run='run', output_dir='output',
 def profile_filename(chk, run):
     """Returns filename for pre-extracted profile
     """
-    return f'{run}_profile_{chk:04d}feather'
+    return f'{run}_profile_{chk:04d}.feather'
 
 
 def profile_filepath(chk, model, run='run', runs_path=None,
