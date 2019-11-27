@@ -19,7 +19,6 @@ import ast
 import subprocess
 import sys
 import yt
-import pickle
 
 # bangpy
 from . import paths
@@ -188,9 +187,9 @@ def get_profile(chk, model, run='run', output_dir='output',
     params : [] (optional)
         profile parameters to extract and return from chk file
     reload : bool (optional)
-        force reload from chk file, else try to load pickled profile
+        force reload from chk file, else try to load pre-extracted profile
     save : bool
-        pickle profile to file for faster loading next time
+        save extracted profile to file for faster loading
     verbose : bool (optional)
     """
     profile = {}
