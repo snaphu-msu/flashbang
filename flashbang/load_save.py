@@ -72,7 +72,7 @@ def get_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
     save : bool
     reload : bool
     """
-    dat_table = {}
+    dat_table = None
     dat_exists = False
 
     if not reload:
@@ -83,13 +83,13 @@ def get_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
         except FileNotFoundError:
             pass
 
-    if len(dat_table.keys()) == 0:
+    if not dat_exists:
         dat_table = extract_dat(model, cols_dict=cols_dict, run=run,
                                 runs_path=runs_path, runs_prefix=runs_prefix)
+        if save:
+            save_dat(dat_table, model=model, run=run, runs_path=runs_path,
+                     runs_prefix=runs_prefix, verbose=verbose)
 
-    if save and not dat_exists:
-        save_dat(dat_table, model=model, run=run, runs_path=runs_path,
-                 runs_prefix=runs_prefix, verbose=verbose)
     return dat_table
 
 
@@ -203,6 +203,7 @@ def get_profile(chk, model, run='run', output_dir='output',
         except FileNotFoundError:
             pass
 
+    # TODO: rework for DataFrame
     if len(profile.keys()) == 0:
         profile = extract_profile(chk, model=model, run=run, output_dir=output_dir,
                                   runs_path=runs_path, runs_prefix=runs_prefix,
