@@ -114,21 +114,15 @@ def extract_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
                                   runs_prefix=runs_prefix)
 
     printv(f'Loading dat file: {filepath}', verbose=verbose)
+
     idxs = []
     keys = []
-
     for key, idx_1 in cols_dict.items():
         idxs += [idx_1 - 1]  # change to zero-indexed
         keys += [key]
 
-    # TODO: load directly with pandas
-    dat_raw = np.loadtxt(filepath, usecols=idxs)
-    dat_table = pd.DataFrame()
-
-    for i, key in enumerate(keys):
-        dat_table[key] = dat_raw[:, i]
-
-    return dat_table
+    return pd.read_csv(filepath, usecols=idxs, names=keys, skiprows=1, header=None,
+                       delim_whitespace=True)
 
 
 def save_dat(dat, model, run='run', runs_path=None, runs_prefix='run_', verbose=True):
