@@ -470,13 +470,17 @@ class Simulation:
         # y_min = -2e18  # TODO: automagic this
         # y_max = 2e18
 
-        profile = self.profiles[chk]
-        trans_idx = self.chk_table.loc[chk, f'{key}_i']
-        x = profile[x_var][trans_idx]
-
+        x = self._get_trans_x(chk=chk, key=key, x_var=x_var)
         x = [x, x]
         y = [y_min, y_max]
         return x, y
+
+    def _get_trans_x(self, chk, key, x_var):
+        """Return x value corresponding to given transition
+        """
+        profile = self.profiles[chk]
+        trans_idx = self.chk_table.loc[chk, f'{key}_i']
+        return profile[x_var][trans_idx]
 
     def _plot_trans_line(self, x_var, y, ax, chk, trans, linewidth=1):
         """Add transition line to axis
