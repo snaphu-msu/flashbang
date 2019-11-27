@@ -112,7 +112,7 @@ def extract_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
     filepath = paths.dat_filepath(model=model, run=run, runs_path=runs_path,
                                   runs_prefix=runs_prefix)
 
-    printv(f'Loading dat file: {filepath}', verbose=verbose)
+    printv(f'Loading dat: {filepath}', verbose=verbose)
 
     idxs = []
     keys = []
@@ -142,7 +142,7 @@ def save_dat(dat, model, run='run', runs_path=None, runs_prefix='run_', verbose=
     filepath = paths.dat_temp_filepath(model=model, run=run, runs_path=runs_path,
                                        runs_prefix=runs_prefix)
 
-    printv(f'Saving: {filepath}', verbose)
+    printv(f'Saving dat: {filepath}', verbose)
     dat.to_feather(filepath)
 
 
@@ -159,7 +159,7 @@ def load_dat(model, run='run', runs_path=None, runs_prefix='run_', verbose=True)
     """
     filepath = paths.dat_temp_filepath(model=model, run=run, runs_path=runs_path,
                                        runs_prefix=runs_prefix)
-    printv(f'Loading: {filepath}', verbose)
+    printv(f'Loading dat: {filepath}', verbose)
     if os.path.exists(filepath):
         return pd.read_feather(filepath)
     else:
@@ -264,7 +264,7 @@ def save_profile(profile, chk, model, run='run', runs_path=None,
     filepath = paths.profile_filepath(chk=chk, model=model, run=run,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
 
-    printv(f'Saving: {filepath}', verbose)
+    printv(f'Saving profile: {filepath}', verbose)
     profile.to_feather(filepath)
 
 
@@ -283,7 +283,7 @@ def load_profile(chk, model, run='run', runs_path=None,
     """
     filepath = paths.profile_filepath(chk=chk, model=model, run=run,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
-    printv(f'Loading: {filepath}', verbose)
+    printv(f'Loading profile: {filepath}', verbose)
 
     if os.path.exists(filepath):
         return pd.read_feather(filepath)
