@@ -29,7 +29,7 @@ def get_mass_interior(radius, density):
 
     return mass
 
-    
+
 def get_mass_between(radius, density):
     """Return mass contained between each point of given radius/density profile,
     using trapezoidal rule
