@@ -245,13 +245,13 @@ def extract_profile(chk, model, run='run', output_dir='output',
         profile[var.strip()] = np.array(chk_data[var])
 
     if 'mass' in derived_params:
-        get_mass_profile(profile)
+        add_mass_profile(profile)
 
     return profile
 
 
-def get_mass_profile(profile):
-    """Calculate interior/enclosed mass for given profile
+def add_mass_profile(profile):
+    """Calculate interior/enclosed mass profile, and adds to given table
 
     parameters
     ----------
