@@ -21,6 +21,7 @@ from . import plot_tools
 #   - n_step
 #   - n_zones
 
+
 # noinspection PyTypeChecker
 class Simulation:
     def __init__(self, model, run='run', runs_path=None, config='default',
@@ -164,6 +165,7 @@ class Simulation:
         self.profiles[chk] = load_save.get_profile(
                                 chk, model=self.model, run=self.run,
                                 o_path=self.output_path, params=params,
+                                derived_params=config['derived_params'],
                                 reload=reload, save=save, verbose=self.verbose)
 
     def find_trans_idxs(self):
