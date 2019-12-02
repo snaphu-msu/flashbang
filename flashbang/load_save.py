@@ -290,7 +290,7 @@ def load_profile_cache(chk, model, run='run', runs_path=None,
 
 def load_chk(chk, model, run='run', output_dir='output',
              runs_path=None, runs_prefix='run_', o_path=None):
-    """Load checkpoint file for given model
+    """Load raw checkpoint file for given model
 
     parameters
     ----------
