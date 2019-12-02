@@ -24,9 +24,6 @@ import yt
 from . import paths
 from .strings import printv
 
-# TODO:
-#   - rename dat to dat_table
-
 
 def load_config(name='default', verbose=True):
     """Load .ini config file and return as dict
@@ -65,20 +62,20 @@ def get_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
     model : str
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
-    run: str
-    runs_path : str
-    runs_prefix : str
-    verbose : bool
-    save : bool
-    reload : bool
+    run: str (optional)
+    runs_path : str (optional)
+    runs_prefix : str (optional)
+    verbose : bool (optional)
+    save : bool (optional)
+    reload : bool (optional)
     """
     dat_table = None
 
     # attempt to load temp file
     if not reload:
         try:
-            dat_table = load_dat(model=model, run=run, runs_path=runs_path,
-                                 runs_prefix=runs_prefix, verbose=verbose)
+            dat_table = load_dat_cache(model=model, run=run, runs_path=runs_path,
+                                       runs_prefix=runs_prefix, verbose=verbose)
         except FileNotFoundError:
             pass
 
@@ -87,8 +84,8 @@ def get_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
         dat_table = extract_dat(model, cols_dict=cols_dict, run=run,
                                 runs_path=runs_path, runs_prefix=runs_prefix)
         if save:
-            save_dat(dat_table, model=model, run=run, runs_path=runs_path,
-                     runs_prefix=runs_prefix, verbose=verbose)
+            save_dat_cache(dat_table, model=model, run=run, runs_path=runs_path,
+                           runs_prefix=runs_prefix, verbose=verbose)
 
     return dat_table
 
@@ -104,10 +101,10 @@ def extract_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
     model : str
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
-    run: str
-    runs_path : str
-    runs_prefix : str
-    verbose : bool
+    run: str (optional)
+    runs_path : str (optional)
+    runs_prefix : str (optional)
+    verbose : bool (optional)
     """
     filepath = paths.dat_filepath(model=model, run=run, runs_path=runs_path,
                                   runs_prefix=runs_prefix)
@@ -124,15 +121,15 @@ def extract_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
                        delim_whitespace=True)
 
 
-def save_dat(dat, model, run='run', runs_path=None, runs_prefix='run_', verbose=True):
-    """Save extracted .dat properties to file, for faster loading
+def save_dat_cache(dat, model, run='run', runs_path=None, runs_prefix='run_', verbose=True):
+    """Save pre-extracted .dat quantities, for faster loading
 
     parameters
     ----------
     dat : pd.DataFrame
         table as returned by extract_dat()
-    run : str
     model : str
+    run : str (optional)
     runs_path : str (optional)
     runs_prefix : str (optional)
     verbose : bool (optional)
@@ -146,13 +143,13 @@ def save_dat(dat, model, run='run', runs_path=None, runs_prefix='run_', verbose=
     dat.to_feather(filepath)
 
 
-def load_dat(model, run='run', runs_path=None, runs_prefix='run_', verbose=True):
-    """Load profile from pre-extracted file (see: save_profile)
+def load_dat_cache(model, run='run', runs_path=None, runs_prefix='run_', verbose=True):
+    """Load pre-extracted .dat quantities (see: save_dat_cache)
 
     parameters
     ----------
     model : str
-    run : str
+    run : str (optional)
     runs_path : str (optional)
     runs_prefix : str (optional)
     verbose : bool (optional)
@@ -179,7 +176,7 @@ def get_profile(chk, model, run='run', output_dir='output',
     ----------
     chk : int
     model : str
-    run : str
+    run : str (optional)
     output_dir : str (optional)
     runs_path : str (optional)
     runs_prefix : str (optional)
@@ -225,7 +222,7 @@ def extract_profile(chk, model, run='run', output_dir='output',
     ----------
     chk : int
     model : str
-    run : str
+    run : str (optional)
     output_dir : str (optional)
     runs_path : str (optional)
     runs_prefix : str (optional)
@@ -254,7 +251,7 @@ def save_profile(profile, chk, model, run='run', runs_path=None,
             table as returned by extract_profile()
     chk : int
     model : str
-    run : str
+    run : str (optional)
     runs_path : str (optional)
     runs_prefix : str (optional)
     verbose : bool (optional)
@@ -276,7 +273,7 @@ def load_profile(chk, model, run='run', runs_path=None,
     ----------
     chk : int
     model : str
-    run : str
+    run : str (optional)
     runs_path : str (optional)
     runs_prefix : str (optional)
     verbose : bool (optional)
@@ -301,7 +298,7 @@ def load_chk(chk, model, run='run', output_dir='output',
     ----------
     chk : int
     model : str
-    run : str
+    run : str (optional)
     output_dir : str (optional)
     runs_path : str (optional)
     runs_prefix : str (optional)
@@ -443,10 +440,10 @@ def try_mkdir(path, skip=False, verbose=True):
     parameters
     ----------
     path: str
-    skip : bool
+    skip : bool (optional)
         do nothing if directory already exists
         if skip=false, will ask to overwrite an existing directory
-    verbose : bool
+    verbose : bool (optional)
     """
     printv(f'Creating directory  {path}', verbose)
     if os.path.exists(path):
