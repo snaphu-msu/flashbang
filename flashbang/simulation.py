@@ -13,7 +13,7 @@ from . import tools
 from . import plot_tools
 
 # TODO:
-#   - use rcparams for default values of run, etc.
+#   - create an rcparams for default values of run, etc.
 #   - generalised axis plotting
 #       - save/show plot
 
