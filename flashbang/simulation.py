@@ -70,9 +70,11 @@ class Simulation:
         self.bounce_time = None
         self.profiles = {}
 
-        self.trans = trans  # TODO: add defaults to config
-        self.n_chk = None
+        if trans is None:
+            trans = self.config['transitions']['dens']
+        self.trans = trans
 
+        self.n_chk = None
         self.update_chk_list()
 
         if load_all:
@@ -101,7 +103,9 @@ class Simulation:
         self.get_bounce_time()
         self.load_dat(reload=reload, save=save)
         self.load_all_profiles(reload=reload, save=save)
-        self.find_trans_idxs()
+
+        if self.trans is not None:
+            self.find_trans_idxs()
 
     def get_bounce_time(self):
         """Get bounce time (s) from log file
