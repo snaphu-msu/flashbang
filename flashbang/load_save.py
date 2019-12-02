@@ -23,6 +23,7 @@ import yt
 # bangpy
 from . import paths
 from .strings import printv
+from . import quantities
 
 
 def load_config(name='default', verbose=True):
@@ -213,7 +214,8 @@ def get_profile(chk, model, run='run', output_dir='output',
 
 def extract_profile(chk, model, run='run', output_dir='output',
                     runs_path=None, runs_prefix='run_', o_path=None,
-                    params=('r', 'temp', 'dens', 'pres')):
+                    params=('r', 'temp', 'dens', 'pres'),
+                    derived_params=('mass',)):
     """Extract and reduce profile data from chk file
 
     Returns : pd.DataFrame
@@ -229,6 +231,8 @@ def extract_profile(chk, model, run='run', output_dir='output',
     o_path : str (optional)
     params : [] (optional)
         profile parameters to extract and return from chk file
+    derived_params : [] (optional)
+        secondary profile parameters, derived from primary parameters
     """
     profile = pd.DataFrame()
     chk_raw = load_chk(chk=chk, model=model, run=run, output_dir=output_dir,
@@ -238,7 +242,25 @@ def extract_profile(chk, model, run='run', output_dir='output',
     for var in params:
         profile[var.strip()] = np.array(chk_data[var])
 
+    if 'mass' in derived_params:
+        get_mass_profile(profile)
+
     return profile
+
+
+def get_mass_profile(profile):
+    """Calculate interior/enclosed mass for given profile
+
+    parameters
+    ----------
+    profile : pd.DataFrame
+        table as returned by extract_profile()
+    """
+    if ('r' not in profile.columns) or ('dens' not in profile.columns):
+        raise ValueError(f'Need radius and density columns (r, dens) to calculate mass')
+
+    profile['mass'] = quantities.get_mass_interior(radius=np.array(profile['r']),
+                                                   density=np.array(profile['dens']))
 
 
 def save_profile_cache(profile, chk, model, run='run', runs_path=None,
