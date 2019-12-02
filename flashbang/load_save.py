@@ -213,7 +213,7 @@ def get_profile(chk, model, run='run', output_dir='output',
 
 def extract_profile(chk, model, run='run', output_dir='output',
                     runs_path=None, runs_prefix='run_', o_path=None,
-                    params=('temp', 'dens', 'pres')):
+                    params=('r', 'temp', 'dens', 'pres')):
     """Extract and reduce profile data from chk file
 
     Returns : pd.DataFrame
