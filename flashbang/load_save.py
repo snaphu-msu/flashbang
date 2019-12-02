@@ -192,7 +192,7 @@ def get_profile(chk, model, run='run', output_dir='output',
         save extracted profile to file for faster loading
     verbose : bool (optional)
     """
-    profile = {}
+    profile = None
     profile_exists = False
 
     if not reload:
@@ -203,8 +203,7 @@ def get_profile(chk, model, run='run', output_dir='output',
         except FileNotFoundError:
             pass
 
-    # TODO: rework for DataFrame
-    if len(profile.keys()) == 0:
+    if profile is None:
         profile = extract_profile(chk, model=model, run=run, output_dir=output_dir,
                                   runs_path=runs_path, runs_prefix=runs_prefix,
                                   o_path=o_path, params=params)
@@ -282,6 +281,8 @@ def load_profile(chk, model, run='run', runs_path=None,
     runs_prefix : str (optional)
     verbose : bool (optional)
     """
+    # TODO: rename to e.g. load_temp_profile()
+    #           - general term for saved files?
     filepath = paths.profile_filepath(chk=chk, model=model, run=run,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
     printv(f'Loading profile: {filepath}', verbose)
