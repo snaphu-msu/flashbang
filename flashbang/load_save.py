@@ -166,8 +166,8 @@ def load_dat_cache(model, run='run', runs_path=None, runs_prefix='run_', verbose
 
 def get_profile(chk, model, run='run', output_dir='output',
                 runs_path=None, runs_prefix='run_', o_path=None,
-                params=('temp', 'dens', 'pres'), reload=False,
-                save=True, verbose=True):
+                params=('temp', 'dens', 'pres'), derived_params=('mass',),
+                reload=False, save=True, verbose=True):
     """Get reduced radial profile, as contained in checkpoint file
     Loads pre-extracted profile if available, otherwise from raw file
 
@@ -184,6 +184,8 @@ def get_profile(chk, model, run='run', output_dir='output',
     o_path : str (optional)
     params : [] (optional)
         profile parameters to extract and return from chk file
+    derived_params : [] (optional)
+        secondary profile parameters, derived from primary parameters
     reload : bool (optional)
         force reload from chk file, else try to load pre-extracted profile
     save : bool
@@ -204,7 +206,7 @@ def get_profile(chk, model, run='run', output_dir='output',
     if profile is None:
         profile = extract_profile(chk, model=model, run=run, output_dir=output_dir,
                                   runs_path=runs_path, runs_prefix=runs_prefix,
-                                  o_path=o_path, params=params)
+                                  o_path=o_path, params=params, derived_params=derived_params)
         if save:
             save_profile_cache(profile, chk=chk, model=model, run=run, runs_path=runs_path,
                                runs_prefix=runs_prefix, verbose=verbose)
