@@ -193,22 +193,25 @@ def get_profile(chk, model, run='run', output_dir='output',
     verbose : bool (optional)
     """
     profile = None
-    profile_exists = False
+    temp_exists = False
 
+    # attempt to load temp file
     if not reload:
         try:
             profile = load_profile(chk, model=model, run=run, runs_path=runs_path,
                                    runs_prefix=runs_prefix, verbose=verbose)
-            profile_exists = True
+            temp_exists = True
         except FileNotFoundError:
             pass
 
+    # fall back on loading raw chk
     if profile is None:
         profile = extract_profile(chk, model=model, run=run, output_dir=output_dir,
                                   runs_path=runs_path, runs_prefix=runs_prefix,
                                   o_path=o_path, params=params)
 
-    if save and not profile_exists:
+    # save temp file if none exist
+    if save and not temp_exists:
         save_profile(profile, chk=chk, model=model, run=run,
                      runs_path=runs_path, runs_prefix=runs_prefix, verbose=verbose)
     return profile
