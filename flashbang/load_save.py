@@ -90,8 +90,8 @@ def get_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
     return dat_table
 
 
-def extract_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
-                verbose=True):
+def extract_dat(model, cols_dict, run='run', runs_path=None,
+                runs_prefix='run_', verbose=True):
     """Extract and reduce data from .dat file
 
     Returns : dict of 1D quantities
@@ -109,7 +109,7 @@ def extract_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
     filepath = paths.dat_filepath(model=model, run=run, runs_path=runs_path,
                                   runs_prefix=runs_prefix)
 
-    printv(f'Loading dat: {filepath}', verbose=verbose)
+    printv(f'Extracting dat: {filepath}', verbose=verbose)
 
     idxs = []
     keys = []
@@ -139,7 +139,7 @@ def save_dat_cache(dat, model, run='run', runs_path=None, runs_prefix='run_', ve
     filepath = paths.dat_temp_filepath(model=model, run=run, runs_path=runs_path,
                                        runs_prefix=runs_prefix)
 
-    printv(f'Saving dat: {filepath}', verbose)
+    printv(f'Saving dat cache: {filepath}', verbose)
     dat.to_feather(filepath)
 
 
@@ -156,7 +156,7 @@ def load_dat_cache(model, run='run', runs_path=None, runs_prefix='run_', verbose
     """
     filepath = paths.dat_temp_filepath(model=model, run=run, runs_path=runs_path,
                                        runs_prefix=runs_prefix)
-    printv(f'Loading dat: {filepath}', verbose)
+    printv(f'Loading dat cache: {filepath}', verbose)
     if os.path.exists(filepath):
         return pd.read_feather(filepath)
     else:
@@ -194,8 +194,8 @@ def get_profile(chk, model, run='run', output_dir='output',
     # attempt to load temp file
     if not reload:
         try:
-            profile = load_profile(chk, model=model, run=run, runs_path=runs_path,
-                                   runs_prefix=runs_prefix, verbose=verbose)
+            profile = load_profile_cache(chk, model=model, run=run, runs_path=runs_path,
+                                         runs_prefix=runs_prefix, verbose=verbose)
         except FileNotFoundError:
             pass
 
@@ -205,8 +205,8 @@ def get_profile(chk, model, run='run', output_dir='output',
                                   runs_path=runs_path, runs_prefix=runs_prefix,
                                   o_path=o_path, params=params)
         if save:
-            save_profile(profile, chk=chk, model=model, run=run,
-                         runs_path=runs_path, runs_prefix=runs_prefix, verbose=verbose)
+            save_profile_cache(profile, chk=chk, model=model, run=run, runs_path=runs_path,
+                               runs_prefix=runs_prefix, verbose=verbose)
 
     return profile
 
@@ -241,8 +241,8 @@ def extract_profile(chk, model, run='run', output_dir='output',
     return profile
 
 
-def save_profile(profile, chk, model, run='run', runs_path=None,
-                 runs_prefix='run_', verbose=True):
+def save_profile_cache(profile, chk, model, run='run', runs_path=None,
+                       runs_prefix='run_', verbose=True):
     """Save profile to file for faster loading
 
     parameters
@@ -261,13 +261,13 @@ def save_profile(profile, chk, model, run='run', runs_path=None,
     filepath = paths.profile_filepath(chk=chk, model=model, run=run,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
 
-    printv(f'Saving profile: {filepath}', verbose)
+    printv(f'Saving profile cache: {filepath}', verbose)
     profile.to_feather(filepath)
 
 
-def load_profile(chk, model, run='run', runs_path=None,
-                 runs_prefix='run_', verbose=True):
-    """Load profile from pre-extracted file (see: save_profile)
+def load_profile_cache(chk, model, run='run', runs_path=None,
+                       runs_prefix='run_', verbose=True):
+    """Load pre-extracted profile (see: save_profile_cache)
 
     parameters
     ----------
@@ -278,11 +278,9 @@ def load_profile(chk, model, run='run', runs_path=None,
     runs_prefix : str (optional)
     verbose : bool (optional)
     """
-    # TODO: rename to e.g. load_temp_profile()
-    #           - general term for saved files?
     filepath = paths.profile_filepath(chk=chk, model=model, run=run,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
-    printv(f'Loading profile: {filepath}', verbose)
+    printv(f'Loading profile cache: {filepath}', verbose)
 
     if os.path.exists(filepath):
         return pd.read_feather(filepath)
@@ -307,6 +305,7 @@ def load_chk(chk, model, run='run', output_dir='output',
     filepath = paths.chk_filepath(chk=chk, model=model, run=run,
                                   output_dir=output_dir, runs_path=runs_path,
                                   runs_prefix=runs_prefix, o_path=o_path)
+
     if not os.path.exists(filepath):
         raise FileNotFoundError(f'checkpoint {chk:04d} file does not exist: {filepath}')
 
