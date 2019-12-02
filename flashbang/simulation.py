@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -54,6 +55,7 @@ class Simulation:
         trans : {}
             transition densities to track (g/cm^3), e.g. {'': 6e7, 'low': 1e7}
         """
+        t0 = time.time()
         self.verbose = verbose
         self.runs_path = runs_path
         self.path = paths.model_path(model=model, runs_path=runs_path, runs_prefix=runs_prefix)
@@ -75,6 +77,9 @@ class Simulation:
 
         if load_all:
             self.load_all(reload=reload, save=save)
+
+        t1 = time.time()
+        self.printv(f'Total load time: {t1-t0:.3f} s')
 
     def printv(self, string, verbose=None):
         """Verbose-aware print
