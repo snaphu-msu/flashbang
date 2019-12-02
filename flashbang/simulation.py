@@ -12,15 +12,13 @@ from . import tools
 from . import plot_tools
 
 # TODO:
-#   - Pandas dataframes:
-#       - chk profiles: 1 table for each chk
-#       - dat table: 1 table
 #   - use rcparams for default values of run, etc.
 #   - generalised axis plotting
 #       - save/show plot
 
-# TODO: chk_table, add columns:
+# TODO: chk_table, add columns (include in profile table on extraction?):
 #   - time
+#   - n_step
 #   - n_zones
 
 # noinspection PyTypeChecker
