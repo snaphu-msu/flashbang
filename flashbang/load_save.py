@@ -119,7 +119,7 @@ def extract_dat(model, cols_dict, run='run', runs_path=None,
         keys += [key]
 
     return pd.read_csv(filepath, usecols=idxs, names=keys, skiprows=1, header=None,
-                       delim_whitespace=True)
+                       delim_whitespace=True, low_memory=False)
 
 
 def save_dat_cache(dat, model, run='run', runs_path=None, runs_prefix='run_', verbose=True):
