@@ -73,17 +73,15 @@ def get_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
     reload : bool
     """
     dat_table = None
-    dat_exists = False
 
     if not reload:
         try:
             dat_table = load_dat(model=model, run=run, runs_path=runs_path,
                                  runs_prefix=runs_prefix, verbose=verbose)
-            dat_exists = True
         except FileNotFoundError:
             pass
 
-    if not dat_exists:
+    if dat_table is None:
         dat_table = extract_dat(model, cols_dict=cols_dict, run=run,
                                 runs_path=runs_path, runs_prefix=runs_prefix)
         if save:
