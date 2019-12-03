@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
+from scipy.interpolate import interp1d
+from astropy import units
 
 # bangpy
 from . import paths
@@ -13,11 +15,13 @@ from . import tools
 from . import plot_tools
 
 # TODO:
+#   - load progenitor model
 #   - create an rcparams for default values of run, etc.
+#   - construct tracers
 #   - generalised axis plotting
 #       - save/show plot
 
-# TODO: chk_table, add columns (include in profile table on extraction?):
+# TODO: chk_table, add columns:
 #   - time
 #   - n_step
 #   - n_zones
@@ -69,6 +73,7 @@ class Simulation:
         self.dat = None
         self.bounce_time = None
         self.profiles = {}
+        self.tracers = {}
 
         if trans is None:
             trans = self.config['transitions']['dens']
@@ -83,6 +88,9 @@ class Simulation:
         t1 = time.time()
         self.printv(f'Total load time: {t1-t0:.3f} s')
 
+    # =======================================================
+    #                      Setup/init
+    # =======================================================
     def printv(self, string, verbose=None):
         """Verbose-aware print
 
@@ -114,6 +122,17 @@ class Simulation:
                                                      runs_path=self.runs_path,
                                                      verbose=self.verbose)
 
+    def update_chk_list(self):
+        """Update the list of checkpoint files available
+        """
+        self.chk_table['chk'] = load_save.find_chk(path=self.output_path,
+                                                   match_str=f'{self.run}_hdf5_chk_')
+        self.chk_table.set_index('chk', inplace=True)
+        self.n_chk = len(self.chk_table)
+
+    # =======================================================
+    #                   Loading Data
+    # =======================================================
     def load_dat(self, reload=False, save=True):
         """Load .dat file
 
@@ -125,14 +144,6 @@ class Simulation:
         self.dat = load_save.get_dat(
                         model=self.model, run=self.run, runs_path=self.runs_path,
                         cols_dict=self.config['dat_columns'], reload=reload, save=save)
-
-    def update_chk_list(self):
-        """Update the list of checkpoint files available
-        """
-        self.chk_table['chk'] = load_save.find_chk(path=self.output_path,
-                                                   match_str=f'{self.run}_hdf5_chk_')
-        self.chk_table.set_index('chk', inplace=True)
-        self.n_chk = len(self.chk_table)
 
     def load_all_profiles(self, reload=False, save=True):
         """Load profiles for all available checkpoints
@@ -177,6 +188,9 @@ class Simulation:
                                 derived_params=config['derived_params'],
                                 reload=reload, save=save, verbose=self.verbose)
 
+    # =======================================================
+    #                       Analysis
+    # =======================================================
     def find_trans_idxs(self):
         """Find idxs for zones closest to the helmholtz transition densities
         for each chk profile
@@ -196,6 +210,9 @@ class Simulation:
 
             self.chk_table[f'{key}_i'] = idx_list
 
+    # =======================================================
+    #                      Plotting
+    # =======================================================
     def plot_profiles(self, chk, y_var_list, x_var='r', y_scale=None, x_scale=None,
                       max_cols=2, sub_figsize=(6, 5), trans=True, legend=False):
         """Plot one or more profile variables
@@ -360,7 +377,7 @@ class Simulation:
                           x_scale=x_scale, ax=profile_ax, legend=legend, trans=trans,
                           title=title, ylims=ylims, xlims=xlims, figsize=figsize,
                           linestyle=linestyle, marker=marker)
-        profile_ax.vlines(x=2.95546e+33, ymin=0, ymax=1, ls='--', color='k')
+
         def update(chk):
             idx = int(chk)
             profile = self.profiles[idx]
@@ -467,6 +484,9 @@ class Simulation:
         if display:
             plt.show(block=False)
 
+    # =======================================================
+    #                      Plotting Tools
+    # =======================================================
     def get_label(self, key):
         """Return formatted string for plot label
         """
