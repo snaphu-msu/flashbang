@@ -232,7 +232,8 @@ class Simulation:
 
     def plot_profile(self, chk, y_var, x_var='r', y_scale=None, x_scale=None,
                      ax=None, legend=False, trans=True, title=True,
-                     ylims=None, xlims=None, figsize=(8, 6), label=None):
+                     ylims=None, xlims=None, figsize=(8, 6), label=None,
+                     linestyle='-', marker=''):
         """Plot given profile variable
 
         parameters
@@ -253,6 +254,8 @@ class Simulation:
         xlims : []
         figsize : []
         label : str
+        linestyle : str
+        marker : str
         """
         chk = tools.ensure_sequence(chk)
 
@@ -270,7 +273,7 @@ class Simulation:
             profile = self.profiles[i]
             y = profile[y_var]
 
-            ax.plot(profile[x_var], y, ls='-', marker='', label=label)
+            ax.plot(profile[x_var], y, ls=linestyle, marker=marker, label=label)
             self._plot_trans_line(x_var, y=y, ax=ax, chk=i, trans=trans)
 
         if legend:
@@ -328,7 +331,8 @@ class Simulation:
         return fig
 
     def plot_slider(self, y_var, x_var='r', y_scale=None, x_scale=None, trans=True,
-                    figsize=(8, 6), title=True, xlims=None, ylims=None, legend=True):
+                    figsize=(8, 6), title=True, xlims=None, ylims=None, legend=True,
+                    linestyle='-', marker=''):
         """Plot interactive slider of profile for given variable
 
         parameters
@@ -344,6 +348,8 @@ class Simulation:
         xlims : [2]
         ylims : [2]
         legend : bool
+        linestyle : str
+        marker : str
         """
         fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
         chk_max, chk_min, chk_init = self._get_slider_chk()
@@ -352,7 +358,8 @@ class Simulation:
 
         self.plot_profile(chk_init, y_var=y_var, x_var=x_var, y_scale=y_scale,
                           x_scale=x_scale, ax=profile_ax, legend=legend, trans=trans,
-                          title=title, ylims=ylims, xlims=xlims, figsize=figsize)
+                          title=title, ylims=ylims, xlims=xlims, figsize=figsize,
+                          linestyle=linestyle, marker=marker)
 
         def update(chk):
             idx = int(chk)
