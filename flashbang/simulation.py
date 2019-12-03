@@ -360,7 +360,7 @@ class Simulation:
                           x_scale=x_scale, ax=profile_ax, legend=legend, trans=trans,
                           title=title, ylims=ylims, xlims=xlims, figsize=figsize,
                           linestyle=linestyle, marker=marker)
-
+        profile_ax.vlines(x=2.95546e+33, ymin=0, ymax=1, ls='--', color='k')
         def update(chk):
             idx = int(chk)
             profile = self.profiles[idx]
@@ -444,7 +444,8 @@ class Simulation:
         slider.on_changed(update)
         return fig, slider
 
-    def plot_dat(self, y_var, y_scale='log', display=True, ax=None, figsize=(8, 6)):
+    def plot_dat(self, y_var, y_scale='log', display=True, ax=None, figsize=(8, 6),
+                 linestyle='-', marker=''):
         """Plot quantity from dat file
 
         parameters
@@ -454,9 +455,11 @@ class Simulation:
         figsize : []
         display : bool
         ax : pyplot.axis
+        linestyle : str
+        marker : str
         """
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
-        ax.plot(self.dat['time'], self.dat[y_var])
+        ax.plot(self.dat['time'], self.dat[y_var], linestyle=linestyle, marker=marker)
 
         ax.set_yscale(y_scale)
         self._set_ax_labels(ax, x_var='$t$ (s)', y_var=y_var)
