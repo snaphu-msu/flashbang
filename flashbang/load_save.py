@@ -312,6 +312,46 @@ def load_profile_cache(chk, model, run='run', runs_path=None,
         raise FileNotFoundError
 
 
+def extract_chk_timesteps(chk_list, model, params=('time', 'nstep'), run='run',
+                          output_dir='output', runs_path=None, runs_prefix='run_',
+                          o_path=None):
+    """Extract timestep quantities from chk files
+
+    Returns: pd.DataFrame()
+
+    parameters
+    ----------
+    chk_list : [int]
+    model : str
+    params : [str] (optional)
+    run : str (optional)
+    output_dir : str (optional)
+    runs_path : str (optional)
+    runs_prefix : str (optional)
+    o_path : str (optional)
+    """
+    # get
+    arrays = dict.fromkeys(params)
+    chk0 = load_chk(chk_list[0], model=model, run=run, output_dir=output_dir,
+                    runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
+    for par in params:
+        par_type = type(chk0.parameters[par])
+        arrays[par] = np.zeros_like(chk_list, dtype=par_type)
+
+    for i, chk in enumerate(chk_list[1:]):
+        chk_raw = load_chk(chk, model=model, run=run, output_dir=output_dir,
+                           runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
+        for par in params:
+            arrays[par][i+1] = chk_raw.parameters[par]
+
+    table = pd.DataFrame()
+    table['chk'] = chk_list
+    for par, arr in arrays.items():
+        table[par] = arr
+
+    return table
+
+
 def load_chk(chk, model, run='run', output_dir='output',
              runs_path=None, runs_prefix='run_', o_path=None):
     """Load raw checkpoint file for given model
