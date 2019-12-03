@@ -13,7 +13,7 @@ from flashbang import simulation, load_save
 #   - check for existing tempfiles, only load missing
 
 
-def main(model, run, multithread=False, reload=False, save=True,
+def main(model, run, multithread=True, reload=False, save=True,
          config='default'):
     sim = simulation.Simulation(run=run, model=model, config=config, load_all=False)
     conf = sim.config['profile']
