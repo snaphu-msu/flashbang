@@ -189,7 +189,7 @@ class Simulation:
                                 reload=reload, save=save, verbose=self.verbose)
 
     # =======================================================
-    #                       Analysis
+    #                 Analysis & Postprocessing
     # =======================================================
     def find_trans_idxs(self):
         """Find idxs for zones closest to the helmholtz transition densities
@@ -209,6 +209,42 @@ class Simulation:
                 idx_list[i] = max_idx - trans_idx  # flip back
 
             self.chk_table[f'{key}_i'] = idx_list
+
+    def construct_tracers(self):
+        """Construct mass tracers from profile data
+        """
+        # TODO:
+        #   - get timesteps
+        #   - print progress
+        #   - save data cube
+        #   - load data cube
+        #   - save tracers
+        g_to_msun = units.g.to(units.M_sun)
+
+        params = self.config['tracers']['params']
+        mass_def = self.config['tracers']['mass_grid']
+        mass_grid = np.linspace(mass_def[0], mass_def[1], mass_def[2])
+
+        n_tracers = len(mass_grid)
+        n_chk = len(self.chk_table)
+        n_params = len(params)
+
+        data_cube = np.zeros([n_tracers, n_chk, n_params])
+        print(data_cube.shape)
+        for i, chk in enumerate(self.chk_table.index):
+            print(chk)
+            profile = self.profiles[i]
+
+            for j, par in enumerate(params):
+                func = interp1d(profile['mass'] * g_to_msun, profile[par])
+                data_cube[:, i, j] = func(mass_grid)
+
+        self.tracers['mass_grid'] = mass_grid
+
+        for i, mass in enumerate(mass_grid):
+            self.tracers[i] = pd.DataFrame(index=self.chk_table.index,
+                                           data=data_cube[i, :, :],
+                                           columns=params)
 
     # =======================================================
     #                      Plotting
