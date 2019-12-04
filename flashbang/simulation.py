@@ -154,7 +154,6 @@ class Simulation:
         save : bool
         """
         self.printv(f'Loading chk profiles from: {self.output_path}')
-
         verbose_setting = self.verbose  # verbosity hack
         self.verbose = False
 
@@ -219,25 +218,34 @@ class Simulation:
         #   - save data cube
         #   - load data cube
         #   - save tracers
+        self.printv(f'Constructing mass tracers from profiles')
+        verbose_setting = self.verbose  # verbosity hack
+        self.verbose = False
         g_to_msun = units.g.to(units.M_sun)
 
         params = self.config['tracers']['params']
         mass_def = self.config['tracers']['mass_grid']
         mass_grid = np.linspace(mass_def[0], mass_def[1], mass_def[2])
+        chk_list = self.chk_table.index
 
         n_tracers = len(mass_grid)
-        n_chk = len(self.chk_table)
+        n_chk = len(chk_list)
         n_params = len(params)
 
         data_cube = np.zeros([n_tracers, n_chk, n_params])
-        print(data_cube.shape)
-        for i, chk in enumerate(self.chk_table.index):
-            print(chk)
+        chk_max = chk_list[-1]
+
+        for i, chk in enumerate(chk_list):
+            if verbose_setting:
+                sys.stdout.write(f'\rchk: {chk}/{chk_max}')
             profile = self.profiles[i]
 
             for j, par in enumerate(params):
                 func = interp1d(profile['mass'] * g_to_msun, profile[par])
                 data_cube[:, i, j] = func(mass_grid)
+
+        if verbose_setting:
+            sys.stdout.write('\n')
 
         self.tracers['mass_grid'] = mass_grid
 
