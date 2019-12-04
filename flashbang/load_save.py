@@ -19,6 +19,7 @@ import ast
 import subprocess
 import sys
 import yt
+import time
 
 # bangpy
 from . import paths
@@ -330,7 +331,7 @@ def extract_chk_timesteps(chk_list, model, params=('time', 'nstep'), run='run',
     runs_prefix : str (optional)
     o_path : str (optional)
     """
-    # get
+    t0 = time.time()
     arrays = dict.fromkeys(params)
     chk0 = load_chk(chk_list[0], model=model, run=run, output_dir=output_dir,
                     runs_path=runs_path, runs_prefix=runs_prefix, o_path=o_path)
@@ -349,6 +350,8 @@ def extract_chk_timesteps(chk_list, model, params=('time', 'nstep'), run='run',
     for par, arr in arrays.items():
         table[par] = arr
 
+    t1 = time.time()
+    print('='*20, f'\nTotal time: {t1-t0:.3f} s\n', )
     return table
 
 
