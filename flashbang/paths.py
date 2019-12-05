@@ -30,97 +30,11 @@ flashbang_path = os.environ['FLASHBANG']
 models_path = os.environ['BANG_MODELS']
 
 
-def temp_path(model, runs_path=None, runs_prefix='run_'):
-    """Path to directory for temporary file saving
-    """
-    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    return os.path.join(m_path, 'temp')
-
-
-def dat_filename(run):
-    """Returns filename for .dat file
-    """
-    return f'{run}.dat'
-
-
-def log_filename(run):
-    """Returns filename for .log file
-    """
-    return f'{run}.log'
-
-
-def dat_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
-    """Returns filepath to .dat file
-
-    parameters
-    ----------
-    run : str
-    model : str
-    runs_path : str
-        see model_path()
-    runs_prefix : str
-        see model_path()
-    """
-    filename = dat_filename(run)
-    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    return os.path.join(m_path, filename)
-
-
-def log_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
-    """Returns filepath to .log file
-    """
-    filename = log_filename(run)
-    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    return os.path.join(m_path, filename)
-
-
-def dat_temp_filename(run):
-    """Return filename for temporary (cached) dat file
-    """
-    return f'{run}_dat.feather'
-
-
-def dat_temp_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
-    """Returns filepath to reduced dat table
-    """
-    path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    filename = dat_temp_filename(run)
-    return os.path.join(path, filename)
-
-
-def chk_filename(chk, run):
-    """Returns filename for checkpoint (chk) file
-    """
-    return f'{run}_hdf5_chk_{chk:04d}'
-
-
-def chk_filepath(chk, model, run='run', output_dir='output',
-                 runs_path=None, runs_prefix='run_', o_path=None):
-    """Returns filepath to checkpoint file
-    """
-    filename = chk_filename(chk=chk, run=run)
-    if o_path is None:
-        o_path = output_path(model, output_dir=output_dir, runs_path=runs_path,
-                             runs_prefix=runs_prefix)
-    return os.path.join(o_path, filename)
-
-
-def profile_filename(chk, run):
-    """Returns filename for pre-extracted profile
-    """
-    return f'{run}_profile_{chk:04d}.feather'
-
-
-def profile_filepath(chk, model, run='run', runs_path=None, runs_prefix='run_'):
-    """Returns filepath to pre-extracted profile
-    """
-    path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
-    filename = profile_filename(chk, run)
-    return os.path.join(path, filename)
-
-
+# ===============================================================
+#                      Flashbang
+# ===============================================================
 def config_filepath(name='default'):
-    """Returns path to config file
+    """Return path to config file
 
     parameters
     ----------
@@ -131,8 +45,11 @@ def config_filepath(name='default'):
     return os.path.join(flashbang_path, 'flashbang', 'config', f'{name}.ini')
 
 
+# ===============================================================
+#                      Models
+# ===============================================================
 def model_path(model, runs_path=None, runs_prefix='run_'):
-    """Returns path to model directory
+    """Return path to model directory
 
     parameters
     ----------
@@ -151,9 +68,111 @@ def model_path(model, runs_path=None, runs_prefix='run_'):
     return os.path.join(runs_path, f'{runs_prefix}{model}')
 
 
+def temp_path(model, runs_path=None, runs_prefix='run_'):
+    """Path to directory for temporary file saving
+    """
+    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    return os.path.join(m_path, 'temp')
+
+
 def output_path(model, output_dir='output', runs_path=None,
                 runs_prefix='run_'):
-    """Returns path to model output directory
+    """Return path to model output directory
     """
     m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
     return os.path.join(m_path, output_dir)
+
+
+# ===============================================================
+#                      Dat files
+# ===============================================================
+def dat_filename(run):
+    """Return filename for .dat file
+    """
+    return f'{run}.dat'
+
+
+def dat_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
+    """Return filepath to .dat file
+
+    parameters
+    ----------
+    run : str
+    model : str
+    runs_path : str
+        see model_path()
+    runs_prefix : str
+        see model_path()
+    """
+    filename = dat_filename(run)
+    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    return os.path.join(m_path, filename)
+
+
+def dat_temp_filename(run):
+    """Return filename for temporary (cached) dat file
+    """
+    return f'{run}_dat.feather'
+
+
+def dat_temp_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
+    """Return filepath to reduced dat table
+    """
+    path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    filename = dat_temp_filename(run)
+    return os.path.join(path, filename)
+
+
+# ===============================================================
+#                      Log files
+# ===============================================================
+def log_filename(run):
+    """Return filename for .log file
+    """
+    return f'{run}.log'
+
+
+def log_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
+    """Return filepath to .log file
+    """
+    filename = log_filename(run)
+    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    return os.path.join(m_path, filename)
+
+
+# ===============================================================
+#                      Chk files
+# ===============================================================
+def chk_filename(chk, run):
+    """Return filename for checkpoint (chk) file
+    """
+    return f'{run}_hdf5_chk_{chk:04d}'
+
+
+def chk_filepath(chk, model, run='run', output_dir='output',
+                 runs_path=None, runs_prefix='run_', o_path=None):
+    """Return filepath to checkpoint file
+    """
+    filename = chk_filename(chk=chk, run=run)
+    if o_path is None:
+        o_path = output_path(model, output_dir=output_dir, runs_path=runs_path,
+                             runs_prefix=runs_prefix)
+    return os.path.join(o_path, filename)
+
+
+# ===============================================================
+#                      Profiles
+# ===============================================================
+def profile_filename(chk, run):
+    """Return filename for pre-extracted profile
+    """
+    return f'{run}_profile_{chk:04d}.feather'
+
+
+def profile_filepath(chk, model, run='run', runs_path=None, runs_prefix='run_'):
+    """Return filepath to pre-extracted profile
+    """
+    path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    filename = profile_filename(chk, run)
+    return os.path.join(path, filename)
+
