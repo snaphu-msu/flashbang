@@ -166,7 +166,7 @@ class Simulation:
             sys.stdout.write('\n')
         self.verbose = verbose_setting
 
-    def load_profile(self, chk, reload=False, save=True):
+    def load_profile(self, chk, reload=False, save=True, verbose=None):
         """Load checkpoint data file
 
         parameters
@@ -179,11 +179,14 @@ class Simulation:
         config = self.config['profile']
         params = config['params'] + config['composition']
 
+        if verbose is None:
+            verbose = self.verbose
+
         self.profiles[chk] = load_save.get_profile(
                                 chk, model=self.model, run=self.run,
                                 o_path=self.output_path, params=params,
                                 derived_params=config['derived_params'],
-                                reload=reload, save=save, verbose=self.verbose)
+                                reload=reload, save=save, verbose=verbose)
 
     # =======================================================
     #                 Analysis & Postprocessing
