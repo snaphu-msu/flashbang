@@ -350,7 +350,54 @@ def load_profile_cache(chk, model, run='run', runs_path=None,
 # ===============================================================
 #                      Chk files
 # ===============================================================
-def extract_chk_timesteps(chk_list, model, params=('time', 'nstep'), run='run',
+def find_chk(path, match_str='hdf5_chk_', n_digits=4):
+    """Return list of checkpoint (chk) files available in given directory
+        returns as nparray of checkpoint numbers
+
+    parameters
+    ----------
+    path : str
+        path to directory to look in
+    match_str : str
+        string to match for in filename, to identify chk files
+    n_digits : int
+        number of digits at end of filename corresponding to checkpoint ID
+    """
+    file_list = os.listdir(path)
+    chks = []
+
+    for file in file_list:
+        if match_str in file:
+            chks += [int(file[-n_digits:])]
+
+    return np.sort(chks)
+
+
+def load_chk(chk, model, run='run', output_dir='output',
+             runs_path=None, runs_prefix='run_', o_path=None):
+    """Load checkpoint file using yt
+
+    parameters
+    ----------
+    chk : int
+    model : str
+    run : str
+    output_dir : str
+    runs_path : str
+    runs_prefix : str
+    o_path : str
+    """
+    filepath = paths.chk_filepath(chk=chk, model=model, run=run,
+                                  output_dir=output_dir, runs_path=runs_path,
+                                  runs_prefix=runs_prefix, o_path=o_path)
+
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(f'checkpoint {chk:04d} file does not exist: {filepath}')
+
+    return yt.load(filepath)
+
+
+def extract_timesteps(chk_list, model, params=('time', 'nstep'), run='run',
                           output_dir='output', runs_path=None, runs_prefix='run_',
                           o_path=None):
     """Extract timestep quantities from chk files
@@ -394,51 +441,17 @@ def extract_chk_timesteps(chk_list, model, params=('time', 'nstep'), run='run',
     return chk_table
 
 
-def load_chk(chk, model, run='run', output_dir='output',
-             runs_path=None, runs_prefix='run_', o_path=None):
-    """Load raw checkpoint file for given model
-
-    parameters
-    ----------
-    chk : int
-    model : str
-    run : str
-    output_dir : str
-    runs_path : str
-    runs_prefix : str
-    o_path : str
+def save_timesteps_cache(chk, model, run='run', runs_path=None,
+                         runs_prefix='run_', verbose=True):
+    """Save pre-extracted chk timesteps to file
     """
-    filepath = paths.chk_filepath(chk=chk, model=model, run=run,
-                                  output_dir=output_dir, runs_path=runs_path,
-                                  runs_prefix=runs_prefix, o_path=o_path)
-
-    if not os.path.exists(filepath):
-        raise FileNotFoundError(f'checkpoint {chk:04d} file does not exist: {filepath}')
-
-    return yt.load(filepath)
+    pass
 
 
-def find_chk(path, match_str='hdf5_chk_', n_digits=4):
-    """Return list of checkpoint (chk) files available in given directory
-        returns as nparray of checkpoint numbers
-
-    parameters
-    ----------
-    path : str
-        path to directory to look in
-    match_str : str
-        string to match for in filename, to identify chk files
-    n_digits : int
-        number of digits at end of filename corresponding to checkpoint ID
+def load_chk_timesteps():
+    """Load pre-extracted chk timesteps to file
     """
-    file_list = os.listdir(path)
-    chks = []
-
-    for file in file_list:
-        if match_str in file:
-            chks += [int(file[-n_digits:])]
-
-    return np.sort(chks)
+    pass
 
 
 # ===============================================================
