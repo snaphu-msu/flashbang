@@ -27,6 +27,8 @@ from . import paths
 from .strings import printv
 from . import quantities
 
+# TODO:
+#   - rename runs_prefix to model_prefix
 
 # =======================================================================
 #                      Config files
@@ -397,9 +399,12 @@ def load_chk(chk, model, run='run', output_dir='output',
     return yt.load(filepath)
 
 
+# ===============================================================
+#                      Timesteps
+# ===============================================================
 def extract_timesteps(chk_list, model, params=('time', 'nstep'), run='run',
-                          output_dir='output', runs_path=None, runs_prefix='run_',
-                          o_path=None):
+                      output_dir='output', runs_path=None, runs_prefix='run_',
+                      o_path=None):
     """Extract timestep quantities from chk files
 
     Returns: pd.DataFrame()
@@ -441,17 +446,48 @@ def extract_timesteps(chk_list, model, params=('time', 'nstep'), run='run',
     return chk_table
 
 
-def save_timesteps_cache(chk, model, run='run', runs_path=None,
+def save_timesteps_cache(chk_table, model, run='run', runs_path=None,
                          runs_prefix='run_', verbose=True):
     """Save pre-extracted chk timesteps to file
+
+    parameters
+    ----------
+    chk_table : pd.DataFrame
+        table of chk timesteps, as returned by extract_timesteps()
+    model : str
+    run : str
+    runs_path : str
+    runs_prefix : str
+    verbose : bool
     """
-    pass
+    ensure_temp_dir_exists(model, runs_path=runs_path, runs_prefix=runs_prefix,
+                           verbose=verbose)
+    filepath = paths.timesteps_filepath(model, run=run, runs_path=runs_path,
+                                        runs_prefix=runs_prefix)
+    printv(f'Saving timesteps cache: {filepath}', verbose)
+    chk_table.to_feather(filepath)
 
 
-def load_chk_timesteps():
+def load_timesteps_cache(model, run='run', runs_path=None,
+                         runs_prefix='run_', verbose=True):
     """Load pre-extracted chk timesteps to file
+
+    parameters
+    ----------
+    model : str
+    run : str
+    runs_path : str
+    runs_prefix : str
+    verbose : bool
     """
-    pass
+    filepath = paths.timesteps_filepath(model=model, run=run, runs_path=runs_path,
+                                        runs_prefix=runs_prefix)
+    printv(f'Loading timesteps cache: {filepath}', verbose)
+
+    if os.path.exists(filepath):
+        return pd.read_feather(filepath)
+    else:
+        raise FileNotFoundError
 
 
 # ===============================================================
