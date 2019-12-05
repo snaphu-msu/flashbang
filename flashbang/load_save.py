@@ -30,6 +30,7 @@ from . import quantities
 # TODO:
 #   - rename runs_prefix to model_prefix
 
+
 # =======================================================================
 #                      Config files
 # =======================================================================
@@ -168,10 +169,7 @@ def load_dat_cache(model, run='run', runs_path=None, runs_prefix='run_', verbose
     filepath = paths.dat_temp_filepath(model=model, run=run, runs_path=runs_path,
                                        runs_prefix=runs_prefix)
     printv(f'Loading dat cache: {filepath}', verbose)
-    if os.path.exists(filepath):
-        return pd.read_feather(filepath)
-    else:
-        raise FileNotFoundError
+    return load_feather(filepath)
 
 
 def print_dat_colnames(model, run='run', runs_path=None, runs_prefix='run_'):
@@ -341,12 +339,9 @@ def load_profile_cache(chk, model, run='run', runs_path=None,
     """
     filepath = paths.profile_filepath(chk=chk, model=model, run=run,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
-    printv(f'Loading profile cache: {filepath}', verbose)
 
-    if os.path.exists(filepath):
-        return pd.read_feather(filepath)
-    else:
-        raise FileNotFoundError
+    printv(f'Loading profile cache: {filepath}', verbose)
+    return load_feather(filepath)
 
 
 # ===============================================================
