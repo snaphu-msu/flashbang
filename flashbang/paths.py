@@ -189,3 +189,18 @@ def timestep_filename(model, run='run'):
     run : str
     """
     return f'{run}_{model}_timesteps.feather'
+
+
+def timestep_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
+    """Return filename for pre-extracted timestep table
+
+    parameters
+    ----------
+    model : str
+    run : str
+    runs_path : str
+    runs_prefix : str
+    """
+    path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    filename = timestep_filename(model=model, run=run)
+    return os.path.join(path, filename)
