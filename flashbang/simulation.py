@@ -209,12 +209,11 @@ class Simulation:
 
             self.chk_table[f'{key}_i'] = idx_list
 
-    def construct_tracers(self):
+    def extract_tracers(self):
         """Construct mass tracers from profile data
         """
         # TODO:
         #   - get timesteps
-        #   - print progress
         #   - save data cube
         #   - load data cube
         #   - save tracers
@@ -253,6 +252,7 @@ class Simulation:
             self.tracers[i] = pd.DataFrame(index=self.chk_table.index,
                                            data=data_cube[i, :, :],
                                            columns=params)
+        self.verbose = verbose_setting
 
     # =======================================================
     #                      Plotting
