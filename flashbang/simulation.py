@@ -5,19 +5,17 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
-from scipy.interpolate import interp1d
-from astropy import units
 
-# bangpy
-from . import paths
+# flashbang
+from . import analysis
 from . import load_save
-from . import tools
+from . import paths
 from . import plot_tools
+from . import tools
 
 # TODO:
 #   - load progenitor model
 #   - create an rcparams for default values of run, etc.
-#   - construct tracers
 #   - generalised axis plotting
 #       - save/show plot
 
@@ -220,7 +218,6 @@ class Simulation:
         self.printv(f'Constructing mass tracers from profiles')
         verbose_setting = self.verbose  # verbosity hack
         self.verbose = False
-        g_to_msun = units.g.to(units.M_sun)
 
         params = self.config['tracers']['params']
         mass_def = self.config['tracers']['mass_grid']
@@ -237,12 +234,11 @@ class Simulation:
         for i, chk in enumerate(chk_list):
             if verbose_setting:
                 sys.stdout.write(f'\rchk: {chk}/{chk_max}')
+
             profile = self.profiles[i]
-
-            for j, par in enumerate(params):
-                func = interp1d(profile['mass'] * g_to_msun, profile[par])
-                data_cube[:, i, j] = func(mass_grid)
-
+            data_cube[:, i, :] = analysis.extract_mass_tracers(mass_grid=mass_grid,
+                                                               profile=profile,
+                                                               params=params)
         if verbose_setting:
             sys.stdout.write('\n')
 
