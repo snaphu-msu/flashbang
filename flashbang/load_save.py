@@ -61,8 +61,7 @@ def load_config(name='default', verbose=True):
 # =======================================================================
 #                      Dat files
 # =======================================================================
-def get_dat(model, cols_dict, run='run',
-            reload=False, save=True, verbose=True):
+def get_dat(model, cols_dict, run='run', reload=False, save=True, verbose=True):
     """Get reduced set of integrated quantities, as contained in [run].dat file
 
     Returns : pandas.DataFrame
@@ -353,6 +352,46 @@ def load_chk(chk, model, run='run', output_dir='output', o_path=None):
 # ===============================================================
 #                      Timesteps
 # ===============================================================
+def get_timesteps(model, run='run', params=('time', 'nstep'),
+                  reload=False, save=True, output_dir='output',
+                  o_path=None, verbose=True):
+    """Get table of timestep quantities (time, n_steps, etc.) from chk files
+
+    Returns : pandas.DataFrame
+
+    parameters
+    ----------
+    model : str
+    run: str
+    params : [str]
+    reload : bool
+    save : bool
+    output_dir : str
+    o_path : str
+    verbose : bool
+    """
+    timesteps = None
+
+    # attempt to load temp file
+    if not reload:
+        try:
+            timesteps = load_timesteps_cache(model=model, run=run, verbose=verbose)
+        except FileNotFoundError:
+            pass
+
+    # fall back on loading from raw chk files
+    if timesteps is None:
+        output_path = paths.output_path(model, output_dir=output_dir)
+        chk_list = find_chk(path=output_path, match_str=f'{run}_hdf5_chk_')
+
+        timesteps = extract_timesteps(chk_list, model, run=run, params=params,
+                                      output_dir=output_dir, o_path=o_path)
+        if save:
+            save_timesteps_cache(timesteps, model=model, run=run, verbose=verbose)
+
+    return timesteps
+
+
 def extract_timesteps(chk_list, model, run='run', params=('time', 'nstep'),
                       output_dir='output', o_path=None):
     """Extract timestep quantities from chk files
@@ -381,24 +420,25 @@ def extract_timesteps(chk_list, model, run='run', params=('time', 'nstep'),
         for par in params:
             arrays[par][i+1] = chk_raw.parameters[par]
 
-    chk_table = pd.DataFrame()
-    chk_table['chk'] = chk_list
-    for par, arr in arrays.items():
-        chk_table[par] = arr
+    timesteps = pd.DataFrame()
+    timesteps['chk'] = chk_list
 
-    chk_table.set_index('chk', inplace=True)
+    for par, arr in arrays.items():
+        timesteps[par] = arr
+
+    timesteps.set_index('chk', inplace=True)
 
     t1 = time.time()
     print('='*20, f'\nTotal time: {t1-t0:.3f} s\n')
-    return chk_table
+    return timesteps
 
 
-def save_timesteps_cache(chk_table, model, run='run', verbose=True):
+def save_timesteps_cache(timesteps, model, run='run', verbose=True):
     """Save pre-extracted chk timesteps to file
 
     parameters
     ----------
-    chk_table : pd.DataFrame
+    timesteps : pd.DataFrame
         table of chk timesteps, as returned by extract_timesteps()
     model : str
     run : str
@@ -406,8 +446,10 @@ def save_timesteps_cache(chk_table, model, run='run', verbose=True):
     """
     ensure_temp_dir_exists(model, verbose=verbose)
     filepath = paths.timesteps_filepath(model, run=run)
+
     printv(f'Saving timesteps cache: {filepath}', verbose)
-    chk_table.to_feather(filepath)
+    timesteps_out = timesteps.reset_index()
+    timesteps_out.to_feather(filepath)
 
 
 def load_timesteps_cache(model, run='run', verbose=True):
@@ -421,7 +463,10 @@ def load_timesteps_cache(model, run='run', verbose=True):
     """
     filepath = paths.timesteps_filepath(model=model, run=run)
     printv(f'Loading timesteps cache: {filepath}', verbose)
-    return load_feather(filepath)
+
+    timesteps = load_feather(filepath)
+    timesteps.set_index('chk', inplace=True)
+    return timesteps
 
 
 # ===============================================================

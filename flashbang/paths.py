@@ -25,6 +25,9 @@ Default model directory structure expected:
 
 import os
 
+# TODO:
+#   - deprecate output_dir, o_path (replace with environment variables)
+
 
 # ===============================================================
 #                      Flashbang
