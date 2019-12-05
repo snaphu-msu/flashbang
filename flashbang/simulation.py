@@ -211,44 +211,21 @@ class Simulation:
         """Construct mass tracers from profile data
         """
         # TODO:
-        #   - get timesteps
-        #   - save data cube
-        #   - load data cube
-        #   - save tracers
-        self.printv(f'Constructing mass tracers from profiles')
-        verbose_setting = self.verbose  # verbosity hack
-        self.verbose = False
-
+        #   - include chk timesteps
         params = self.config['tracers']['params']
         mass_def = self.config['tracers']['mass_grid']
         mass_grid = np.linspace(mass_def[0], mass_def[1], mass_def[2])
-        chk_list = self.chk_table.index
 
-        n_tracers = len(mass_grid)
-        n_chk = len(chk_list)
-        n_params = len(params)
-
-        data_cube = np.zeros([n_tracers, n_chk, n_params])
-        chk_max = chk_list[-1]
-
-        for i, chk in enumerate(chk_list):
-            if verbose_setting:
-                sys.stdout.write(f'\rchk: {chk}/{chk_max}')
-
-            profile = self.profiles[i]
-            data_cube[:, i, :] = analysis.extract_mass_tracers(mass_grid=mass_grid,
-                                                               profile=profile,
-                                                               params=params)
-        if verbose_setting:
-            sys.stdout.write('\n')
-
+        data_cube = analysis.extract_multi_mass_tracers(mass_grid,
+                                                        profiles=self.profiles,
+                                                        params=params,
+                                                        verbose=self.verbose)
         self.tracers['mass_grid'] = mass_grid
 
         for i, mass in enumerate(mass_grid):
             self.tracers[i] = pd.DataFrame(index=self.chk_table.index,
-                                           data=data_cube[i, :, :],
+                                           data=data_cube[:, i, :],
                                            columns=params)
-        self.verbose = verbose_setting
 
     # =======================================================
     #                      Plotting
