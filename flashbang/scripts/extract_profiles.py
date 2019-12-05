@@ -11,6 +11,8 @@ from flashbang import simulation, load_save
 
 # TODO:
 #   - check for existing tempfiles, only load missing
+#   - extract tracers
+#   - disable try_mkdir temp
 
 
 def main(model, run, multithread=True, reload=False, save=True,
