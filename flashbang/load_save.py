@@ -2,9 +2,10 @@
 
 General terminology
 -------------------
-    dat: Time-integrated data found in [model].dat file
+    dat: Integrated time-series quantities found in [model].dat file
     chk: Checkpoint data found in 'chk' files
     profile: Radial profile data as extracted from chk files
+    log: Data printed to terminal during model, stored in .log files
 
     extract: Extract and reduce data from raw output files
     save: Save pre-extracted data to file
@@ -27,6 +28,9 @@ from .strings import printv
 from . import quantities
 
 
+# =======================================================================
+#                      Config files
+# =======================================================================
 def load_config(name='default', verbose=True):
     """Load .ini config file and return as dict
 
@@ -53,6 +57,9 @@ def load_config(name='default', verbose=True):
     return config
 
 
+# =======================================================================
+#                      Dat files
+# =======================================================================
 def get_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
             verbose=True, save=True, reload=False):
     """Get reduced set of integrated quantities, as contained in [run].dat file
@@ -165,6 +172,26 @@ def load_dat_cache(model, run='run', runs_path=None, runs_prefix='run_', verbose
         raise FileNotFoundError
 
 
+def print_dat_colnames(model, run='run', runs_path=None, runs_prefix='run_'):
+    """Print all column names from .dat file
+    """
+    filepath = paths.dat_filepath(run=run, model=model, runs_prefix=runs_prefix,
+                                  runs_path=runs_path)
+    with open(filepath, 'r') as f:
+        colnames = f.readline().split()
+
+    count = 1
+    for word in colnames:
+        if str(count) in word:
+            print(f'\n{count}', end=' ')
+            count += 1
+        else:
+            print(word, end=' ')
+            
+            
+# ===============================================================
+#                      Profiles
+# ===============================================================
 def get_profile(chk, model, run='run', output_dir='output',
                 runs_path=None, runs_prefix='run_', o_path=None,
                 params=('temp', 'dens', 'pres'), derived_params=('mass',),
@@ -313,6 +340,9 @@ def load_profile_cache(chk, model, run='run', runs_path=None,
         raise FileNotFoundError
 
 
+# ===============================================================
+#                      Chk files
+# ===============================================================
 def extract_chk_timesteps(chk_list, model, params=('time', 'nstep'), run='run',
                           output_dir='output', runs_path=None, runs_prefix='run_',
                           o_path=None):
@@ -402,6 +432,9 @@ def find_chk(path, match_str='hdf5_chk_', n_digits=4):
     return np.sort(chks)
 
 
+# ===============================================================
+#                      Log files
+# ===============================================================
 def get_bounce_time(model, run='run', runs_path=None, runs_prefix='run_',
                     match_str='Bounce', verbose=True):
     """Return bounce time (s)
@@ -427,6 +460,9 @@ def get_bounce_time(model, run='run', runs_path=None, runs_prefix='run_',
     return bounce_time
 
 
+# ===============================================================
+#                      SNEC models
+# ===============================================================
 def reduce_snec_profile(profile_dict):
     """Reduce given profile dictionary into a 2D nparray
         Returns: profile_array, time, mass_grid
@@ -483,23 +519,9 @@ def load_snec_xg(filepath, verbose=True):
     return profile
 
 
-def print_dat_colnames(model, run='run', runs_path=None, runs_prefix='run_'):
-    """Print all column names from .dat file
-    """
-    filepath = paths.dat_filepath(run=run, model=model, runs_prefix=runs_prefix,
-                                  runs_path=runs_path)
-    with open(filepath, 'r') as f:
-        colnames = f.readline().split()
-
-    count = 1
-    for word in colnames:
-        if str(count) in word:
-            print(f'\n{count}', end=' ')
-            count += 1
-        else:
-            print(word, end=' ')
-
-
+# ===============================================================
+#              Misc. file things
+# ===============================================================
 def try_mkdir(path, skip=False, verbose=True):
     """Try to make given directory
 
