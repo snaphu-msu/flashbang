@@ -152,19 +152,13 @@ class Simulation:
         save : bool
         """
         self.printv(f'Loading chk profiles from: {self.output_path}')
-        verbose_setting = self.verbose  # verbosity hack
-        self.verbose = False
-
         chk_max = self.chk_table.index[-1]
 
         for chk in self.chk_table.index:
-            if verbose_setting:
-                sys.stdout.write(f'\rchk: {chk}/{chk_max}')
-            self.load_profile(chk, reload=reload, save=save)
+            self.printv(f'\rchk: {chk}/{chk_max}', end='')
+            self.load_profile(chk, reload=reload, save=save, verbose=False)
 
-        if verbose_setting:
-            sys.stdout.write('\n')
-        self.verbose = verbose_setting
+        self.printv('')
 
     def load_profile(self, chk, reload=False, save=True, verbose=None):
         """Load checkpoint data file
