@@ -45,7 +45,7 @@ def extract_multi_mass_tracers(mass_grid, profiles, params, verbose=True):
         data_cube[i, :, :] = extract_mass_tracers(mass_grid=mass_grid,
                                                   profile=profile,
                                                   params=params)
-    printv('\n', verbose)
+    printv('', verbose)
     return data_cube
 
 
