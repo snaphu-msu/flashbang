@@ -465,25 +465,25 @@ def get_bounce_time(model, run='run', runs_path=None, runs_prefix='run_',
 # ===============================================================
 def reduce_snec_profile(profile_dict):
     """Reduce given profile dictionary into a 2D nparray
-        Returns: profile_array, time, mass_grid
+        Returns: profile_array, timesteps, mass_grid
 
     parameters
     ----------
     profile_dict : {}
         Dictionary containing profile data, as returned from load_snec_xg()
     """
-    time = np.array(list(profile_dict.keys()))
-    n_time = len(time)
+    timesteps = np.array(list(profile_dict.keys()))
+    n_time = len(timesteps)
     
-    mass_grid = profile_dict[time[0]][:, 0]
+    mass_grid = profile_dict[timesteps[0]][:, 0]
     n_mass = len(mass_grid)
     
     profile_array = np.zeros((n_time, n_mass))
     
-    for i, key in enumerate(time):
+    for i, key in enumerate(timesteps):
         profile_array[i, :] = profile_dict[key][:, 1]
     
-    return profile_array, time, mass_grid
+    return profile_array, timesteps, mass_grid
     
 
 def load_snec_xg(filepath, verbose=True):
@@ -502,16 +502,16 @@ def load_snec_xg(filepath, verbose=True):
 
             # Beginning of time data - make key for this time
             if 'Time' in line:
-                time = float(cols[-1])
-                profile[time] = []
+                timesteps = float(cols[-1])
+                profile[timesteps] = []
 
             # In time data -- build x,y arrays
             elif len(cols) == 2:
-                profile[time].append(np.fromstring(line, sep=' '))
+                profile[timesteps].append(np.fromstring(line, sep=' '))
 
             # End of time data (blank line) -- make list into array
             else:
-                profile[time] = np.array(profile[time])
+                profile[timesteps] = np.array(profile[timesteps])
             count += 1
 
     if verbose:
