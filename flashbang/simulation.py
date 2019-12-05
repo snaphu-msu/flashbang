@@ -159,7 +159,8 @@ class Simulation:
         """
         self.dat = load_save.get_dat(
                         model=self.model, run=self.run, runs_path=self.runs_path,
-                        cols_dict=self.config['dat_columns'], reload=reload, save=save)
+                        cols_dict=self.config['dat_columns'], reload=reload,
+                        save=save, verbose=self.verbose)
 
     def load_all_profiles(self, reload=False, save=True):
         """Load profiles for all available checkpoints
