@@ -482,12 +482,9 @@ def load_timesteps_cache(model, run='run', runs_path=None,
     """
     filepath = paths.timesteps_filepath(model=model, run=run, runs_path=runs_path,
                                         runs_prefix=runs_prefix)
-    printv(f'Loading timesteps cache: {filepath}', verbose)
 
-    if os.path.exists(filepath):
-        return pd.read_feather(filepath)
-    else:
-        raise FileNotFoundError
+    printv(f'Loading timesteps cache: {filepath}', verbose)
+    return load_feather(filepath)
 
 
 # ===============================================================
@@ -591,6 +588,19 @@ def load_snec_xg(filepath, verbose=True):
 # ===============================================================
 #              Misc. file things
 # ===============================================================
+def load_feather(filepath):
+    """Load a .feather file with pandas
+
+    parameters
+    ----------
+    filepath : str
+    """
+    if os.path.exists(filepath):
+        return pd.read_feather(filepath)
+    else:
+        raise FileNotFoundError
+
+
 def try_mkdir(path, skip=False, verbose=True):
     """Try to make given directory
 
