@@ -21,7 +21,7 @@ import sys
 import yt
 import time
 
-# bangpy
+# flashbang
 from . import paths
 from .strings import printv
 from . import quantities
