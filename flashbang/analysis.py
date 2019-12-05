@@ -13,8 +13,8 @@ def extract_all_mass_tracers():
     pass
 
 
-def extract_chk_mass_tracers(mass_grid, profile, params):
-    """Return interpolated mass tracers for given profile quantities
+def extract_mass_tracers(mass_grid, profile, params):
+    """Return interpolated mass tracers for given chk profile
 
     Returns: np.ndarray
         2D array of shape [n_tracers, n_params], where n_tracers=len(mass_grid)
