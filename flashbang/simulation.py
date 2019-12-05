@@ -27,7 +27,7 @@ from . import tools
 
 # noinspection PyTypeChecker
 class Simulation:
-    def __init__(self, model, run='run', runs_path=None, config='default',
+    def __init__(self, model, run='run', config='default',
                  output_dir='output', verbose=True, load_all=True,
                  reload=False, save=True, trans=None):
         """Object representing a 1D flash simulation
@@ -39,9 +39,6 @@ class Simulation:
 
         run : str
             The label that's used in chk and .dat files, e.g. 'run' for 'run.dat'
-
-        runs_path : str
-            Override the default place to look for models (bash variable: BANG_MODELS)
 
         config : str
             Base name of config file to use, e.g. 'default' for 'config/default.ini'
@@ -65,8 +62,7 @@ class Simulation:
         """
         t0 = time.time()
         self.verbose = verbose
-        self.runs_path = runs_path
-        self.path = paths.model_path(model=model, runs_path=runs_path)
+        self.path = paths.model_path(model=model)
         self.output_path = os.path.join(self.path, output_dir)
 
         self.model = model
@@ -131,7 +127,6 @@ class Simulation:
         """Get bounce time (s) from log file
         """
         self.bounce_time = load_save.get_bounce_time(self.model, run=self.run,
-                                                     runs_path=self.runs_path,
                                                      verbose=self.verbose)
 
     def update_chk_list(self):
@@ -154,7 +149,7 @@ class Simulation:
         save : bool
         """
         self.dat = load_save.get_dat(
-                        model=self.model, run=self.run, runs_path=self.runs_path,
+                        model=self.model, run=self.run,
                         cols_dict=self.config['dat_columns'], reload=reload,
                         save=save, verbose=self.verbose)
 
