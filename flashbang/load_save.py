@@ -387,8 +387,10 @@ def extract_chk_timesteps(chk_list, model, params=('time', 'nstep'), run='run',
     for par, arr in arrays.items():
         table[par] = arr
 
+    table.set_index('chk', inplace=True)
+
     t1 = time.time()
-    print('='*20, f'\nTotal time: {t1-t0:.3f} s\n', )
+    print('='*20, f'\nTotal time: {t1-t0:.3f} s\n')
     return table
 
 
