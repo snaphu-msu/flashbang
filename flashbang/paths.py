@@ -24,10 +24,6 @@ Expected directory structure:
 
 import os
 
-# Bash environment variables, need to set these first
-flashbang_path = os.environ['FLASHBANG']
-models_path = os.environ['BANG_MODELS']
-
 
 # ===============================================================
 #                      Flashbang
@@ -41,6 +37,13 @@ def config_filepath(name='default'):
         base name of config file
         defaults to 'default' (for file 'default.ini')
     """
+    try:
+        flashbang_path = os.environ['FLASHBANG']
+    except KeyError:
+        raise EnvironmentError('Environment variable FLASHBANG not set. '
+                               'Set path to flashbang directory, e.g., '
+                               "'export FLASHBANG=${HOME}/codes/flashbang'")
+
     return os.path.join(flashbang_path, 'flashbang', 'config', f'{name}.ini')
 
 
@@ -59,7 +62,12 @@ def model_path(model, runs_path=None):
         defaults to environment variable BANG_MODELS
     """
     if runs_path is None:
-        runs_path = models_path
+        try:
+            runs_path = os.environ['FLASH_MODELS']
+        except KeyError:
+            raise EnvironmentError('Environment variable FLASH_MODELS not set. '
+                                   'Set path to directory containing flash models, e.g., '
+                                   "'export FLASH_MODELS=${HOME}/BANG/runs'")
 
     return os.path.join(runs_path, model)
 
