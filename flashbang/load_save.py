@@ -496,8 +496,7 @@ def load_snec_xg(filepath, verbose=True):
     with open(filepath, 'r') as rf:
         count = 0
         for line in rf:
-            # if verbose:
-            sys.stdout.write(f'\r{100 * count/n_lines:.1f}%')
+            printv(f'\r{100 * count/n_lines:.1f}%', verbose, end='')
             cols = line.split()
 
             # Beginning of time data - make key for this time
@@ -514,8 +513,7 @@ def load_snec_xg(filepath, verbose=True):
                 profile[timesteps] = np.array(profile[timesteps])
             count += 1
 
-    if verbose:
-        sys.stdout.write('\n')
+    printv('\n', verbose)
     return profile
 
 
