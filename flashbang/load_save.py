@@ -90,8 +90,8 @@ def get_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
 
     # fall back on loading raw .dat
     if dat_table is None:
-        dat_table = extract_dat(model, cols_dict=cols_dict, run=run,
-                                runs_path=runs_path, runs_prefix=runs_prefix)
+        dat_table = extract_dat(model, cols_dict=cols_dict, run=run, runs_path=runs_path,
+                                runs_prefix=runs_prefix, verbose=verbose)
         if save:
             save_dat_cache(dat_table, model=model, run=run, runs_path=runs_path,
                            runs_prefix=runs_prefix, verbose=verbose)
