@@ -36,9 +36,9 @@ def load_config(name='default', verbose=True):
 
     parameters
     ----------
-    name: str (optional)
+    name: str
         label of config file to load
-    verbose : bool (optional)
+    verbose : bool
     """
     filepath = paths.config_filepath(name=name)
     printv(f'Loading config: {filepath}', verbose)
@@ -71,12 +71,12 @@ def get_dat(model, cols_dict, run='run', runs_path=None, runs_prefix='run_',
     model : str
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
-    run: str (optional)
-    runs_path : str (optional)
-    runs_prefix : str (optional)
-    verbose : bool (optional)
-    save : bool (optional)
-    reload : bool (optional)
+    run: str
+    runs_path : str
+    runs_prefix : str
+    verbose : bool
+    save : bool
+    reload : bool
     """
     dat_table = None
 
@@ -110,10 +110,10 @@ def extract_dat(model, cols_dict, run='run', runs_path=None,
     model : str
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
-    run: str (optional)
-    runs_path : str (optional)
-    runs_prefix : str (optional)
-    verbose : bool (optional)
+    run: str
+    runs_path : str
+    runs_prefix : str
+    verbose : bool
     """
     filepath = paths.dat_filepath(model=model, run=run, runs_path=runs_path,
                                   runs_prefix=runs_prefix)
@@ -136,12 +136,12 @@ def save_dat_cache(dat, model, run='run', runs_path=None, runs_prefix='run_', ve
     parameters
     ----------
     dat : pd.DataFrame
-        table as returned by extract_dat()
+        data table as returned by extract_dat()
     model : str
-    run : str (optional)
-    runs_path : str (optional)
-    runs_prefix : str (optional)
-    verbose : bool (optional)
+    run : str
+    runs_path : str
+    runs_prefix : str
+    verbose : bool
     """
     ensure_temp_dir_exists(model, runs_path=runs_path, runs_prefix=runs_prefix,
                            verbose=verbose)
@@ -158,10 +158,10 @@ def load_dat_cache(model, run='run', runs_path=None, runs_prefix='run_', verbose
     parameters
     ----------
     model : str
-    run : str (optional)
-    runs_path : str (optional)
-    runs_prefix : str (optional)
-    verbose : bool (optional)
+    run : str
+    runs_path : str
+    runs_prefix : str
+    verbose : bool
     """
     filepath = paths.dat_temp_filepath(model=model, run=run, runs_path=runs_path,
                                        runs_prefix=runs_prefix)
@@ -174,6 +174,13 @@ def load_dat_cache(model, run='run', runs_path=None, runs_prefix='run_', verbose
 
 def print_dat_colnames(model, run='run', runs_path=None, runs_prefix='run_'):
     """Print all column names from .dat file
+
+    parameters
+    ----------
+    model : str
+    run : str
+    runs_path : str
+    runs_prefix : str
     """
     filepath = paths.dat_filepath(run=run, model=model, runs_prefix=runs_prefix,
                                   runs_path=runs_path)
@@ -205,20 +212,20 @@ def get_profile(chk, model, run='run', output_dir='output',
     ----------
     chk : int
     model : str
-    run : str (optional)
-    output_dir : str (optional)
-    runs_path : str (optional)
-    runs_prefix : str (optional)
-    o_path : str (optional)
-    params : [] (optional)
+    run : str
+    output_dir : str
+    runs_path : str
+    runs_prefix : str
+    o_path : str
+    params : [str]
         profile parameters to extract and return from chk file
-    derived_params : [] (optional)
+    derived_params : [str]
         secondary profile parameters, derived from primary parameters
-    reload : bool (optional)
+    reload : bool
         force reload from chk file, else try to load pre-extracted profile
     save : bool
         save extracted profile to file for faster loading
-    verbose : bool (optional)
+    verbose : bool
     """
     profile = None
 
@@ -254,14 +261,14 @@ def extract_profile(chk, model, run='run', output_dir='output',
     ----------
     chk : int
     model : str
-    run : str (optional)
-    output_dir : str (optional)
-    runs_path : str (optional)
-    runs_prefix : str (optional)
-    o_path : str (optional)
-    params : [] (optional)
+    run : str
+    output_dir : str
+    runs_path : str
+    runs_prefix : str
+    o_path : str
+    params : [str]
         profile parameters to extract and return from chk file
-    derived_params : [] (optional)
+    derived_params : [str]
         secondary profile parameters, derived from primary parameters
     """
     profile = pd.DataFrame()
@@ -300,13 +307,13 @@ def save_profile_cache(profile, chk, model, run='run', runs_path=None,
     parameters
     ----------
     profile : pd.DataFrame
-            table as returned by extract_profile()
+            table of profile properties as returned by extract_profile()
     chk : int
     model : str
-    run : str (optional)
-    runs_path : str (optional)
-    runs_prefix : str (optional)
-    verbose : bool (optional)
+    run : str
+    runs_path : str
+    runs_prefix : str
+    verbose : bool
     """
     ensure_temp_dir_exists(model, runs_path=runs_path, runs_prefix=runs_prefix,
                            verbose=verbose)
@@ -325,10 +332,10 @@ def load_profile_cache(chk, model, run='run', runs_path=None,
     ----------
     chk : int
     model : str
-    run : str (optional)
-    runs_path : str (optional)
-    runs_prefix : str (optional)
-    verbose : bool (optional)
+    run : str
+    runs_path : str
+    runs_prefix : str
+    verbose : bool
     """
     filepath = paths.profile_filepath(chk=chk, model=model, run=run,
                                       runs_path=runs_path, runs_prefix=runs_prefix)
@@ -354,12 +361,12 @@ def extract_chk_timesteps(chk_list, model, params=('time', 'nstep'), run='run',
     ----------
     chk_list : [int]
     model : str
-    params : [str] (optional)
-    run : str (optional)
-    output_dir : str (optional)
-    runs_path : str (optional)
-    runs_prefix : str (optional)
-    o_path : str (optional)
+    params : [str]
+    run : str
+    output_dir : str
+    runs_path : str
+    runs_prefix : str
+    o_path : str
     """
     t0 = time.time()
     arrays = dict.fromkeys(params)
@@ -393,11 +400,11 @@ def load_chk(chk, model, run='run', output_dir='output',
     ----------
     chk : int
     model : str
-    run : str (optional)
-    output_dir : str (optional)
-    runs_path : str (optional)
-    runs_prefix : str (optional)
-    o_path : str (optional)
+    run : str
+    output_dir : str
+    runs_path : str
+    runs_prefix : str
+    o_path : str
     """
     filepath = paths.chk_filepath(chk=chk, model=model, run=run,
                                   output_dir=output_dir, runs_path=runs_path,
@@ -437,9 +444,17 @@ def find_chk(path, match_str='hdf5_chk_', n_digits=4):
 # ===============================================================
 def get_bounce_time(model, run='run', runs_path=None, runs_prefix='run_',
                     match_str='Bounce', verbose=True):
-    """Return bounce time (s)
+    """Get bounce time (s) from .log file
 
-    Assumes the bounce time immediately follows 'match_str'
+    parameters
+    ----------
+    model : str
+    run : str
+    runs_path : str
+    runs_prefix : str
+    match_str : str
+        String which immediately precedes the bounce time
+    verbose : bool
     """
     filepath = paths.log_filepath(run=run, model=model, runs_path=runs_path,
                                   runs_prefix=runs_prefix)
@@ -488,6 +503,11 @@ def reduce_snec_profile(profile_dict):
 
 def load_snec_xg(filepath, verbose=True):
     """Load mass tracers from SNEC output .xg file, returns as dict
+
+    parameters
+    ----------
+    filepath : str
+    verbose : bool
     """    
     printv(f'Loading: {filepath}', verbose)
     n_lines = fast_line_count(filepath)
@@ -526,10 +546,10 @@ def try_mkdir(path, skip=False, verbose=True):
     parameters
     ----------
     path: str
-    skip : bool (optional)
+    skip : bool
         do nothing if directory already exists
         if skip=false, will ask to overwrite an existing directory
-    verbose : bool (optional)
+    verbose : bool
     """
     printv(f'Creating directory  {path}', verbose)
     if os.path.exists(path):
@@ -550,6 +570,13 @@ def try_mkdir(path, skip=False, verbose=True):
 
 def ensure_temp_dir_exists(model, runs_path=None, runs_prefix='run_', verbose=True):
     """Ensure temp directory exists (create if not)
+
+    parameters
+    ----------
+    model : str
+    runs_path : str
+    runs_prefix : str
+    verbose : bool
     """
     temp_path = paths.temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
     try_mkdir(temp_path, skip=True, verbose=verbose)
@@ -557,6 +584,10 @@ def ensure_temp_dir_exists(model, runs_path=None, runs_prefix='run_', verbose=Tr
 
 def fast_line_count(filepath):
     """Efficiently find the number of lines in a file
+
+    parameters
+    ----------
+    filepath: str
     """
     lines = 0
     buf_size = 1024 * 1024
