@@ -89,7 +89,7 @@ class Simulation:
     # =======================================================
     #                      Setup/init
     # =======================================================
-    def printv(self, string, verbose=None):
+    def printv(self, string, verbose=None, **kwargs):
         """Verbose-aware print
 
         parameters
@@ -101,7 +101,7 @@ class Simulation:
         if verbose is None:
             verbose = self.verbose
         if verbose:
-            print(string)
+            print(string, **kwargs)
 
     def load_all(self, reload, save):
         """Load all model data
