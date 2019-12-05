@@ -176,3 +176,16 @@ def profile_filepath(chk, model, run='run', runs_path=None, runs_prefix='run_'):
     filename = profile_filename(chk, run)
     return os.path.join(path, filename)
 
+
+# ===============================================================
+#                      Timesteps
+# ===============================================================
+def timestep_filename(model, run='run'):
+    """Return filename for pre-extracted timestep table
+
+    parameters
+    ----------
+    model : str
+    run : str
+    """
+    return f'{run}_{model}_timesteps.feather'
