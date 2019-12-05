@@ -19,7 +19,6 @@ Expected directory structure:
 
     Note:
         - path to 'runs' directory can be set with arg 'runs_path'
-        - prefix to model directory, 'run_', can be set with arg 'runs_prefix'
         - name of 'output' directory can be set with arg 'output_dir'
 """
 
@@ -48,7 +47,7 @@ def config_filepath(name='default'):
 # ===============================================================
 #                      Models
 # ===============================================================
-def model_path(model, runs_path=None, runs_prefix='run_'):
+def model_path(model, runs_path=None):
     """Return path to model directory
 
     parameters
@@ -58,28 +57,24 @@ def model_path(model, runs_path=None, runs_prefix='run_'):
     runs_path : str (optional)
         path to directory containing all flash models
         defaults to environment variable BANG_MODELS
-    runs_prefix : str (optional)
-         prefix of model directory
-         defaults to 'run_'
     """
     if runs_path is None:
         runs_path = models_path
 
-    return os.path.join(runs_path, f'{runs_prefix}{model}')
+    return os.path.join(runs_path, model)
 
 
-def temp_path(model, runs_path=None, runs_prefix='run_'):
+def temp_path(model, runs_path=None):
     """Path to directory for temporary file saving
     """
-    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    m_path = model_path(model, runs_path=runs_path)
     return os.path.join(m_path, 'temp')
 
 
-def output_path(model, output_dir='output', runs_path=None,
-                runs_prefix='run_'):
+def output_path(model, output_dir='output', runs_path=None):
     """Return path to model output directory
     """
-    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    m_path = model_path(model, runs_path=runs_path)
     return os.path.join(m_path, output_dir)
 
 
@@ -92,7 +87,7 @@ def dat_filename(run):
     return f'{run}.dat'
 
 
-def dat_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
+def dat_filepath(model, run='run', runs_path=None):
     """Return filepath to .dat file
 
     parameters
@@ -101,11 +96,9 @@ def dat_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
     model : str
     runs_path : str
         see model_path()
-    runs_prefix : str
-        see model_path()
     """
     filename = dat_filename(run)
-    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    m_path = model_path(model, runs_path=runs_path)
     return os.path.join(m_path, filename)
 
 
@@ -115,10 +108,10 @@ def dat_temp_filename(run):
     return f'{run}_dat.feather'
 
 
-def dat_temp_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
+def dat_temp_filepath(model, run='run', runs_path=None):
     """Return filepath to reduced dat table
     """
-    path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    path = temp_path(model, runs_path=runs_path)
     filename = dat_temp_filename(run)
     return os.path.join(path, filename)
 
@@ -132,11 +125,11 @@ def log_filename(run):
     return f'{run}.log'
 
 
-def log_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
+def log_filepath(model, run='run', runs_path=None):
     """Return filepath to .log file
     """
     filename = log_filename(run)
-    m_path = model_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    m_path = model_path(model, runs_path=runs_path)
     return os.path.join(m_path, filename)
 
 
@@ -150,13 +143,12 @@ def chk_filename(chk, run):
 
 
 def chk_filepath(chk, model, run='run', output_dir='output',
-                 runs_path=None, runs_prefix='run_', o_path=None):
+                 runs_path=None, o_path=None):
     """Return filepath to checkpoint file
     """
     filename = chk_filename(chk=chk, run=run)
     if o_path is None:
-        o_path = output_path(model, output_dir=output_dir, runs_path=runs_path,
-                             runs_prefix=runs_prefix)
+        o_path = output_path(model, output_dir=output_dir, runs_path=runs_path)
     return os.path.join(o_path, filename)
 
 
@@ -169,10 +161,10 @@ def profile_filename(chk, run):
     return f'{run}_profile_{chk:04d}.feather'
 
 
-def profile_filepath(chk, model, run='run', runs_path=None, runs_prefix='run_'):
+def profile_filepath(chk, model, run='run', runs_path=None):
     """Return filepath to pre-extracted profile
     """
-    path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    path = temp_path(model, runs_path=runs_path)
     filename = profile_filename(chk, run)
     return os.path.join(path, filename)
 
@@ -191,7 +183,7 @@ def timesteps_filename(model, run='run'):
     return f'{run}_{model}_timesteps.feather'
 
 
-def timesteps_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
+def timesteps_filepath(model, run='run', runs_path=None):
     """Return filename for pre-extracted timestep table
 
     parameters
@@ -199,8 +191,7 @@ def timesteps_filepath(model, run='run', runs_path=None, runs_prefix='run_'):
     model : str
     run : str
     runs_path : str
-    runs_prefix : str
     """
-    path = temp_path(model, runs_path=runs_path, runs_prefix=runs_prefix)
+    path = temp_path(model, runs_path=runs_path)
     filename = timesteps_filename(model=model, run=run)
     return os.path.join(path, filename)

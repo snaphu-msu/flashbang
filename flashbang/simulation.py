@@ -1,5 +1,4 @@
 import os
-import sys
 import time
 import numpy as np
 import pandas as pd
@@ -23,14 +22,14 @@ from . import tools
 #   - time
 #   - n_step
 #   - n_zones
+#   - rsh_avg, other dat params
 
 
 # noinspection PyTypeChecker
 class Simulation:
     def __init__(self, model, run='run', runs_path=None, config='default',
-                 output_dir='output', verbose=True,
-                 load_all=True, reload=False, save=True,
-                 runs_prefix='run_', trans=None):
+                 output_dir='output', verbose=True, load_all=True,
+                 reload=False, save=True, trans=None):
         """Object representing a 1D flash simulation
 
         parameters
@@ -43,9 +42,6 @@ class Simulation:
 
         runs_path : str
             Override the default place to look for models (bash variable: BANG_MODELS)
-
-        runs_prefix : str
-            The prefix added to 'model', e.g. 'run_' for 'run_helmNet'
 
         config : str
             Base name of config file to use, e.g. 'default' for 'config/default.ini'
@@ -70,7 +66,7 @@ class Simulation:
         t0 = time.time()
         self.verbose = verbose
         self.runs_path = runs_path
-        self.path = paths.model_path(model=model, runs_path=runs_path, runs_prefix=runs_prefix)
+        self.path = paths.model_path(model=model, runs_path=runs_path)
         self.output_path = os.path.join(self.path, output_dir)
 
         self.model = model
