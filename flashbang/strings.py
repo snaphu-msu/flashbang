@@ -2,8 +2,8 @@
 """
 
 
-def printv(string, verbose):
+def printv(string, verbose, **kwargs):
     """Print string if verbose is True
     """
     if verbose:
-        print(string)
+        print(string, **kwargs)
