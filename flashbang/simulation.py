@@ -37,23 +37,33 @@ class Simulation:
         ----------
         model : str
             The label for the model directory, e.g. 'helmNet' for 'run_helmNet/'
+
         run : str
             The label that's used in chk and .dat files, e.g. 'run' for 'run.dat'
+
         runs_path : str
             Override the default place to look for models (bash variable: BANG_MODELS)
+
         runs_prefix : str
             The prefix added to 'model', e.g. 'run_' for 'run_helmNet'
+
         config : str
             Base name of config file to use, e.g. 'default' for 'config/default.ini'
+
         output_dir : str
             name of subdirectory containing model output files
+
         load_all : bool
             immediately load all model data (chk profiles, dat)
+
         reload : bool
             force reload model data from raw files (don't load from temp/)
+
         save : bool
             save extracted model data to temporary files (for faster loading)
+
         verbose : bool
+
         trans : {}
             transition densities to track (g/cm^3), e.g. {'': 6e7, 'low': 1e7}
         """
@@ -97,14 +107,22 @@ class Simulation:
         string : str
             string to print if verbose=True
         verbose : bool
+            override self.verbose setting
+        **kwargs
+            args for print()
         """
         if verbose is None:
             verbose = self.verbose
         if verbose:
             print(string, **kwargs)
 
-    def load_all(self, reload, save):
+    def load_all(self, reload=False, save=True):
         """Load all model data
+
+        parameters
+        ----------
+        reload : bool
+        save : bool
         """
         self.get_bounce_time()
         self.load_dat(reload=reload, save=save)
@@ -169,6 +187,7 @@ class Simulation:
             checkpoint file to load from (e.g., chk=12 for `run_hdf5_chk_0012`
         reload : bool
         save : bool
+        verbose : bool
         """
         config = self.config['profile']
         params = config['params'] + config['composition']
@@ -235,12 +254,12 @@ class Simulation:
         ----------
         chk : int
             checkpoint to plot
-        y_var_list : str | [str]
+        y_var_list : str or [str]
             variable(s) to plot on y-axis (from Simulation.profile)
         x_var : str
             variable to plot on x-axis
-        y_scale : bool
-        x_scale : bool
+        y_scale : {'log', 'linear'}
+        x_scale : {'log', 'linear'}
         legend : bool
         max_cols : bool
         sub_figsize : tuple
@@ -269,21 +288,21 @@ class Simulation:
 
         parameters
         ----------
-        chk : int | [int]
+        chk : int or [int]
             checkpoint(s) to plot
         y_var : str
             variable to plot on y-axis (from Simulation.profile)
         x_var : str
             variable to plot on x-axis
-        y_scale : str
-        x_scale : bool
-        ax : pyplot.axis
+        y_scale : {'log', 'linear'}
+        x_scale : {'log', 'linear'}
+        ax : Axes
         legend : bool
         trans : bool
         title : bool
-        ylims : []
-        xlims : []
-        figsize : []
+        ylims : [min, max]
+        xlims : [min, max]
+        figsize : [width, height]
         label : str
         linestyle : str
         marker : str
@@ -312,8 +331,8 @@ class Simulation:
 
         return fig
 
-    def plot_composition(self, chk, x_var='r', y_scale='log', x_scale=None,
-                         y_var_list=None, ax=None, legend=True, ylims=(1e-5, 2), xlims=None,
+    def plot_composition(self, chk, x_var='r', y_var_list=None, y_scale='log',
+                         x_scale=None, ax=None, legend=True, ylims=(1e-5, 2), xlims=None,
                          trans=True, figsize=(8, 6), title=True, legend_loc='lower left',
                          show_ye=True):
         """Plot isotope composition profile
@@ -321,20 +340,20 @@ class Simulation:
         parameters
         ----------
         chk : int
-        y_var_list : [str]
-            list of isotopes to plot (see self.config['profile']['params'])
         x_var : str
             variable to plot on x-axis
-        y_scale : str
-        x_scale : bool
-        ax : pyplot.axis
+        y_var_list : [str]
+            list of isotopes to plot (see self.config['profile']['params'])
+        y_scale : {'log', 'linear'}
+        x_scale : {'log', 'linear'}
+        ax : Axes
         legend : bool
         trans : bool
         title : bool
-        ylims : []
-        xlims : []
-        figsize : []
-        legend_loc : str
+        ylims : [min, max]
+        xlims : [min, max]
+        figsize : [width, height]
+        legend_loc : str or int
         show_ye : bool
         """
         if chk not in self.profiles.keys():
@@ -370,14 +389,14 @@ class Simulation:
         ----------
         y_var : str
         x_var : str
-        y_scale : str
-        x_scale : str
+        y_scale : {'log', 'linear'}
+        x_scale : {'log', 'linear'}
         trans : bool
             plot helmholtz transitions
-        figsize : []
+        figsize : [width, height]
         title : bool
-        xlims : [2]
-        ylims : [2]
+        xlims : [min, max]
+        ylims : [min, max]
         legend : bool
         linestyle : str
         marker : str
@@ -421,14 +440,14 @@ class Simulation:
         ----------
         y_var_list : [str]
         x_var : str
-        y_scale : str
-        x_scale : str
+        y_scale : {'log', 'linear'}
+        x_scale : {'log', 'linear'}
         trans : bool
             plot helmholtz transitions
-        figsize : []
+        figsize : [width, height]
         title : bool
-        xlims : [2]
-        ylims : [2]
+        xlims : [min, max]
+        ylims : [min, max]
         legend : bool
         show_ye : bool
         """
@@ -482,10 +501,10 @@ class Simulation:
         parameters
         ----------
         y_var : str
-        y_scale : str
-        figsize : []
+        y_scale : {'log', 'linear'}
+        figsize : [width, height]
         display : bool
-        ax : pyplot.axis
+        ax : Axes
         linestyle : str
         marker : str
         """
@@ -503,6 +522,11 @@ class Simulation:
     # =======================================================
     def get_label(self, key):
         """Return formatted string for plot label
+
+        parameters
+        ----------
+        key : str
+            parameter key, e.g. 'r', 'temp', 'dens'
         """
         return self.config['plotting']['labels'].get(key, key)
 
@@ -512,9 +536,9 @@ class Simulation:
         parameters
         ----------
         chk : int
+        key : str
         x_var : str
-        y : []
-            1D array of y-values
+        y : 1D array
         """
         # TODO: rename get_trans_x()
         y_max = np.max(y)
@@ -530,6 +554,12 @@ class Simulation:
 
     def _get_trans_x(self, chk, key, x_var):
         """Return x value corresponding to given transition
+
+        parameters
+        ----------
+        chk : int
+        key : str
+        x_var : str
         """
         profile = self.profiles[chk]
         trans_idx = self.chk_table.loc[chk, f'{key}_i']
@@ -543,7 +573,7 @@ class Simulation:
         x_var : str
         y : []
             1D array of y-values
-        ax : pyplot.axis
+        ax : Axes
         chk : int
         trans : bool
         """
@@ -557,11 +587,11 @@ class Simulation:
 
         parameters
         ----------
-        ax : pyplot.axis
+        ax : Axes
         y_var : str
         x_var : str
-        y_scale : str
-        x_scale : str
+        y_scale : {'log', 'linear'}
+        x_scale : {'log', 'linear'}
         """
         if x_scale is None:
             x_scale = self.config['plotting']['ax_scales'].get(x_var, 'log')
@@ -576,24 +606,24 @@ class Simulation:
 
         parameters
         ----------
-        ax : pyplot.axis
+        ax : Axes
         chk : int
         title : bool
         """
         # TODO: account for different zero points/starting times
         if title:
             dt = self.config['plotting']['scales']['chk_dt']
-            time = dt * chk - self.bounce_time
-            ax.set_title(f't={time:.3f} s')
+            timestep = dt * chk - self.bounce_time
+            ax.set_title(f't={timestep:.3f} s')
 
     def _set_ax_lims(self, ax, xlims, ylims):
         """Set x and y axis limits
 
         parameters
         ----------
-        ax : pyplot.axis
-        xlims : []
-        ylims : []
+        ax : Axes
+        xlims : [min, max]
+        ylims : [min, max]
         """
         c = self.config['plotting']  # TODO: something with auto-lims in future
         if ylims is not None:
@@ -606,7 +636,7 @@ class Simulation:
 
         parameters
         ----------
-        ax : pyplot.axis
+        ax : Axes
         x_var : str
         y_var : str
         """
@@ -615,6 +645,11 @@ class Simulation:
 
     def _setup_fig_ax(self, ax, figsize):
         """Setup fig, ax, checking if ax already provided
+
+        parameters
+        ----------
+        ax : Axes
+        figsize : [width, height]
         """
         c = self.config['plotting']  # TODO: default settings from config
         fig = None
@@ -626,6 +661,10 @@ class Simulation:
 
     def _setup_slider_fig(self, figsize):
         """Setup fig, ax for slider
+
+        parameters
+        ----------
+        figsize : [width, height]
         """
         c = self.config['plotting']  # TODO: default settings from config
         fig = plt.figure(figsize=figsize)
