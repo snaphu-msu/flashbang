@@ -179,7 +179,7 @@ def print_dat_colnames(model, run='run'):
 # ===============================================================
 #                      Profiles
 # ===============================================================
-def get_profile(chk, model, run='run', params=('temp', 'dens', 'pres'),
+def get_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
                 derived_params=('mass',), output_dir='output', o_path=None,
                 reload=False, save=True, verbose=True):
     """Get reduced radial profile, as contained in checkpoint file
