@@ -133,7 +133,7 @@ def save_dat_cache(dat, model, run='run', verbose=True):
     run : str
     verbose : bool
     """
-    ensure_temp_dir_exists(model, verbose=verbose)
+    ensure_temp_dir_exists(model, verbose=False)
     filepath = paths.dat_temp_filepath(model=model, run=run)
 
     printv(f'Saving dat cache: {filepath}', verbose)
@@ -281,7 +281,7 @@ def save_profile_cache(profile, chk, model, run='run', verbose=True):
     run : str
     verbose : bool
     """
-    ensure_temp_dir_exists(model, verbose=verbose)
+    ensure_temp_dir_exists(model, verbose=False)
     filepath = paths.profile_filepath(chk=chk, model=model, run=run)
 
     printv(f'Saving profile cache: {filepath}', verbose)
@@ -444,7 +444,7 @@ def save_timesteps_cache(timesteps, model, run='run', verbose=True):
     run : str
     verbose : bool
     """
-    ensure_temp_dir_exists(model, verbose=verbose)
+    ensure_temp_dir_exists(model, verbose=False)
     filepath = paths.timesteps_filepath(model, run=run)
 
     printv(f'Saving timesteps cache: {filepath}', verbose)
