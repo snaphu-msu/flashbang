@@ -10,6 +10,7 @@ Python tools for extracting/analysing/plotting 1D core-collapse supernova models
 * pandas
 * astropy
 * scipy
+
 You should already be using something like [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#using-pip-in-an-environment) to manage separate python environments. In which case installing dependencies is as simple as `pip install numpy`, etc..
 
 # Setup
