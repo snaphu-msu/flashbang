@@ -34,6 +34,9 @@ $FLASH_MODELS
 │       │   run_hdf5_chk_0000
 │       │   run_hdf5_chk_0001
 │       │   ...
+│
+│___flash_model_2
+│   ...
 ```
 
 You can then initialise the Simulation object in python using:
