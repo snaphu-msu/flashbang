@@ -1,3 +1,35 @@
+"""Main flashbang class for the Simulation object.
+
+A Simulation instance represents a single 1D FLASH model.
+It can load model data files, manipulate/extract that data,
+and plot it across various "dimensions".
+
+General terminology
+-------------------
+    Setup arguments
+    ---------------
+    model: Name of the FLASH model (i.e. the directory name).
+        Typically corresponds to a particular compiled `flash4` executable.
+
+    run: sub-model label (i.e. the prefix used in filenames,
+        e.g. use 'run2' for 'run2.dat').
+        Multiple simulations may have been executed under the
+        same umbrella "model". Use this to distinguish between them.
+
+    Data structures
+    ---------------
+    dat: Integrated time-series quantities found in the `[run].dat` file.
+
+    chk: Checkpoint data found in `chk` files.
+
+    profile: Radial profiles as extracted from chk files.
+        Each profile corresponds to a chk file.
+
+    log: Data printed to terminal during model, stored in the `[run].log` file.
+
+    tracers: Trajectories/tracers for given mass shells.
+        Extracted using profile mass coordinates, for a chosen mass grid.
+"""
 import os
 import time
 import numpy as np
@@ -17,12 +49,16 @@ from . import tools
 #   - create an rcparams for default values of run, etc.
 #   - generalised axis plotting
 #       - save/show plot
+#   - change mass units to m_sun
 
 # TODO: chk_table, add columns:
 #   - time
 #   - n_step
 #   - n_zones
 #   - rsh_avg, other dat params
+
+# TODO: plotting
+#   - find max/min y-values over all chk --> set slider ylim
 
 
 # noinspection PyTypeChecker
@@ -35,10 +71,10 @@ class Simulation:
         parameters
         ----------
         model : str
-            The label for the model directory, e.g. 'helmNet' for 'run_helmNet/'
+            The name of the main model directory
 
         run : str
-            The label that's used in chk and .dat files, e.g. 'run' for 'run.dat'
+            The label that's used in chk and .dat filenames, e.g. 'run' for 'run.dat'
 
         config : str
             Base name of config file to use, e.g. 'default' for 'config/default.ini'
