@@ -1,7 +1,7 @@
 # flashbang
 Python tools for extracting/analysing/plotting 1D core-collapse supernova models from [FLASH](http://flash.uchicago.edu/site/flashcode/).
 
-# Dependencies
+# Python Dependencies
 * numpy
 * matplotlib
 * yt
