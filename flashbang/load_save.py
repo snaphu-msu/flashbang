@@ -310,21 +310,26 @@ def load_profile_cache(chk, model, run='run', verbose=True):
 # ===============================================================
 #                      Chk files
 # ===============================================================
-def find_chk(path, match_str='hdf5_chk_', n_digits=4):
+def find_chk(model=None, output_path=None, match_str='hdf5_chk_', n_digits=4):
     """Return list of checkpoint (chk) files available in given directory
         returns as nparray of checkpoint numbers
 
     parameters
     ----------
-    path : str
-        path to directory to look in
+    model : str
+    output_path : str
+        full path to directory containing chk files
     match_str : str
         string to match for in filename, to identify chk files
     n_digits : int
         number of digits at end of filename corresponding to checkpoint ID
     """
-    # TODO: add args model, run etc.
-    file_list = os.listdir(path)
+    if output_path is None:
+        if model is None:
+            raise ValueError('Must provide one of (model, output_path)')
+        output_path = paths.output_path(model=model)
+
+    file_list = os.listdir(output_path)
     chks = []
 
     for file in file_list:
@@ -382,12 +387,11 @@ def get_timesteps(model, run='run', params=('time', 'nstep'),
 
     # fall back on loading from raw chk files
     if timesteps is None:
-        if output_path is None:
-            output_path = paths.output_path(model)
+        chk_list = find_chk(model=model, output_path=output_path,
+                            match_str=f'{run}_hdf5_chk_')
+        timesteps = extract_timesteps(chk_list, model, run=run, params=params,
+                                      output_path=output_path)
 
-        chk_list = find_chk(path=output_path, match_str=f'{run}_hdf5_chk_')
-
-        timesteps = extract_timesteps(chk_list, model, run=run, params=params, output_path=output_path)
         if save:
             save_timesteps_cache(timesteps, model=model, run=run, verbose=verbose)
 

@@ -167,7 +167,7 @@ class Simulation:
     def update_chk_list(self):
         """Update the list of checkpoint files available
         """
-        self.chk_table['chk'] = load_save.find_chk(path=self.output_path,
+        self.chk_table['chk'] = load_save.find_chk(output_path=self.output_path,
                                                    match_str=f'{self.run}_hdf5_chk_')
         self.chk_table.set_index('chk', inplace=True)
         self.n_chk = len(self.chk_table)
