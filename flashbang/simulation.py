@@ -50,12 +50,11 @@ from . import tools
 #   - generalised axis plotting
 #       - save/show plot
 #   - change mass units to m_sun
-
-# chk_table, add columns:
-#   - time
-#   - n_step
-#   - n_zones
-#   - rsh_avg, other dat params
+#   - chk_table, add columns:
+#       - time
+#       - n_step
+#       - n_zones
+#       - rsh_avg, other dat params
 
 # TODO: plotting
 #   - find max/min y-values over all chk --> set slider ylim
@@ -225,7 +224,7 @@ class Simulation:
 
         self.profiles[chk] = load_save.get_profile(
                                 chk, model=self.model, run=self.run,
-                                o_path=self.output_path, params=params,
+                                output_path=self.output_path, params=params,
                                 derived_params=config['derived_params'],
                                 reload=reload, save=save, verbose=verbose)
 
