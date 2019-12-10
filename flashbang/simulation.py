@@ -97,11 +97,11 @@ class Simulation:
         """
         t0 = time.time()
         self.verbose = verbose
-        self.path = paths.model_path(model=model)
-        self.output_path = os.path.join(self.path, output_dir)
-
         self.model = model
         self.run = run
+
+        self.model_path = paths.model_path(model=model)
+        self.output_path = os.path.join(self.model_path, output_dir)
 
         self.config = load_save.load_config(name=config, verbose=self.verbose)
         self.chk_table = pd.DataFrame()
