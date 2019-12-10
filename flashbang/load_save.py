@@ -27,6 +27,10 @@ from . import paths
 from .strings import printv
 from . import quantities
 
+# TODO:
+#   - revert to pickle? (do speed-tests)
+#   - save/load tracers (use xarray?)
+
 
 # =======================================================================
 #                      Config files
