@@ -28,8 +28,8 @@ from .strings import printv
 from . import quantities
 
 # TODO:
-#   - revert to pickle? (do speed-tests)
 #   - save/load tracers (use xarray?)
+#   - Refactor profiles into large xarray?
 
 
 # =======================================================================
@@ -166,6 +166,7 @@ def print_dat_colnames(model, run='run'):
     model : str
     run : str
     """
+    # TODO: function to extract colnames
     filepath = paths.dat_filepath(run=run, model=model)
 
     with open(filepath, 'r') as f:
@@ -266,6 +267,7 @@ def add_mass_profile(profile):
     profile : pd.DataFrame
         table as returned by extract_profile()
     """
+    # TODO: check this is correct
     if ('r' not in profile.columns) or ('dens' not in profile.columns):
         raise ValueError(f'Need radius and density columns (r, dens) to calculate mass')
 
