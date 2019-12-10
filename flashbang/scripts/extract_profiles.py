@@ -6,6 +6,7 @@ Usage:
 """
 import sys
 import multiprocessing as mp
+import time
 
 # flashbang
 from flashbang import simulation, load_save
@@ -18,6 +19,7 @@ from flashbang import simulation, load_save
 
 def main(model, run, multithread=True, reload=False, save=True,
          config='default'):
+    t0 = time.time()
     sim = simulation.Simulation(run=run, model=model, config=config, load_all=False)
     conf = sim.config['profile']
     params = conf['params'] + conf['composition']
@@ -35,13 +37,8 @@ def main(model, run, multithread=True, reload=False, save=True,
             extract_profiles(chk, model=model, run=run, reload=reload,
                              save=save, params=params, derived_params=derived_params)
 
-    # =========================
-    # bool_map = {'True': True, 'False': False}
-    # for k in kwargs:
-    #     kwargs[k] = bool_map[kwargs[k]]
-    # batches = np.arange(batch_first, batch_last + 1)
-    # burst_pipeline.run_analysis(batches, source, **kwargs)
-    # =========================
+    t1 = time.time()
+    print(f'Time taken: {t1-t0:.2f} s')
 
 
 def extract_profiles(chk, model, run, reload, save, params, derived_params):
