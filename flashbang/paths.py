@@ -111,7 +111,7 @@ def dat_filepath(model, run='run'):
 def dat_temp_filename(run):
     """Return filename for temporary (cached) dat file
     """
-    return f'{run}_dat.feather'
+    return f'{run}_dat.pickle'
 
 
 def dat_temp_filepath(model, run='run'):
@@ -163,7 +163,7 @@ def chk_filepath(chk, model, run='run', output_dir='output', o_path=None):
 def profile_filename(chk, run):
     """Return filename for pre-extracted profile
     """
-    return f'{run}_profile_{chk:04d}.feather'
+    return f'{run}_profile_{chk:04d}.pickle'
 
 
 def profile_filepath(chk, model, run='run'):
@@ -185,7 +185,7 @@ def timesteps_filename(model, run='run'):
     model : str
     run : str
     """
-    return f'{run}_{model}_timesteps.feather'
+    return f'{run}_{model}_timesteps.pickle'
 
 
 def timesteps_filepath(model, run='run'):

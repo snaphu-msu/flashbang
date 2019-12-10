@@ -141,7 +141,7 @@ def save_dat_cache(dat, model, run='run', verbose=True):
     filepath = paths.dat_temp_filepath(model=model, run=run)
 
     printv(f'Saving dat cache: {filepath}', verbose)
-    dat.to_feather(filepath)
+    dat.to_pickle(filepath)
 
 
 def load_dat_cache(model, run='run', verbose=True):
@@ -155,7 +155,7 @@ def load_dat_cache(model, run='run', verbose=True):
     """
     filepath = paths.dat_temp_filepath(model=model, run=run)
     printv(f'Loading dat cache: {filepath}', verbose)
-    return load_feather(filepath)
+    return pd.read_pickle(filepath)
 
 
 def print_dat_colnames(model, run='run'):
@@ -289,7 +289,6 @@ def save_profile_cache(profile, chk, model, run='run', verbose=True):
     filepath = paths.profile_filepath(chk=chk, model=model, run=run)
 
     printv(f'Saving profile cache: {filepath}', verbose)
-    # profile.to_feather(filepath)
     profile.to_pickle(filepath)
 
 
@@ -305,7 +304,6 @@ def load_profile_cache(chk, model, run='run', verbose=True):
     """
     filepath = paths.profile_filepath(chk=chk, model=model, run=run)
     printv(f'Loading profile cache: {filepath}', verbose)
-    # return load_feather(filepath)
     return pd.read_pickle(filepath)
 
 
@@ -456,7 +454,7 @@ def save_timesteps_cache(timesteps, model, run='run', verbose=True):
 
     printv(f'Saving timesteps cache: {filepath}', verbose)
     timesteps_out = timesteps.reset_index()
-    timesteps_out.to_feather(filepath)
+    timesteps_out.to_pickle(filepath)
 
 
 def load_timesteps_cache(model, run='run', verbose=True):
@@ -471,7 +469,7 @@ def load_timesteps_cache(model, run='run', verbose=True):
     filepath = paths.timesteps_filepath(model=model, run=run)
     printv(f'Loading timesteps cache: {filepath}', verbose)
 
-    timesteps = load_feather(filepath)
+    timesteps = pd.read_pickle(filepath)
     timesteps.set_index('chk', inplace=True)
     return timesteps
 
