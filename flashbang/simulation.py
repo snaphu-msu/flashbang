@@ -122,7 +122,7 @@ class Simulation:
             self.load_all(reload=reload, save=save)
 
         t1 = time.time()
-        self.printv(f'Total load time: {t1-t0:.3f} s')
+        self.printv(f'Model load time: {t1-t0:.3f} s')
 
     # =======================================================
     #                      Setup/init
