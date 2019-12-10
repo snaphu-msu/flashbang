@@ -51,7 +51,7 @@ from . import tools
 #       - save/show plot
 #   - change mass units to m_sun
 
-# TODO: chk_table, add columns:
+# chk_table, add columns:
 #   - time
 #   - n_step
 #   - n_zones

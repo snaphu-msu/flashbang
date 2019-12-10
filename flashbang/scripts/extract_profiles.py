@@ -1,13 +1,14 @@
+"""
+Script to extract chk profiles en-masse using multithreading
+
+Usage:
+    python extract_profiles [run] [model]
+"""
 import sys
 import multiprocessing as mp
 
+# flashbang
 from flashbang import simulation, load_save
-
-# =================================================================
-# Script callable from terminal to extract model profiles
-# Usage:
-#   python extract_profiles [run] [model]
-# =================================================================
 
 # TODO:
 #   - check for existing tempfiles, only load missing

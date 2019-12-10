@@ -407,6 +407,7 @@ def extract_timesteps(chk_list, model, run='run', params=('time', 'nstep'),
     output_dir : str
     o_path : str
     """
+    # TODO: multithread extract
     t0 = time.time()
     arrays = dict.fromkeys(params)
     chk0 = load_chk(chk_list[0], model=model, run=run, output_dir=output_dir, o_path=o_path)
