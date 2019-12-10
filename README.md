@@ -2,6 +2,7 @@
 Python tools for extracting/analysing/plotting 1D core-collapse supernova models from [FLASH](http://flash.uchicago.edu/site/flashcode/).
 
 # Python Dependencies
+* python 3.7
 * astropy
 * h5py
 * matplotlib
