@@ -13,7 +13,13 @@ Python tools for extracting/analysing/plotting 1D core-collapse supernova models
 
 Use the included `environment.yml` file to easily set up a working [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) environment with the necessary dependencies.
 
-Simply run `conda env create -f environment.yml`, which will create a new environment called `flashbang`, which you can then activate with `conda activate flashbang`.
+Simply run 
+
+`conda env create -f environment.yml`
+
+which will create a new environment called `flashbang`, which you can then activate with 
+
+`conda activate flashbang`
 
 # Setup
 Set these shell environment variables (in your `.bashrc` etc.):
