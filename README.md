@@ -57,9 +57,9 @@ sim = flashbang.simulation.Simulation(model='flash_model_1',
                                       run='run', 
                                       output_dir='output')
 ```
-**Warning:** If your model has more than a few `chk` files (like >10), this could take a long time (~2 sec per file). In that case use the arg `load_all=False` to skip loading for now. Look at `flashbang/scripts/extract_profiles.py` to "pre-load" a large number of `chk` files with multithreading (more detail to come soon...)
-
 Where `model` is the name of the model directory, `run` is the prefix used in the output filenames (defaults to `'run'`), and `output` is the name of the output directory containing the `chk` and `plt` files (defaults to `'output'`).
+
+**Warning:** If your model has more than a few `chk` files (like >10), this could take a long time (~2 sec per file). In that case use the arg `load_all=False` to skip loading for now. Look at `flashbang/scripts/extract_profiles.py` to "pre-load" a large number of `chk` files with multithreading (more detail to come soon...)
 
 # (To be continued...)
 * config files (look in `flashbang/config/`)
