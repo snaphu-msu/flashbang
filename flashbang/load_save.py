@@ -289,7 +289,8 @@ def save_profile_cache(profile, chk, model, run='run', verbose=True):
     filepath = paths.profile_filepath(chk=chk, model=model, run=run)
 
     printv(f'Saving profile cache: {filepath}', verbose)
-    profile.to_feather(filepath)
+    # profile.to_feather(filepath)
+    profile.to_pickle(filepath)
 
 
 def load_profile_cache(chk, model, run='run', verbose=True):
@@ -304,7 +305,8 @@ def load_profile_cache(chk, model, run='run', verbose=True):
     """
     filepath = paths.profile_filepath(chk=chk, model=model, run=run)
     printv(f'Loading profile cache: {filepath}', verbose)
-    return load_feather(filepath)
+    # return load_feather(filepath)
+    return pd.read_pickle(filepath)
 
 
 # ===============================================================
