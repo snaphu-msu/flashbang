@@ -32,16 +32,16 @@ def str_to_bool(string, true_options=("yes", "y", "true"),
 
     parameters
     ----------
-    string : str
+    string : str or bool
         string to convert to bool (case insensitive)
     true_options : [str]
         (lowercase) strings which evaluate to True
     false_options : [str]
         (lowercase) strings which evaluate to False
     """
-    if string.lower() in true_options:
+    if str(string).lower() in true_options:
         return True
-    elif string.lower() in false_options:
+    elif str(string).lower() in false_options:
         return False
     else:
         raise Exception(f'Undefined string for boolean conversion: {string}')
