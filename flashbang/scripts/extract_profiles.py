@@ -9,7 +9,7 @@ import multiprocessing as mp
 import time
 
 # flashbang
-from flashbang import simulation, load_save
+from flashbang import simulation, load_save, tools
 
 # TODO:
 #   - check for existing tempfiles, only load missing
@@ -20,6 +20,11 @@ from flashbang import simulation, load_save
 def main(model, run, multithread=True, reload=False, save=True,
          config='default'):
     t0 = time.time()
+
+    multithread = tools.str_to_bool(multithread)
+    reload = tools.str_to_bool(reload)
+    save = tools.str_to_bool(save)
+
     sim = simulation.Simulation(run=run, model=model, config=config, load_all=False)
     conf = sim.config['profile']
     params = conf['params'] + conf['composition']
