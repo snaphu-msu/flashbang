@@ -30,6 +30,8 @@ from . import quantities
 # TODO:
 #   - save/load tracers (use xarray?)
 #   - Refactor profiles into large xarray?
+#   - multithread extract_timesteps
+#   - function to extract colnames
 
 
 # =======================================================================
@@ -166,7 +168,6 @@ def print_dat_colnames(model, run='run'):
     model : str
     run : str
     """
-    # TODO: function to extract colnames
     filepath = paths.dat_filepath(run=run, model=model)
 
     with open(filepath, 'r') as f:
@@ -185,7 +186,7 @@ def print_dat_colnames(model, run='run'):
 #                      Profiles
 # ===============================================================
 def get_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
-                derived_params=('mass',), output_dir='output', o_path=None,
+                derived_params=('mass',), o_path=None,
                 reload=False, save=True, verbose=True):
     """Get reduced radial profile, as contained in checkpoint file
     Loads pre-extracted profile if available, otherwise from raw file
@@ -201,7 +202,6 @@ def get_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
         profile parameters to extract and return from chk file
     derived_params : [str]
         secondary profile parameters, derived from primary parameters
-    output_dir : str
     o_path : str
     reload : bool
         force reload from chk file, else try to load pre-extracted profile
@@ -220,8 +220,8 @@ def get_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
 
     # fall back on loading raw chk
     if profile is None:
-        profile = extract_profile(chk, model=model, run=run, output_dir=output_dir,
-                                  o_path=o_path, params=params, derived_params=derived_params)
+        profile = extract_profile(chk, model=model, run=run, o_path=o_path,
+                                  params=params, derived_params=derived_params)
         if save:
             save_profile_cache(profile, chk=chk, model=model, run=run, verbose=verbose)
 
@@ -229,7 +229,7 @@ def get_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
 
 
 def extract_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
-                    derived_params=('mass',), output_dir='output', o_path=None):
+                    derived_params=('mass',), o_path=None):
     """Extract and reduce profile data from chk file
 
     Returns : pd.DataFrame
@@ -243,11 +243,10 @@ def extract_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
         profile parameters to extract and return from chk file
     derived_params : [str]
         secondary profile parameters, derived from primary parameters
-    output_dir : str
     o_path : str
     """
     profile = pd.DataFrame()
-    chk_raw = load_chk(chk=chk, model=model, run=run, output_dir=output_dir, o_path=o_path)
+    chk_raw = load_chk(chk=chk, model=model, run=run, o_path=o_path)
     chk_data = chk_raw.all_data()
 
     for var in params:
@@ -267,7 +266,6 @@ def add_mass_profile(profile):
     profile : pd.DataFrame
         table as returned by extract_profile()
     """
-    # TODO: check this is correct
     if ('r' not in profile.columns) or ('dens' not in profile.columns):
         raise ValueError(f'Need radius and density columns (r, dens) to calculate mass')
 
@@ -335,7 +333,7 @@ def find_chk(path, match_str='hdf5_chk_', n_digits=4):
     return np.sort(chks)
 
 
-def load_chk(chk, model, run='run', output_dir='output', o_path=None):
+def load_chk(chk, model, run='run', o_path=None):
     """Load checkpoint file using yt
 
     parameters
@@ -343,11 +341,9 @@ def load_chk(chk, model, run='run', output_dir='output', o_path=None):
     chk : int
     model : str
     run : str
-    output_dir : str
     o_path : str
     """
-    filepath = paths.chk_filepath(chk=chk, model=model, run=run, output_dir=output_dir,
-                                  o_path=o_path)
+    filepath = paths.chk_filepath(chk=chk, model=model, run=run, o_path=o_path)
 
     if not os.path.exists(filepath):
         raise FileNotFoundError(f'checkpoint {chk:04d} file does not exist: {filepath}')
@@ -359,8 +355,7 @@ def load_chk(chk, model, run='run', output_dir='output', o_path=None):
 #                      Timesteps
 # ===============================================================
 def get_timesteps(model, run='run', params=('time', 'nstep'),
-                  reload=False, save=True, output_dir='output',
-                  o_path=None, verbose=True):
+                  reload=False, save=True, o_path=None, verbose=True):
     """Get table of timestep quantities (time, n_steps, etc.) from chk files
 
     Returns : pandas.DataFrame
@@ -372,7 +367,6 @@ def get_timesteps(model, run='run', params=('time', 'nstep'),
     params : [str]
     reload : bool
     save : bool
-    output_dir : str
     o_path : str
     verbose : bool
     """
@@ -387,11 +381,13 @@ def get_timesteps(model, run='run', params=('time', 'nstep'),
 
     # fall back on loading from raw chk files
     if timesteps is None:
-        output_path = paths.output_path(model, output_dir=output_dir)
+        output_path = o_path
+        if output_path is None:
+            output_path = paths.output_path(model)
+
         chk_list = find_chk(path=output_path, match_str=f'{run}_hdf5_chk_')
 
-        timesteps = extract_timesteps(chk_list, model, run=run, params=params,
-                                      output_dir=output_dir, o_path=o_path)
+        timesteps = extract_timesteps(chk_list, model, run=run, params=params, o_path=o_path)
         if save:
             save_timesteps_cache(timesteps, model=model, run=run, verbose=verbose)
 
@@ -399,7 +395,7 @@ def get_timesteps(model, run='run', params=('time', 'nstep'),
 
 
 def extract_timesteps(chk_list, model, run='run', params=('time', 'nstep'),
-                      output_dir='output', o_path=None):
+                      o_path=None):
     """Extract timestep quantities from chk files
 
     Returns: pd.DataFrame()
@@ -410,20 +406,18 @@ def extract_timesteps(chk_list, model, run='run', params=('time', 'nstep'),
     model : str
     run : str
     params : [str]
-    output_dir : str
     o_path : str
     """
-    # TODO: multithread extract
     t0 = time.time()
     arrays = dict.fromkeys(params)
-    chk0 = load_chk(chk_list[0], model=model, run=run, output_dir=output_dir, o_path=o_path)
+    chk0 = load_chk(chk_list[0], model=model, run=run, o_path=o_path)
     
     for par in params:
         par_type = type(chk0.parameters[par])
         arrays[par] = np.zeros_like(chk_list, dtype=par_type)
 
     for i, chk in enumerate(chk_list[1:]):
-        chk_raw = load_chk(chk, model=model, run=run, output_dir=output_dir, o_path=o_path)
+        chk_raw = load_chk(chk, model=model, run=run, o_path=o_path)
         for par in params:
             arrays[par][i+1] = chk_raw.parameters[par]
 

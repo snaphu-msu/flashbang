@@ -148,12 +148,14 @@ def chk_filename(chk, run):
     return f'{run}_hdf5_chk_{chk:04d}'
 
 
-def chk_filepath(chk, model, run='run', output_dir='output', o_path=None):
+def chk_filepath(chk, model, run='run', o_path=None):
     """Return filepath to checkpoint file
     """
     filename = chk_filename(chk=chk, run=run)
+
     if o_path is None:
-        o_path = output_path(model, output_dir=output_dir)
+        o_path = output_path(model)
+
     return os.path.join(o_path, filename)
 
 
