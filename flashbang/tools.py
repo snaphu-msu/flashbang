@@ -24,3 +24,24 @@ def find_nearest_idx(array, value):
         return idx - 1
     else:
         return idx
+
+
+def str_to_bool(string, true_options=("yes", "y", "true"),
+                false_options=("no",  "n", "false")):
+    """Converts string to boolean, e.g. for parsing shell input
+
+    parameters
+    ----------
+    string : str
+        string to convert to bool (case insensitive)
+    true_options : [str]
+        (lowercase) strings which evaluate to True
+    false_options : [str]
+        (lowercase) strings which evaluate to False
+    """
+    if string.lower() in true_options:
+        return True
+    elif string.lower() in false_options:
+        return False
+    else:
+        raise Exception(f'Undefined string for boolean conversion: {string}')
