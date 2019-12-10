@@ -571,19 +571,6 @@ def load_snec_xg(filepath, verbose=True):
 # ===============================================================
 #              Misc. file things
 # ===============================================================
-def load_feather(filepath):
-    """Load a .feather file with pandas
-
-    parameters
-    ----------
-    filepath : str
-    """
-    if os.path.exists(filepath):
-        return pd.read_feather(filepath)
-    else:
-        raise FileNotFoundError
-
-
 def try_mkdir(path, skip=False, verbose=True):
     """Try to make given directory
 
