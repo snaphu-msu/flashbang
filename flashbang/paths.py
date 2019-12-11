@@ -27,6 +27,7 @@ import os
 
 # TODO:
 #   - deprecate output_dir, o_path (replace with environment variables)
+#   - use config files? How to avoid circular imports?
 
 
 # ===============================================================
