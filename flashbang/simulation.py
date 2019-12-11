@@ -103,12 +103,14 @@ class Simulation:
         self.model_path = paths.model_path(model=model)
         self.output_path = os.path.join(self.model_path, output_dir)
 
-        self.config = load_save.load_config(name=config, verbose=self.verbose)
+        self.config = None
         self.chk_table = pd.DataFrame()
         self.dat = None
         self.bounce_time = None
         self.profiles = {}
         self.tracers = {}
+
+        self.load_config()
 
         if trans is None:
             trans = self.config['transitions']['dens']
@@ -142,6 +144,11 @@ class Simulation:
             verbose = self.verbose
         if verbose:
             print(string, **kwargs)
+
+    def load_config(self, config='default'):
+        """Load config parameters from file
+        """
+        self.config = load_save.load_config(name=config, verbose=self.verbose)
 
     def load_all(self, reload=False, save=True):
         """Load all model data
@@ -534,6 +541,7 @@ class Simulation:
         linestyle : str
         marker : str
         """
+        # TODO: subtract bounce_time
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
         ax.plot(self.dat['time'], self.dat[y_var], linestyle=linestyle, marker=marker)
 
