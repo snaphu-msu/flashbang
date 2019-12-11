@@ -64,7 +64,7 @@ from . import tools
 class Simulation:
     def __init__(self, model, run='run', config='default',
                  output_dir='output', verbose=True, load_all=True,
-                 reload=False, save=True, trans=None):
+                 reload=False, save=True):
         """Object representing a 1D flash simulation
 
         parameters
@@ -91,9 +91,6 @@ class Simulation:
             save extracted model data to temporary files (for faster loading)
 
         verbose : bool
-
-        trans : {}
-            transition densities to track (g/cm^3), e.g. {'': 6e7, 'low': 1e7}
         """
         t0 = time.time()
         self.verbose = verbose
@@ -104,19 +101,15 @@ class Simulation:
         self.output_path = os.path.join(self.model_path, output_dir)
 
         self.config = None
-        self.chk_table = pd.DataFrame()
         self.dat = None
         self.bounce_time = None
+        self.trans = None
+        self.n_chk = None
+        self.chk_table = pd.DataFrame()
         self.profiles = {}
         self.tracers = {}
 
-        self.load_config()
-
-        if trans is None:
-            trans = self.config['transitions']['dens']
-        self.trans = trans
-
-        self.n_chk = None
+        self.load_config(config=config)
         self.update_chk_list()
 
         if load_all:
@@ -148,7 +141,10 @@ class Simulation:
     def load_config(self, config='default'):
         """Load config parameters from file
         """
-        self.config = load_save.load_config(name=config, verbose=self.verbose)
+        config = load_save.load_config(name=config, verbose=self.verbose)
+
+        self.trans = config['transitions']['dens']
+        self.config = config
 
     def load_all(self, reload=False, save=True):
         """Load all model data
