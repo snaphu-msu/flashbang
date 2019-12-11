@@ -105,6 +105,7 @@ class Simulation:
         self.bounce_time = None
         self.trans = None
         self.n_chk = None
+        self.mass_grid = None
         self.chk_table = pd.DataFrame()
         self.profiles = {}
         self.tracers = {}
@@ -144,6 +145,10 @@ class Simulation:
         config = load_save.load_config(name=config, verbose=self.verbose)
 
         self.trans = config['transitions']['dens']
+
+        mass_def = config['tracers']['mass_grid']
+        self.mass_grid = np.linspace(mass_def[0], mass_def[1], mass_def[2])
+
         self.config = config
 
     def load_all(self, reload=False, save=True):
@@ -258,16 +263,11 @@ class Simulation:
         # TODO:
         #   - include chk timesteps
         params = self.config['tracers']['params']
-        mass_def = self.config['tracers']['mass_grid']
-        mass_grid = np.linspace(mass_def[0], mass_def[1], mass_def[2])
-
-        data_cube = analysis.extract_multi_mass_tracers(mass_grid,
+        data_cube = analysis.extract_multi_mass_tracers(self.mass_grid,
                                                         profiles=self.profiles,
                                                         params=params,
                                                         verbose=self.verbose)
-        self.tracers['mass_grid'] = mass_grid
-
-        for i, mass in enumerate(mass_grid):
+        for i, mass in enumerate(self.mass_grid):
             self.tracers[i] = pd.DataFrame(index=self.chk_table.index,
                                            data=data_cube[:, i, :],
                                            columns=params)
