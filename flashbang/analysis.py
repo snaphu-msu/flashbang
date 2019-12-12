@@ -1,4 +1,5 @@
 import numpy as np
+import xarray as xr
 from scipy.interpolate import interp1d
 import astropy.units as units
 
@@ -15,8 +16,8 @@ g_to_msun = units.g.to(units.M_sun)
 def extract_multi_mass_tracers(mass_grid, profiles, params, verbose=True):
     """Iterate over chk profiles and interpolate mass shell tracers for each
 
-    Returns: np.ndarray
-        3D array of shape [n_profiles, n_tracers, n_params],
+    Returns: xr.Dataset
+        3D dataset of shape [n_profiles, n_tracers, n_params],
         where n_profiles=len(profiles), n_tracers=len(mass_grid) and n_params=len(params).
 
     parameters
@@ -32,22 +33,25 @@ def extract_multi_mass_tracers(mass_grid, profiles, params, verbose=True):
     """
     printv(f'Extracting mass tracers from chk profiles', verbose=verbose)
 
-    n_profiles = len(profiles)
-    n_tracers = len(mass_grid)
-    n_params = len(params)
-
-    data_cube = np.zeros([n_profiles, n_tracers, n_params])
+    data_cube = np.zeros([len(profiles), len(mass_grid), len(params)])
     end_chk = list(profiles.keys())[-1]
 
     for i, chk in enumerate(profiles.keys()):
         printv(f'\rchk: {chk}/{end_chk}', verbose, end='')
-        profile = profiles[i]
-
         data_cube[i, :, :] = extract_mass_tracers(mass_grid=mass_grid,
-                                                  profile=profile,
+                                                  profile=profiles[i],
                                                   params=params)
+
+    # construct xarray Dataset
+    tracers = xr.Dataset()
+    tracers.coords['chk'] = list(profiles.keys())
+    tracers.coords['mass'] = mass_grid
+
+    for i, par in enumerate(params):
+        tracers[par] = (('chk', 'mass'), data_cube[:, :, i])
+
     printv('', verbose)
-    return data_cube
+    return tracers
 
 
 def extract_mass_tracers(mass_grid, profile, params):
@@ -67,12 +71,10 @@ def extract_mass_tracers(mass_grid, profile, params):
     params : [str]
         list of profile quantities to extract.
     """
-    n_tracers = len(mass_grid)
-    n_params = len(params)
-    out_array = np.zeros([n_tracers, n_params])
+    out_array = np.zeros([len(mass_grid), len(params)])
 
     for i, par in enumerate(params):
-        func = interp1d(profile['mass'] * g_to_msun, profile[par])
-        out_array[:, i] = func(mass_grid)
+        interp_func = interp1d(profile['mass'] * g_to_msun, profile[par])
+        out_array[:, i] = interp_func(mass_grid)
 
     return out_array

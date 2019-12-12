@@ -263,14 +263,10 @@ class Simulation:
         # TODO:
         #   - include chk timesteps
         params = self.config['tracers']['params']
-        data_cube = analysis.extract_multi_mass_tracers(self.mass_grid,
-                                                        profiles=self.profiles,
-                                                        params=params,
-                                                        verbose=self.verbose)
-        for i, mass in enumerate(self.mass_grid):
-            self.tracers[i] = pd.DataFrame(index=self.chk_table.index,
-                                           data=data_cube[:, i, :],
-                                           columns=params)
+        self.tracers = analysis.extract_multi_mass_tracers(self.mass_grid,
+                                                           profiles=self.profiles,
+                                                           params=params,
+                                                           verbose=self.verbose)
 
     # =======================================================
     #                      Plotting
