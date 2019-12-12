@@ -15,6 +15,7 @@ General terminology
 import os
 import numpy as np
 import pandas as pd
+import xarray as xr
 import configparser
 import ast
 import subprocess
@@ -28,7 +29,6 @@ from .strings import printv
 from . import quantities
 
 # TODO:
-#   - save/load tracers (use xarray?)
 #   - Refactor profiles into large xarray?
 #   - multithread extract_timesteps
 #   - function to extract colnames
@@ -508,6 +508,20 @@ def save_tracers_cache(tracers, model, run='run', verbose=True):
     filepath = paths.tracers_filepath(model=model, run=run)
     printv(f'Saving tracers cache: {filepath}', verbose)
     tracers.to_netcdf(filepath)
+
+
+def load_tracers_cache(model, run='run', verbose=True):
+    """Load pre-extracted mass tracers from file
+
+    parameters
+    ----------
+    model : str
+    run : str
+    verbose : bool
+    """
+    filepath = paths.tracers_filepath(model=model, run=run)
+    printv(f'Loading tracers cache: {filepath}', verbose)
+    xr.load_dataset(filepath)
 
 
 # ===============================================================
