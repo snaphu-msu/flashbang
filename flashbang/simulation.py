@@ -360,7 +360,7 @@ class Simulation:
 
         return fig
 
-    def plot_composition(self, chk, x_var='r', y_var_list=None, y_scale='log',
+    def plot_composition(self, chk, x_var='r', y_var_list=None, y_scale='linear',
                          x_scale=None, ax=None, legend=True, trans=True, show_ye=True,
                          ylims=(1e-7, 1), xlims=(1e5, 1.5e9), figsize=(8, 6),
                          title=True, legend_loc='lower left'):
@@ -460,10 +460,10 @@ class Simulation:
         slider.on_changed(update)
         return fig, slider
 
-    def plot_slider_composition(self, y_var_list=None, x_var='r', y_scale=None, x_scale=None,
-                                trans=True, figsize=(8, 6), title=True, xlims=(1e5, 1.5e9),
-                                ylims=(1e-7, 1), legend=True, show_ye=True,
-                                legend_loc='lower left'):
+    def plot_slider_composition(self, y_var_list=None, x_var='r', y_scale='linear',
+                                x_scale=None, trans=True, figsize=(8, 6), title=True,
+                                xlims=(1e5, 1.5e9), ylims=(1e-7, 1), legend=True,
+                                show_ye=True, legend_loc='lower left'):
         """Plot interactive slider of isotope composition
 
         parameters
