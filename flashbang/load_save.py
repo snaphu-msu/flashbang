@@ -185,6 +185,36 @@ def print_dat_colnames(model, run='run'):
 # ===============================================================
 #                      Profiles
 # ===============================================================
+def get_all_profiles(model, run='run', params=None, derived_params=None,
+                     reload=False, save=True, verbose=True):
+    """Get all available chk profiles
+        see: get_profile()
+
+    parameters
+    ----------
+    model : str
+    run : str
+    params : [str]
+    derived_params : [str]
+    reload : bool
+    save : bool
+    verbose : bool
+    """
+    printv(f'Loading chk profiles', verbose=verbose)
+
+    profiles = {}
+    chk_list = find_chk(model=model, match_str=f'{run}_hdf5_chk_')
+    chk_max = chk_list[-1]
+
+    for chk in chk_list:
+        printv(f'\rchk: {chk}/{chk_max}', end='', verbose=verbose)
+        profiles[chk] = get_profile(chk, model=model, run=run, params=params,
+                                    derived_params=derived_params,
+                                    reload=reload, save=save, verbose=False)
+    printv('', verbose=verbose)
+    return profiles
+
+
 def get_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
                 derived_params=('mass',), reload=False, save=True, verbose=True):
     """Get reduced radial profile, as contained in checkpoint file
