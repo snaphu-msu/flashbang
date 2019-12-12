@@ -37,9 +37,10 @@ def extract_multi_mass_tracers(mass_grid, profiles, params, verbose=True):
     n_params = len(params)
 
     data_cube = np.zeros([n_profiles, n_tracers, n_params])
+    end_chk = list(profiles.keys())[-1]
 
     for i, chk in enumerate(profiles.keys()):
-        printv(f'\rchk: {chk} ({100 * i / n_profiles:.0f}%)', verbose, end='')
+        printv(f'\rchk: {chk}/{end_chk}', verbose, end='')
         profile = profiles[i]
 
         data_cube[i, :, :] = extract_mass_tracers(mass_grid=mass_grid,
