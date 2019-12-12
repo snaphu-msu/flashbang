@@ -207,14 +207,14 @@ class Simulation:
         reload : bool
         save : bool
         """
-        self.printv(f'Loading chk profiles from: {self.output_path}')
-        chk_max = self.chk_table.index[-1]
-
-        for chk in self.chk_table.index:
-            self.printv(f'\rchk: {chk}/{chk_max}', end='')
-            self.load_profile(chk, reload=reload, save=save, verbose=False)
-
-        self.printv('')
+        config = self.config['profile']
+        
+        self.profiles = load_save.get_multi_profiles(
+                                model=self.model, run=self.run,
+                                chk_list=self.chk_table.index,
+                                params=config['params'] + config['composition'],
+                                derived_params=config['derived_params'],
+                                reload=reload, save=save, verbose=self.verbose)
 
     def load_profile(self, chk, reload=False, save=True, verbose=None):
         """Load checkpoint data file
