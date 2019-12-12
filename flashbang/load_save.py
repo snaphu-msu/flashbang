@@ -492,6 +492,25 @@ def get_bounce_time(model, run='run', match_str='Bounce', verbose=True):
 
 
 # ===============================================================
+#                      Mass Tracers
+# ===============================================================
+def save_tracers_cache(tracers, model, run='run', verbose=True):
+    """Save pre-extracted mass tracers to file
+
+    parameters
+    ----------
+    tracers : xr.Dataset
+        mass tracer data, as returned by analysis.extract_multi_tracers()
+    model : str
+    run : str
+    verbose : bool
+    """
+    filepath = paths.tracers_filepath(model=model, run=run)
+    printv(f'Saving tracers cache: {filepath}', verbose)
+    tracers.to_netcdf(filepath)
+
+
+# ===============================================================
 #              Misc. file things
 # ===============================================================
 def try_mkdir(path, skip=False, verbose=True):
