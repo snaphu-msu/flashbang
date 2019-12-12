@@ -462,7 +462,8 @@ class Simulation:
 
     def plot_slider_composition(self, y_var_list=None, x_var='r', y_scale=None, x_scale=None,
                                 trans=True, figsize=(8, 6), title=True, xlims=(1e5, 1.5e9),
-                                ylims=(1e-7, 1), legend=True, show_ye=True):
+                                ylims=(1e-7, 1), legend=True, show_ye=True,
+                                legend_loc='lower left'):
         """Plot interactive slider of isotope composition
 
         parameters
@@ -479,6 +480,7 @@ class Simulation:
         ylims : [min, max]
         legend : bool
         show_ye : bool
+        legend_loc : str
         """
         # TODO:
         #   - create isotope palette
@@ -493,7 +495,7 @@ class Simulation:
         self.plot_composition(chk_init, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
                               y_var_list=y_var_list, ax=profile_ax, legend=legend,
                               ylims=ylims, xlims=xlims, trans=trans, title=title,
-                              show_ye=show_ye)
+                              show_ye=show_ye, legend_loc=legend_loc)
 
         def update(chk):
             idx = int(chk)
