@@ -13,7 +13,7 @@ g_to_msun = units.g.to(units.M_sun)
 #   - load tracers
 
 
-def extract_multi_mass_tracers(mass_grid, profiles, params, verbose=True):
+def extract_multi_tracers(mass_grid, profiles, params, verbose=True):
     """Iterate over chk profiles and interpolate mass shell tracers for each
 
     Returns: xr.Dataset
@@ -54,7 +54,7 @@ def extract_multi_mass_tracers(mass_grid, profiles, params, verbose=True):
     return tracers
 
 
-def extract_mass_tracers(mass_grid, profile, params):
+def extract_tracers(mass_grid, profile, params):
     """Return interpolated mass tracers for given chk profile
 
     Returns: np.ndarray

@@ -263,10 +263,10 @@ class Simulation:
         # TODO:
         #   - include chk timesteps
         params = self.config['tracers']['params']
-        self.tracers = analysis.extract_multi_mass_tracers(self.mass_grid,
-                                                           profiles=self.profiles,
-                                                           params=params,
-                                                           verbose=self.verbose)
+        self.tracers = analysis.extract_multi_tracers(self.mass_grid,
+                                                      profiles=self.profiles,
+                                                      params=params,
+                                                      verbose=self.verbose)
 
     # =======================================================
     #                      Plotting
