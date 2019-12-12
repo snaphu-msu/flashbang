@@ -185,8 +185,8 @@ def print_dat_colnames(model, run='run'):
 # ===============================================================
 #                      Profiles
 # ===============================================================
-def get_all_profiles(model, run='run', params=None, derived_params=None,
-                     reload=False, save=True, verbose=True):
+def get_multi_profiles(model, run='run', chk_list=None, params=None, derived_params=None,
+                       reload=False, save=True, verbose=True):
     """Get all available chk profiles
         see: get_profile()
 
@@ -194,6 +194,7 @@ def get_all_profiles(model, run='run', params=None, derived_params=None,
     ----------
     model : str
     run : str
+    chk_list : [int]
     params : [str]
     derived_params : [str]
     reload : bool
@@ -202,8 +203,10 @@ def get_all_profiles(model, run='run', params=None, derived_params=None,
     """
     printv(f'Loading chk profiles', verbose=verbose)
 
+    if chk_list is None:
+        chk_list = find_chk(model=model, match_str=f'{run}_hdf5_chk_')
+
     profiles = {}
-    chk_list = find_chk(model=model, match_str=f'{run}_hdf5_chk_')
     chk_max = chk_list[-1]
 
     for chk in chk_list:
