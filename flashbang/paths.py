@@ -26,7 +26,7 @@ Default model directory structure expected:
 import os
 
 # TODO:
-#   - deprecate output_dir, o_path (replace with environment variables)
+#   - deprecate o_path?
 #   - use config files? How to avoid circular imports?
 
 
@@ -201,4 +201,31 @@ def timesteps_filepath(model, run='run'):
     """
     path = temp_path(model)
     filename = timesteps_filename(model=model, run=run)
+    return os.path.join(path, filename)
+
+
+# ===============================================================
+#                      Mass Tracers
+# ===============================================================
+def tracers_filename(model, run='run'):
+    """Return filename for pre-extracted mass tracers dataset
+
+    parameters
+    ----------
+    model : str
+    run : str
+    """
+    return f'{model}_{run}_tracers.cdf'
+
+
+def tracers_filepath(model, run='run'):
+    """Return filepath for pre-extracted mass tracers dataset
+
+    parameters
+    ----------
+    model : str
+    run : str
+    """
+    path = temp_path(model)
+    filename = tracers_filename(model=model, run=run)
     return os.path.join(path, filename)
