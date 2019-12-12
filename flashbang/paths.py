@@ -33,15 +33,18 @@ import os
 # ===============================================================
 #                      Flashbang
 # ===============================================================
-def config_filepath(name='default'):
+def config_filepath(name=None):
     """Return path to config file
 
     parameters
     ----------
     name : str (optional)
         base name of config file
-        defaults to 'default' (for file 'default.ini')
+        defaults to 'default' (for config file 'default.ini')
     """
+    if name is None:
+        name = 'default'
+
     try:
         flashbang_path = os.environ['FLASHBANG']
     except KeyError:
