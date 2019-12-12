@@ -521,7 +521,7 @@ def load_tracers_cache(model, run='run', verbose=True):
     """
     filepath = paths.tracers_filepath(model=model, run=run)
     printv(f'Loading tracers cache: {filepath}', verbose)
-    xr.load_dataset(filepath)
+    return xr.load_dataset(filepath)
 
 
 # ===============================================================
