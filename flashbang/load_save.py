@@ -37,7 +37,7 @@ from . import quantities
 # =======================================================================
 #                      Config files
 # =======================================================================
-def load_config(name='default', verbose=True):
+def load_config(name=None, verbose=True):
     """Load .ini config file and return as dict
 
     parameters
@@ -226,8 +226,8 @@ def get_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
     return profile
 
 
-def extract_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
-                    derived_params=('mass',)):
+def extract_profile(chk, model, run='run', params=None, derived_params=None,
+                    config=None, verbose=True):
     """Extract and reduce profile data from chk file
 
     Returns : pd.DataFrame
@@ -241,7 +241,14 @@ def extract_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
         profile parameters to extract and return from chk file
     derived_params : [str]
         secondary profile parameters, derived from primary parameters
+    config : str
+    verbose : bool
     """
+    if params is None:
+        c = load_config(config, verbose=verbose)
+        params = c['profile']['params'] + c['profile']['composition']
+        derived_params = c['profile']['derived_params']
+
     profile = pd.DataFrame()
     chk_raw = load_chk(chk=chk, model=model, run=run)
     chk_data = chk_raw.all_data()
