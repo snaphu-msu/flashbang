@@ -646,7 +646,7 @@ class Simulation:
         if title:
             dt = self.config['plotting']['scales']['chk_dt']
             timestep = dt * chk - self.bounce_time
-            ax.set_title(f't={timestep:.3f} s')
+            ax.set_title(f't = {timestep:.3f} s')
 
     def _set_ax_lims(self, ax, xlims, ylims):
         """Set x and y axis limits
