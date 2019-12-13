@@ -18,12 +18,12 @@ Simply run
 
 `conda env create -f environment.yml`
 
-which will create a new environment called `flashbang`, which you can then activate with 
+which will create a python environment called `flashbang`, which you can then activate with 
 
 `conda activate flashbang`
 
 # Setup
-Set these shell environment variables (in your `.bashrc` etc.):
+Set these shell environment variables (e.g. in your `.bashrc`):
 * `FLASHBANG` - path to this code, e.g. `export FLASHBANG=${HOME}/codes/flashbang`
 * `FLASH_MODELS` - path to FLASH models, e.g. `export FLASH_MODELS=${HOME}/BANG/runs`
 
