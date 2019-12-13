@@ -53,10 +53,8 @@ def extract_multi_tracers(mass_grid, profiles, params, verbose=True):
 
     for i, chk in enumerate(profiles.keys()):
         printv(f'\rchk: {chk}/{end_chk}', verbose, end='')
-        data_cube[i, :, :] = extract_mass_tracers(mass_grid=mass_grid,
-                                                  profile=profiles[i],
-                                                  params=params)
-
+        data_cube[i, :, :] = extract_tracers(mass_grid=mass_grid, profile=profiles[i],
+                                             params=params)
     # construct xarray Dataset
     tracers = xr.Dataset()
     tracers.coords['chk'] = list(profiles.keys())
