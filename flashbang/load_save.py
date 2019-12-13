@@ -6,6 +6,7 @@ General terminology
     chk: Checkpoint data found in 'chk' files
     profile: Radial profile data as extracted from chk files
     log: Data printed to terminal during model, stored in .log files
+    tracers: Mass shell tracers, interpolated from profiles
 
     extract: Extract and reduce data from raw output files
     save: Save pre-extracted data to file
