@@ -170,7 +170,7 @@ class Simulation:
         self.get_bounce_time()
         self.load_dat(reload=reload, save=save)
         self.load_all_profiles(reload=reload, save=save)
-        self.get_tracers()
+        self.get_tracers(reload=reload, save=save)
 
         if self.trans is not None:
             self.find_trans_idxs()
@@ -280,7 +280,7 @@ class Simulation:
                                              mass_grid=self.mass_grid,
                                              params=self.config['tracers']['params'],
                                              profiles=self.profiles,
-                                             reload=reload, save=save, config=self.config,
+                                             reload=reload, save=save,
                                              verbose=self.verbose)
 
     # =======================================================
