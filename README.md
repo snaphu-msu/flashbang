@@ -8,8 +8,8 @@ Python tools for extracting/analysing/plotting 1D core-collapse supernova models
 * matplotlib
 * numpy
 * pandas
-* pyarrow
 * scipy
+* xarray
 * yt
 
 Use the included `environment.yml` file to easily set up a working [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) environment with the necessary dependencies.
