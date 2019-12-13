@@ -1,0 +1,26 @@
+=============================================================
+Module hierarchy.
+Each module can only import modules from lower levels.
+=============================================================
+
+----------------------------
+ Level 2
+----------------------------
+simulation.py
+
+
+----------------------------
+ Level 1
+----------------------------
+load_save.py
+
+
+----------------------------
+ Level 0
+----------------------------
+analysis.py
+paths.py
+plot_tools.py
+quantities.py
+strings.py
+tools.py
