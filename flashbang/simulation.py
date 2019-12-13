@@ -108,7 +108,7 @@ class Simulation:
         self.mass_grid = None
         self.chk_table = pd.DataFrame()
         self.profiles = {}
-        self.tracers = {}
+        self.tracers = None
 
         self.load_config(config=config)
         self.update_chk_list()
@@ -141,6 +141,10 @@ class Simulation:
 
     def load_config(self, config='default'):
         """Load config parameters from file
+
+        parameters
+        ----------
+        config : str
         """
         self.config = load_save.load_config(name=config, verbose=self.verbose)
         self.trans = self.config['transitions']['dens']
@@ -208,7 +212,7 @@ class Simulation:
         save : bool
         """
         config = self.config['profile']
-        
+
         self.profiles = load_save.get_multi_profiles(
                                 model=self.model, run=self.run,
                                 chk_list=self.chk_table.index,
@@ -260,16 +264,22 @@ class Simulation:
 
             self.chk_table[f'{key}_i'] = idx_list
 
-    def extract_tracers(self):
-        """Construct mass tracers from profile data
+    def get_tracers(self, reload=False, save=True):
+        """Construct mass tracers from profile data (or load pre-extracted)
+
+        parameters
+        ----------
+        reload : bool
+        save : bool
         """
         # TODO:
         #   - include chk timesteps
-        params = self.config['tracers']['params']
-        self.tracers = analysis.extract_multi_tracers(self.mass_grid,
-                                                      profiles=self.profiles,
-                                                      params=params,
-                                                      verbose=self.verbose)
+        self.tracers = load_save.get_tracers(model=self.model, run=self.run,
+                                             mass_grid=self.mass_grid,
+                                             params=self.config['tracers']['params'],
+                                             profiles=self.profiles,
+                                             reload=reload, save=save, config=self.config,
+                                             verbose=self.verbose)
 
     # =======================================================
     #                      Plotting
