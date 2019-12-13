@@ -8,8 +8,8 @@ Python tools for extracting/analysing/plotting 1D core-collapse supernova models
 * matplotlib
 * numpy
 * pandas
-* pyarrow
 * scipy
+* xarray
 * yt
 
 Use the included `environment.yml` file to easily set up a working [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) environment with the necessary dependencies.
@@ -18,12 +18,12 @@ Simply run
 
 `conda env create -f environment.yml`
 
-which will create a new environment called `flashbang`, which you can then activate with 
+which will create a python environment called `flashbang`, which you can then activate with 
 
 `conda activate flashbang`
 
 # Setup
-Set these shell environment variables (in your `.bashrc` etc.):
+Set these shell environment variables (e.g. in your `.bashrc`):
 * `FLASHBANG` - path to this code, e.g. `export FLASHBANG=${HOME}/codes/flashbang`
 * `FLASH_MODELS` - path to FLASH models, e.g. `export FLASH_MODELS=${HOME}/BANG/runs`
 
