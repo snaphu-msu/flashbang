@@ -24,14 +24,17 @@ import yt
 import time
 
 # flashbang
-from . import paths
 from .strings import printv
+from . import paths
 from . import quantities
+from . import analysis
 
 # TODO:
+#   - merge "get" functions into common class/function?
 #   - Refactor profiles into large xarray?
 #   - multithread extract_timesteps
 #   - function to extract colnames
+#   - rename 'reload' to 'redo' or similar (avoid confusion with 'load')?
 
 
 # =======================================================================
@@ -390,6 +393,11 @@ def load_chk(chk, model, run='run'):
 # ===============================================================
 #                      Timesteps
 # ===============================================================
+# TODO:
+#   - faster method? e.g. reading from .dat somehow?
+#       - or reading chk without loading fully
+#       - incorporating into xr.dataset metadata
+# ===============================================================
 def get_timesteps(model, run='run', params=('time', 'nstep'),
                   reload=False, save=True, verbose=True):
     """Get table of timestep quantities (time, n_steps, etc.) from chk files
@@ -534,6 +542,59 @@ def get_bounce_time(model, run='run', match_str='Bounce', verbose=True):
 # ===============================================================
 #                      Mass Tracers
 # ===============================================================
+def get_tracers(model, run='run', profiles=None, params=None, mass_grid=None,
+                reload=False, save=True, config=None, verbose=True):
+    """Get mass tracers from interpolated chk profiles
+
+    Returns : xr.Dataset
+
+    parameters
+    ----------
+    model : str
+    run: str
+    profiles : {pd.Dataframe}
+    params : [str]
+    mass_grid : [float]
+    reload : bool
+    save : bool
+    config : str
+    verbose : bool
+    """
+    tracers = None
+
+    # attempt to load from cache
+    if not reload:
+        try:
+            tracers = load_tracers_cache(model=model, run=run, verbose=verbose)
+        except FileNotFoundError:
+            pass
+
+    # fall back on re-extracting
+    if tracers is None:
+        c = load_config(config, verbose=verbose)
+
+        if mass_grid is None:
+            mass_def = c['tracers']['mass_grid']
+            mass_grid = analysis.get_mass_grid(mass_def[0], mass_def[1], mass_def[2])
+
+        if params is None:
+            params = c['tracers']['params']
+
+        if profiles is None:
+            chk_list = find_chk(model=model, match_str=f'{run}_hdf5_chk_')
+            profiles = get_multi_profiles(model=model, run=run, chk_list=chk_list,
+                                          params=params, verbose=verbose)
+
+        tracers = analysis.extract_multi_tracers(mass_grid,
+                                                 profiles=profiles,
+                                                 params=params,
+                                                 verbose=verbose)
+        if save:
+            save_tracers_cache(tracers, model=model, run=run, verbose=verbose)
+
+    return tracers
+
+
 def save_tracers_cache(tracers, model, run='run', verbose=True):
     """Save pre-extracted mass tracers to file
 
