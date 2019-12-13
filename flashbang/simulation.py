@@ -58,6 +58,7 @@ from . import tools
 
 # TODO: plotting
 #   - find max/min y-values over all chk --> set slider ylim
+#   - plot tracers
 
 
 # noinspection PyTypeChecker
@@ -169,6 +170,7 @@ class Simulation:
         self.get_bounce_time()
         self.load_dat(reload=reload, save=save)
         self.load_all_profiles(reload=reload, save=save)
+        self.get_tracers()
 
         if self.trans is not None:
             self.find_trans_idxs()
