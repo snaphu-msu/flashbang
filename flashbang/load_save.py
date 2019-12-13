@@ -283,7 +283,7 @@ def extract_profile(chk, model, run='run', params=None, derived_params=None,
     """
     if params is None:
         c = load_config(config, verbose=verbose)
-        params = c['profiles']['params'] + c['profiles']['composition']
+        params = c['profiles']['params'] + c['profiles']['isotopes']
         derived_params = c['profiles']['derived_params']
 
     profile = pd.DataFrame()

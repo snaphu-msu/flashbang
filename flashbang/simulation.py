@@ -218,7 +218,7 @@ class Simulation:
         self.profiles = load_save.get_multi_profiles(
                                 model=self.model, run=self.run,
                                 chk_list=self.chk_table.index,
-                                params=config['params'] + config['composition'],
+                                params=config['params'] + config['isotopes'],
                                 derived_params=config['derived_params'],
                                 reload=reload, save=save, verbose=self.verbose)
 
@@ -234,7 +234,7 @@ class Simulation:
         verbose : bool
         """
         config = self.config['profiles']
-        params = config['params'] + config['composition']
+        params = config['params'] + config['isotopes']
 
         if verbose is None:
             verbose = self.verbose
