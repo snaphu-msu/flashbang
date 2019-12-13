@@ -213,7 +213,7 @@ class Simulation:
         reload : bool
         save : bool
         """
-        config = self.config['profile']
+        config = self.config['profiles']
 
         self.profiles = load_save.get_multi_profiles(
                                 model=self.model, run=self.run,
@@ -233,7 +233,7 @@ class Simulation:
         save : bool
         verbose : bool
         """
-        config = self.config['profile']
+        config = self.config['profiles']
         params = config['params'] + config['composition']
 
         if verbose is None:
@@ -275,6 +275,7 @@ class Simulation:
         save : bool
         """
         # TODO:
+        #   - ensure no. chks consistent with self.profiles
         #   - include chk timesteps
         self.tracers = load_save.get_tracers(model=self.model, run=self.run,
                                              mass_grid=self.mass_grid,
@@ -383,7 +384,7 @@ class Simulation:
         x_var : str
             variable to plot on x-axis
         y_var_list : [str]
-            list of isotopes to plot (see self.config['profile']['params'])
+            list of isotopes to plot (see self.config['profiles']['params'])
         y_scale : {'log', 'linear'}
         x_scale : {'log', 'linear'}
         ax : Axes

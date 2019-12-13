@@ -283,8 +283,8 @@ def extract_profile(chk, model, run='run', params=None, derived_params=None,
     """
     if params is None:
         c = load_config(config, verbose=verbose)
-        params = c['profile']['params'] + c['profile']['composition']
-        derived_params = c['profile']['derived_params']
+        params = c['profiles']['params'] + c['profiles']['composition']
+        derived_params = c['profiles']['derived_params']
 
     profile = pd.DataFrame()
     chk_raw = load_chk(chk=chk, model=model, run=run)
