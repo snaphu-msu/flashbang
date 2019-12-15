@@ -31,7 +31,7 @@ from . import quantities
 from . import analysis
 
 # TODO:
-#   - merge "get" functions into common class/function?
+#   - merge "get" functions into common class/function structure?
 #   - Refactor profiles into large xarray?
 #   - multithread extract_timesteps
 #   - function to extract colnames
@@ -222,8 +222,8 @@ def get_multi_profiles(model, run='run', chk_list=None, params=None, derived_par
     return profiles
 
 
-def get_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
-                derived_params=('mass',), reload=False, save=True, verbose=True):
+def get_profile(chk, model, run='run', params=None, derived_params=None, config=None,
+                reload=False, save=True, verbose=True):
     """Get reduced radial profile, as contained in checkpoint file
     Loads pre-extracted profile if available, otherwise from raw file
 
@@ -238,6 +238,7 @@ def get_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
         profile parameters to extract and return from chk file
     derived_params : [str]
         secondary profile parameters, derived from primary parameters
+    config : str
     reload : bool
         force reload from chk file, else try to load pre-extracted profile
     save : bool
@@ -255,7 +256,7 @@ def get_profile(chk, model, run='run', params=('r', 'temp', 'dens', 'pres'),
 
     # fall back on loading raw chk
     if profile is None:
-        profile = extract_profile(chk, model=model, run=run,
+        profile = extract_profile(chk, model=model, run=run, config=config,
                                   params=params, derived_params=derived_params)
         if save:
             save_profile_cache(profile, chk=chk, model=model, run=run, verbose=verbose)
