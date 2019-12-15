@@ -26,8 +26,8 @@ def main(model, run, multithread=True, reload=False, save=True,
     save = tools.str_to_bool(save)
 
     sim = simulation.Simulation(run=run, model=model, config=config, load_all=False)
-    conf = sim.config['profile']
-    params = conf['params'] + conf['composition']
+    conf = sim.config['profiles']
+    params = conf['params'] + conf['isotopes']
     derived_params = conf['derived_params']
 
     if multithread:
