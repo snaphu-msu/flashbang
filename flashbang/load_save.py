@@ -287,12 +287,12 @@ def extract_profile(chk, model, run='run', params=None, derived_params=None,
         params = c['profiles']['params'] + c['profiles']['isotopes']
         derived_params = c['profiles']['derived_params']
 
-    profile = pd.DataFrame()
+    profile = xr.Dataset()
     chk_raw = load_chk(chk=chk, model=model, run=run)
     chk_data = chk_raw.all_data()
 
     for var in params:
-        profile[var.strip()] = np.array(chk_data[var])
+        profile[var.strip()] = ('zone', np.array(chk_data[var]))
 
     if 'mass' in derived_params:
         add_mass_profile(profile)
@@ -305,14 +305,15 @@ def add_mass_profile(profile):
 
     parameters
     ----------
-    profile : pd.DataFrame
+    profile : xr.Dataset
         table as returned by extract_profile()
     """
-    if ('r' not in profile.columns) or ('dens' not in profile.columns):
+    if ('r' not in profile) or ('dens' not in profile):
         raise ValueError(f'Need radius and density columns (r, dens) to calculate mass')
 
-    profile['mass'] = quantities.get_mass_interior(radius=np.array(profile['r']),
-                                                   density=np.array(profile['dens']))
+    mass = quantities.get_mass_interior(radius=np.array(profile['r']),
+                                        density=np.array(profile['dens']))
+    profile['mass'] = ('zone', mass)
 
 
 def save_profile_cache(profile, chk, model, run='run', verbose=True):
@@ -320,7 +321,7 @@ def save_profile_cache(profile, chk, model, run='run', verbose=True):
 
     parameters
     ----------
-    profile : pd.DataFrame
+    profile : xr.Dataset
             table of profile properties as returned by extract_profile()
     chk : int
     model : str
@@ -331,7 +332,7 @@ def save_profile_cache(profile, chk, model, run='run', verbose=True):
     filepath = paths.profile_filepath(chk=chk, model=model, run=run)
 
     printv(f'Saving profile cache: {filepath}', verbose)
-    profile.to_pickle(filepath)
+    profile.to_netcdf(filepath)
 
 
 def load_profile_cache(chk, model, run='run', verbose=True):
@@ -346,7 +347,7 @@ def load_profile_cache(chk, model, run='run', verbose=True):
     """
     filepath = paths.profile_filepath(chk=chk, model=model, run=run)
     printv(f'Loading profile cache: {filepath}', verbose)
-    return pd.read_pickle(filepath)
+    return xr.load_dataset(filepath)
 
 
 # ===============================================================

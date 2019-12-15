@@ -28,6 +28,7 @@ import os
 # TODO:
 #   - deprecate o_path?
 #   - use config files? How to avoid circular imports?
+#   - replace default run=None
 
 
 # ===============================================================
@@ -169,7 +170,7 @@ def chk_filepath(chk, model, run='run', o_path=None):
 def profile_filename(chk, run):
     """Return filename for pre-extracted profile
     """
-    return f'{run}_profile_{chk:04d}.pickle'
+    return f'{run}_profile_{chk:04d}.cdf'
 
 
 def profile_filepath(chk, model, run='run'):
