@@ -258,7 +258,7 @@ class Simulation:
 
             for i, chk in enumerate(self.chk_table.index):
                 profile = self.profiles[chk]
-                dens_reverse = np.flip(profile['dens'])  # need monotonically-increasing
+                dens_reverse = np.flip(profile['dens'])  # need increasing density
                 max_idx = len(dens_reverse) - 1
 
                 trans_idx = tools.find_nearest_idx(dens_reverse, trans_dens)
