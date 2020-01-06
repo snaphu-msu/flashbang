@@ -32,7 +32,8 @@ from . import analysis
 
 # TODO:
 #   - merge "get" functions into common class/function structure?
-#   - Refactor profiles into large xarray?
+#   - Refactor profiles dict into single xarray
+#       - add metadata, e.g. timesteps
 #   - multithread extract_timesteps
 #   - function to extract colnames
 #   - rename 'reload' to 'redo' or similar (avoid confusion with 'load')?
