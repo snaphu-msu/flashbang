@@ -7,4 +7,5 @@ dependencies:
   - numpy=1.17.*
   - pandas=0.25.*
   - scipy=1.3.*
+  - xarray=0.14.*
   - yt=3.4.*
