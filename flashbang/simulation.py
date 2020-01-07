@@ -50,7 +50,7 @@ from . import tools
 #   - generalised axis plotting
 #       - save/show plot
 #   - change mass units to m_sun
-#   - chk_table, add columns:
+#   - chk_table, add columns: (add to multiprofile metadata?)
 #       - time
 #       - n_step
 #       - n_zones

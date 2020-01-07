@@ -29,6 +29,7 @@ import os
 #   - deprecate o_path?
 #   - use config files? How to avoid circular imports?
 #   - replace default run=None
+#   - add model to all filenames
 
 
 # ===============================================================
