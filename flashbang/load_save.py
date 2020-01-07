@@ -5,6 +5,7 @@ General terminology
     dat: Integrated time-series quantities found in [model].dat file
     chk: Checkpoint data found in 'chk' files
     profile: Radial profile data as extracted from chk files
+    multiprofile: A single Dataset of multiple profiles
     log: Data printed to terminal during model, stored in .log files
     tracers: Mass shell tracers, interpolated from profiles
 
@@ -266,7 +267,7 @@ def get_profile(chk, model, run='run', params=None, derived_params=None, config=
 
 
 def join_profiles(profiles, verbose=True):
-    """Join profile Datasets into a single Dataset
+    """Join multiple profile Datasets into a single Dataset (a 'multiprofile')
 
     Returns : xr.Dataset
 
@@ -338,6 +339,24 @@ def add_mass_profile(profile):
     mass = quantities.get_mass_interior(radius=np.array(profile['r']),
                                         density=np.array(profile['dens']))
     profile['mass'] = ('zone', mass)
+
+
+def save_multiprofile_cache(multiprofile, model, run='run', verbose=True):
+    """Save multiprofile to file for faster loading
+
+    parameters
+    ----------
+    multiprofile : xr.Dataset
+            Dataset of multiple profiles
+    model : str
+    run : str
+    verbose : bool
+    """
+    ensure_temp_dir_exists(model, verbose=False)
+    filepath = paths.multiprofile_filepath(model=model, run=run)
+
+    printv(f'Saving multiprofile cache: {filepath}', verbose)
+    multiprofile.to_netcdf(filepath)
 
 
 def save_profile_cache(profile, chk, model, run='run', verbose=True):
