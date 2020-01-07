@@ -253,6 +253,7 @@ class Simulation:
         """Find idxs for zones closest to the helmholtz transition densities
         for each chk profile
         """
+        # TODO: save to cache
         self.printv('Finding transition zones')
 
         for key, trans_dens in self.trans.items():
@@ -277,7 +278,6 @@ class Simulation:
         save : bool
         """
         # TODO:
-        #   - ensure no. chks consistent with self.profiles
         #   - include chk timesteps
         self.tracers = load_save.get_tracers(model=self.model, run=self.run,
                                              mass_grid=self.mass_grid,
@@ -285,6 +285,11 @@ class Simulation:
                                              profiles=self.profiles,
                                              reload=reload, save=save,
                                              verbose=self.verbose)
+
+        # force reload if chks are missing
+        if not np.array_equal(self.tracers.coords['chk'], self.chk_table.index):
+            self.printv('Profiles missing from tracers; re-extracting')
+            self.get_tracers(reload=True, save=save)
 
     # =======================================================
     #                      Plotting
