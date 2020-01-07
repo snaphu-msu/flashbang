@@ -33,6 +33,7 @@ General terminology
 import os
 import time
 import numpy as np
+import xarray as xr
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
@@ -108,7 +109,7 @@ class Simulation:
         self.n_chk = None
         self.mass_grid = None
         self.chk_table = pd.DataFrame()
-        self.profiles = {}
+        self.profiles = xr.Dataset()
         self.tracers = None
 
         self.load_config(config=config)
@@ -215,7 +216,7 @@ class Simulation:
         """
         config = self.config['profiles']
 
-        self.profiles = load_save.get_all_profiles(
+        self.profiles = load_save.get_multiprofile(
                                 model=self.model, run=self.run,
                                 chk_list=self.chk_table.index,
                                 params=config['params'] + config['isotopes'],
@@ -233,6 +234,7 @@ class Simulation:
         save : bool
         verbose : bool
         """
+        # TODO: deprecate?
         config = self.config['profiles']
         params = config['params'] + config['isotopes']
 
@@ -257,7 +259,7 @@ class Simulation:
             idx_list = np.zeros(self.n_chk, dtype=int)
 
             for i, chk in enumerate(self.chk_table.index):
-                profile = self.profiles[chk]
+                profile = self.profiles.sel(chk=chk)
                 dens_reverse = np.flip(profile['dens'])  # need increasing density
                 max_idx = len(dens_reverse) - 1
 
@@ -350,10 +352,6 @@ class Simulation:
         """
         chk = tools.ensure_sequence(chk)
 
-        for i in chk:
-            if i not in self.profiles.keys():
-                self.load_profile(i)
-
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
         self._set_ax_title(ax, chk=chk[0], title=title)
         self._set_ax_scales(ax, y_var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
@@ -361,7 +359,7 @@ class Simulation:
         self._set_ax_labels(ax, x_var=x_var, y_var=y_var)
 
         for i in chk:
-            profile = self.profiles[i]
+            profile = self.profiles.sel(chk=i)
             y = profile[y_var]
 
             ax.plot(profile[x_var], y, ls=linestyle, marker=marker, label=label)
@@ -397,8 +395,6 @@ class Simulation:
         title : bool
         legend_loc : str or int
         """
-        if chk not in self.profiles.keys():
-            self.load_profile(chk)
         if y_var_list is None:
             y_var_list = self.config['plotting']['isotopes']
 
@@ -408,7 +404,7 @@ class Simulation:
         self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
         self._set_ax_labels(ax, x_var=x_var, y_var='$X$')
 
-        profile = self.profiles[chk]
+        profile = self.profiles.sel(chk=chk)
         for key in y_var_list:
             ax.plot(profile[x_var], profile[key], label=f'{key}')
         if show_ye:
@@ -454,7 +450,7 @@ class Simulation:
 
         def update(chk):
             idx = int(chk)
-            profile = self.profiles[idx]
+            profile = self.profiles.sel(chk=idx)
             y_profile = profile[y_var]
 
             profile_ax.lines[0].set_ydata(y_profile)
@@ -511,7 +507,7 @@ class Simulation:
 
         def update(chk):
             idx = int(chk)
-            profile = self.profiles[idx]
+            profile = self.profiles.sel(chk=idx)
 
             if trans:
                 # TODO: nicer way to do this
@@ -605,7 +601,7 @@ class Simulation:
         key : str
         x_var : str
         """
-        profile = self.profiles[chk]
+        profile = self.profiles.sel(chk=chk)
         trans_idx = self.chk_table.loc[chk, f'{key}_i']
         return profile[x_var][trans_idx]
 
