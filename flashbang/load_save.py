@@ -286,6 +286,28 @@ def join_profiles(profiles, verbose=True):
     return joined
 
 
+def append_to_multiprofile(multiprofile, profiles, verbose=True):
+    """
+    Append new profiles to an existing multiprofile Dataset
+
+    Returns : xr.Dataset
+
+    parameters
+    ----------
+    multiprofile : xr.Dataset
+        multiprofile to append onto
+    profiles : {chk: profile}
+        new profile Datasets to append, with chks as keys
+    verbose : bool
+    """
+    printv('Appending new profiles onto multiprofile', verbose=verbose)
+
+    new_profiles = join_profiles(profiles, verbose=False)
+    joined = xr.concat([multiprofile, new_profiles], dim='chk')
+
+    return joined
+
+
 def extract_profile(chk, model, run='run', params=None, derived_params=None,
                     config=None, verbose=True):
     """Extract and reduce profile data from chk file
