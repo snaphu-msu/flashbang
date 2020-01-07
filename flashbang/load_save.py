@@ -265,11 +265,31 @@ def get_profile(chk, model, run='run', params=None, derived_params=None, config=
     return profile
 
 
+def join_profiles(profiles, verbose=True):
+    """Join profile Datasets into a single Dataset
+
+    Returns : xr.Dataset
+
+    parameters
+    ----------
+    profiles : {chk: profile}
+        dict of profile Datasets to join
+    verbose : bool
+    """
+    printv('Joining profiles', verbose=verbose)
+
+    joined = xr.concat(profiles.values(), dim='chk')
+    n_chk = len(joined.coords['chk'])
+    joined.coords['chk'] = np.arange(n_chk)
+
+    return joined
+
+
 def extract_profile(chk, model, run='run', params=None, derived_params=None,
                     config=None, verbose=True):
     """Extract and reduce profile data from chk file
 
-    Returns : pd.DataFrame
+    Returns : xr.Dataset
 
     parameters
     ----------
