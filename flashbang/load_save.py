@@ -36,6 +36,7 @@ from . import tools
 #   - merge "get" functions into common class/function structure?
 #   - Refactor profiles dict into single xarray
 #       - add metadata, e.g. timesteps
+#       - refactor uses of 'profiles' to 'multiprofile'
 #   - multithread extract_timesteps
 #   - function to extract colnames
 #   - rename 'reload' to 'redo' or similar (avoid confusion with 'load')?
@@ -248,6 +249,8 @@ def get_all_profiles(model, run='run', chk_list=None, params=None, derived_param
                      reload=False, save=True, verbose=True):
     """Get all available chk profiles
         see: get_profile()
+
+    Returns: {chk: profile}
 
     parameters
     ----------
@@ -708,7 +711,7 @@ def get_tracers(model, run='run', profiles=None, params=None, mass_grid=None,
     ----------
     model : str
     run: str
-    profiles : {pd.Dataframe}
+    profiles : xr.Dataset
     params : [str]
     mass_grid : [float]
     reload : bool
@@ -738,7 +741,7 @@ def get_tracers(model, run='run', profiles=None, params=None, mass_grid=None,
 
         if profiles is None:
             chk_list = find_chk(model=model, match_str=f'{run}_hdf5_chk_')
-            profiles = get_all_profiles(model=model, run=run, chk_list=chk_list,
+            profiles = get_multiprofile(model=model, run=run, chk_list=chk_list,
                                         params=params, verbose=verbose)
 
         tracers = analysis.extract_multi_tracers(mass_grid,
