@@ -167,6 +167,20 @@ def chk_filepath(chk, model, run='run', o_path=None):
 # ===============================================================
 #                      Profiles
 # ===============================================================
+def multiprofile_filename(run):
+    """Return filename for pre-extracted multiprofile
+    """
+    return f'{run}_multiprofile.nc'
+
+
+def multiprofile_filepath(model, run='run'):
+    """Return filepath for pre-extracted multiprofile
+    """
+    path = temp_path(model)
+    filename = multiprofile_filename(run)
+    return os.path.join(path, filename)
+
+
 def profile_filename(chk, run):
     """Return filename for pre-extracted profile
     """
