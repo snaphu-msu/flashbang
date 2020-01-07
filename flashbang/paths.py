@@ -30,6 +30,7 @@ import os
 #   - use config files? How to avoid circular imports?
 #   - replace default run=None
 #   - add model to all filenames
+#   - rename .cdf extension to .nc
 
 
 # ===============================================================
