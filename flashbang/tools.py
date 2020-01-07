@@ -36,7 +36,7 @@ def find_nearest_idx(array, value):
 
 def str_to_bool(string, true_options=("yes", "y", "true"),
                 false_options=("no",  "n", "false")):
-    """Converts string to boolean, e.g. for parsing shell input
+    """Convert string to boolean, e.g. for parsing shell input
 
     parameters
     ----------
@@ -53,3 +53,20 @@ def str_to_bool(string, true_options=("yes", "y", "true"),
         return False
     else:
         raise Exception(f'Undefined string for boolean conversion: {string}')
+
+
+def get_missing_elements(elements, array):
+    """Return the elements which are missing from an array
+
+    Returns: 1D array
+
+    parameters
+    ----------
+    elements : 1D array
+        elements to look for
+    array : 1D array
+        array to look in for elements
+    """
+    elements = np.array(elements)
+    is_in = np.isin(elements, array)
+    return elements[np.invert(is_in)]
