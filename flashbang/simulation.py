@@ -223,29 +223,6 @@ class Simulation:
                                 derived_params=config['derived_params'],
                                 reload=reload, save=save, verbose=self.verbose)
 
-    def load_profile(self, chk, reload=False, save=True, verbose=None):
-        """Load checkpoint data file
-
-        parameters
-        ----------
-        chk : int
-            checkpoint file to load from (e.g., chk=12 for `run_hdf5_chk_0012`
-        reload : bool
-        save : bool
-        verbose : bool
-        """
-        # TODO: deprecate?
-        config = self.config['profiles']
-        params = config['params'] + config['isotopes']
-
-        if verbose is None:
-            verbose = self.verbose
-
-        self.profiles[chk] = load_save.get_profile(
-                                chk, model=self.model, run=self.run,
-                                params=params, derived_params=config['derived_params'],
-                                reload=reload, save=save, verbose=verbose)
-
     # =======================================================
     #                 Analysis & Postprocessing
     # =======================================================
