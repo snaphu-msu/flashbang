@@ -191,6 +191,7 @@ def print_dat_colnames(model, run='run'):
 # ===============================================================
 #                      Profiles
 # ===============================================================
+# TODO: rename to avoid confusion with multiprofiles?
 def get_multi_profiles(model, run='run', chk_list=None, params=None, derived_params=None,
                        reload=False, save=True, verbose=True):
     """Get all available chk profiles
@@ -274,14 +275,13 @@ def join_profiles(profiles, verbose=True):
     parameters
     ----------
     profiles : {chk: profile}
-        dict of profile Datasets to join
+        dict of profile Datasets to join (with corresponding chk as keys)
     verbose : bool
     """
     printv('Joining profiles', verbose=verbose)
 
     joined = xr.concat(profiles.values(), dim='chk')
-    n_chk = len(joined.coords['chk'])
-    joined.coords['chk'] = np.arange(n_chk)
+    joined.coords['chk'] = list(profiles.keys())
 
     return joined
 
