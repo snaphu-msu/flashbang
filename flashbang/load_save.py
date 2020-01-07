@@ -191,9 +191,8 @@ def print_dat_colnames(model, run='run'):
 # ===============================================================
 #                      Profiles
 # ===============================================================
-# TODO: rename to avoid confusion with multiprofiles?
-def get_multi_profiles(model, run='run', chk_list=None, params=None, derived_params=None,
-                       reload=False, save=True, verbose=True):
+def get_all_profiles(model, run='run', chk_list=None, params=None, derived_params=None,
+                     reload=False, save=True, verbose=True):
     """Get all available chk profiles
         see: get_profile()
 
@@ -664,8 +663,8 @@ def get_tracers(model, run='run', profiles=None, params=None, mass_grid=None,
 
         if profiles is None:
             chk_list = find_chk(model=model, match_str=f'{run}_hdf5_chk_')
-            profiles = get_multi_profiles(model=model, run=run, chk_list=chk_list,
-                                          params=params, verbose=verbose)
+            profiles = get_all_profiles(model=model, run=run, chk_list=chk_list,
+                                        params=params, verbose=verbose)
 
         tracers = analysis.extract_multi_tracers(mass_grid,
                                                  profiles=profiles,

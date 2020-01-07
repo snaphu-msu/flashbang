@@ -215,7 +215,7 @@ class Simulation:
         """
         config = self.config['profiles']
 
-        self.profiles = load_save.get_multi_profiles(
+        self.profiles = load_save.get_all_profiles(
                                 model=self.model, run=self.run,
                                 chk_list=self.chk_table.index,
                                 params=config['params'] + config['isotopes'],
