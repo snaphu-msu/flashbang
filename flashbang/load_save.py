@@ -224,6 +224,27 @@ def get_all_profiles(model, run='run', chk_list=None, params=None, derived_param
     return profiles
 
 
+def try_load_multiprofile(model, run='run', verbose=True):
+    """Attempt to load pre-extracted multiprofile
+
+   Returns : xr.Dataset, or None
+
+   parameters
+   ----------
+   model : str
+   run : str
+   verbose : bool
+   """
+    multiprofile = None
+    try:
+        multiprofile = load_multiprofile_cache(model=model, run=run, verbose=verbose)
+    except FileNotFoundError:
+        printv('multiprofile cache not found', verbose=verbose)
+        pass
+
+    return multiprofile
+
+
 def get_profile(chk, model, run='run', params=None, derived_params=None, config=None,
                 reload=False, save=True, verbose=True):
     """Get reduced radial profile, as contained in checkpoint file
