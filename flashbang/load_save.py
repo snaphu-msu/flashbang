@@ -30,6 +30,7 @@ from .strings import printv
 from . import paths
 from . import quantities
 from . import analysis
+from . import tools
 
 # TODO:
 #   - merge "get" functions into common class/function structure?
@@ -207,19 +208,38 @@ def get_multiprofile(model, run='run', chk_list=None, params=None, derived_param
     save : bool
     verbose : bool
     """
+    def save_cache():
+        if save:
+            save_multiprofile_cache(multiprofile, model=model, run=run, verbose=verbose)
+
     if chk_list is None:
         chk_list = find_chk(model=model, match_str=f'{run}_hdf5_chk_')
 
+    # 1. Try loading multiprofile
     multiprofile = try_load_multiprofile(model, run=run, verbose=verbose)
 
+    # 2. Reload individual profiles
     if multiprofile is None:
         profiles = get_all_profiles(model, run=run, chk_list=chk_list, params=params,
                                     derived_params=derived_params, reload=reload,
                                     save=save, verbose=verbose)
 
         multiprofile = join_profiles(profiles, verbose=verbose)
-        if save:
-            save_multiprofile_cache(multiprofile, model=model, run=run, verbose=verbose)
+        save_cache()
+
+    # 3. Check for missing profiles
+    else:
+        multi_chk = multiprofile.coords['chk'].values
+        missing_chk = tools.get_missing_elements(chk_list, multi_chk)
+
+        if len(missing_chk) > 0:
+            printv('Loading missing profiles', verbose=verbose)
+            missing_profiles = get_all_profiles(model, run=run, chk_list=missing_chk,
+                                                params=params, derived_params=derived_params,
+                                                reload=reload, save=save, verbose=verbose)
+
+            multiprofile = append_to_multiprofile(multiprofile, profiles=missing_profiles)
+            save_cache()
 
     return multiprofile
 
@@ -353,6 +373,7 @@ def append_to_multiprofile(multiprofile, profiles, verbose=True):
         new profile Datasets to append, with chks as keys
     verbose : bool
     """
+    # TODO: check no overlap? use merge?
     printv('Appending new profiles onto multiprofile', verbose=verbose)
 
     new_profiles = join_profiles(profiles, verbose=False)
