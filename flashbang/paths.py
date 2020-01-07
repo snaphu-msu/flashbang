@@ -114,17 +114,17 @@ def dat_filepath(model, run='run'):
     return os.path.join(m_path, filename)
 
 
-def dat_temp_filename(run):
+def dat_temp_filename(model, run):
     """Return filename for temporary (cached) dat file
     """
-    return f'{run}_dat.pickle'
+    return f'{model}_{run}_dat.pickle'
 
 
 def dat_temp_filepath(model, run='run'):
     """Return filepath to reduced dat table
     """
     path = temp_path(model)
-    filename = dat_temp_filename(run)
+    filename = dat_temp_filename(model, run)
     return os.path.join(path, filename)
 
 
