@@ -298,6 +298,9 @@ def extract_profile(chk, model, run='run', params=None, derived_params=None,
     if 'mass' in derived_params:
         add_mass_profile(profile)
 
+    n_zones = len(profile['zone'])
+    profile.coords['zone'] = np.arange(n_zones)  # set coords (mostly for concat later)
+
     return profile
 
 
