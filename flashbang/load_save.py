@@ -191,6 +191,39 @@ def print_dat_colnames(model, run='run'):
 # ===============================================================
 #                      Profiles
 # ===============================================================
+def get_multiprofile(model, run='run', chk_list=None, params=None, derived_params=None,
+                     reload=False, save=True, verbose=True):
+    """Get all available profiles as multiprofile Dataset
+        see: get_all_profiles()
+
+    parameters
+    ----------
+    model : str
+    run : str
+    chk_list : [int]
+    params : [str]
+    derived_params : [str]
+    reload : bool
+    save : bool
+    verbose : bool
+    """
+    if chk_list is None:
+        chk_list = find_chk(model=model, match_str=f'{run}_hdf5_chk_')
+
+    multiprofile = try_load_multiprofile(model, run=run, verbose=verbose)
+
+    if multiprofile is None:
+        profiles = get_all_profiles(model, run=run, chk_list=chk_list, params=params,
+                                    derived_params=derived_params, reload=reload,
+                                    save=save, verbose=verbose)
+
+        multiprofile = join_profiles(profiles, verbose=verbose)
+        if save:
+            save_multiprofile_cache(multiprofile, model=model, run=run, verbose=verbose)
+
+    return multiprofile
+
+
 def get_all_profiles(model, run='run', chk_list=None, params=None, derived_params=None,
                      reload=False, save=True, verbose=True):
     """Get all available chk profiles
