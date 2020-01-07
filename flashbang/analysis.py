@@ -39,7 +39,7 @@ def extract_multi_tracers(mass_grid, profiles, params, verbose=True):
     ----------
     mass_grid : [float]
         1D array of mass shells to track.
-    profiles : {pd.DataFrame}
+    profiles : xr.Dataset
         set of profile tables for each chk, with columns of params (including mass shells)
         and rows of radial zones (see: load_save.extract_profile).
     params : [str]
@@ -48,16 +48,20 @@ def extract_multi_tracers(mass_grid, profiles, params, verbose=True):
     """
     printv(f'Extracting mass tracers from chk profiles', verbose=verbose)
 
-    data_cube = np.zeros([len(profiles), len(mass_grid), len(params)])
-    end_chk = list(profiles.keys())[-1]
+    chk_list = profiles.coords['chk'].values
+    data_cube = np.zeros([len(chk_list),
+                          len(mass_grid),
+                          len(params)])
 
-    for i, chk in enumerate(profiles.keys()):
-        printv(f'\rchk: {chk}/{end_chk}', verbose, end='')
-        data_cube[i, :, :] = extract_tracers(mass_grid=mass_grid, profile=profiles[i],
+    for i, chk in enumerate(chk_list):
+        printv(f'\rchk: {chk}/{chk_list[-1]}', verbose, end='')
+
+        data_cube[i, :, :] = extract_tracers(mass_grid=mass_grid,
+                                             profile=profiles.sel(chk=i),
                                              params=params)
     # construct xarray Dataset
     tracers = xr.Dataset()
-    tracers.coords['chk'] = list(profiles.keys())
+    tracers.coords['chk'] = chk_list
     tracers.coords['mass'] = mass_grid
 
     for i, par in enumerate(params):
