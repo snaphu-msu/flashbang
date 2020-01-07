@@ -359,6 +359,20 @@ def save_multiprofile_cache(multiprofile, model, run='run', verbose=True):
     multiprofile.to_netcdf(filepath)
 
 
+def load_multiprofile_cache(model, run='run', verbose=True):
+    """Load pre-extracted profile (see: save_profile_cache)
+
+    parameters
+    ----------
+    model : str
+    run : str
+    verbose : bool
+    """
+    filepath = paths.multiprofile_filepath(model=model, run=run)
+    printv(f'Loading multiprofile cache: {filepath}', verbose)
+    return xr.load_dataset(filepath)
+
+
 def save_profile_cache(profile, chk, model, run='run', verbose=True):
     """Save profile to file for faster loading
 
