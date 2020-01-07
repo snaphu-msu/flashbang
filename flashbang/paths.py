@@ -30,7 +30,6 @@ import os
 #   - use config files? How to avoid circular imports?
 #   - replace default run=None
 #   - add model to all filenames
-#   - rename .cdf extension to .nc
 
 
 # ===============================================================
@@ -186,7 +185,7 @@ def multiprofile_filepath(model, run='run'):
 def profile_filename(chk, run):
     """Return filename for pre-extracted profile
     """
-    return f'{run}_profile_{chk:04d}.cdf'
+    return f'{run}_profile_{chk:04d}.nc'
 
 
 def profile_filepath(chk, model, run='run'):
@@ -235,7 +234,7 @@ def tracers_filename(model, run='run'):
     model : str
     run : str
     """
-    return f'{model}_{run}_tracers.cdf'
+    return f'{model}_{run}_tracers.nc'
 
 
 def tracers_filepath(model, run='run'):
