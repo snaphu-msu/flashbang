@@ -207,7 +207,7 @@ def timesteps_filename(model, run='run'):
     model : str
     run : str
     """
-    return f'{run}_{model}_timesteps.pickle'
+    return f'{model}_{run}_timesteps.pickle'
 
 
 def timesteps_filepath(model, run='run'):
