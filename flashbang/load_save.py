@@ -550,6 +550,42 @@ def load_chk(chk, model, run='run'):
 
 
 # ===============================================================
+#                      chk_table
+# ===============================================================
+def load_chk_table_cache(model, run='run', verbose=True):
+    """Load pre-extracted chk timesteps to file
+
+    Returns: pd.Dataframe
+
+    parameters
+    ----------
+    model : str
+    run : str
+    verbose : bool
+    """
+    filepath = paths.chk_table_filepath(model=model, run=run)
+    printv(f'Loading chk_table cache: {filepath}', verbose)
+    chk_table = pd.read_pickle(filepath)
+    return chk_table
+
+
+def save_chk_table_cache(chk_table, model, run='run', verbose=True):
+    """Saves pre-extracted chk_table to file
+
+    parameters
+    ----------
+    chk_table : pd.Dataframe
+    model : str
+    run : str
+    verbose : bool
+    """
+    ensure_temp_dir_exists(model, verbose=False)
+    filepath = paths.chk_table_filepath(model=model, run=run)
+    printv(f'Saving chk_table cache: {filepath}', verbose)
+    chk_table.to_pickle(filepath)
+
+
+# ===============================================================
 #                      Timesteps
 # ===============================================================
 # TODO:
