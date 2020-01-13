@@ -555,7 +555,7 @@ def load_chk(chk, model, run='run'):
 # TODO:
 #   - faster method? e.g. reading from .dat somehow?
 #       - or reading chk without loading fully
-#       - incorporating into xr.dataset metadata
+#       - incorporating into multiprofile
 # ===============================================================
 def get_timesteps(model, run='run', params=('time', 'nstep'),
                   reload=False, save=True, verbose=True):

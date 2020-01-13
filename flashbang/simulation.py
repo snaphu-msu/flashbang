@@ -105,7 +105,7 @@ class Simulation:
         self.config = None
         self.dat = None
         self.bounce_time = None
-        self.trans = None
+        self.trans_dens = None
         self.n_chk = None
         self.mass_grid = None
         self.chk_table = pd.DataFrame()
@@ -149,7 +149,7 @@ class Simulation:
         config : str
         """
         self.config = load_save.load_config(name=config, verbose=self.verbose)
-        self.trans = self.config['transitions']['dens']
+        self.trans_dens = self.config['transitions']['dens']
         self.setup_mass_grid()
 
     def setup_mass_grid(self):
@@ -173,7 +173,7 @@ class Simulation:
         self.load_all_profiles(reload=reload, save=save)
         self.get_tracers(reload=reload, save=save)
 
-        if self.trans is not None:
+        if self.trans_dens is not None:
             self.find_trans_idxs()
 
     def get_bounce_time(self):
@@ -233,7 +233,7 @@ class Simulation:
         # TODO: save to cache
         self.printv('Finding transition zones')
 
-        for key, trans_dens in self.trans.items():
+        for key, trans_dens in self.trans_dens.items():
             idx_list = np.zeros(self.n_chk, dtype=int)
 
             for i, chk in enumerate(self.chk_table.index):
@@ -440,7 +440,7 @@ class Simulation:
             self._set_ax_title(profile_ax, chk=idx, title=title)
 
             if trans:
-                for i, key in enumerate(self.trans):
+                for i, key in enumerate(self.trans_dens):
                     x, y = self._get_trans_xy(chk=idx, key=key, x_var=x_var, y=y_profile)
                     profile_ax.lines[i+1].set_xdata(x)
                     profile_ax.lines[i+1].set_ydata(y)
@@ -493,7 +493,7 @@ class Simulation:
 
             if trans:
                 # TODO: nicer way to do this
-                for i, key in enumerate(self.trans):
+                for i, key in enumerate(self.trans_dens):
                     x, y = self._get_trans_xy(chk=idx, key=key, x_var=x_var, y=ylims)
                     line_idx = -i - 1
                     profile_ax.lines[line_idx].set_xdata(x)
@@ -600,7 +600,7 @@ class Simulation:
         trans : bool
         """
         if trans:
-            for key in self.trans:
+            for key in self.trans_dens:
                 x, y = self._get_trans_xy(chk=chk, key=key, x_var=x_var, y=y)
                 ax.plot(x, y, ls='--', color='k', linewidth=linewidth)
 
