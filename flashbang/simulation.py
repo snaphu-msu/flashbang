@@ -94,6 +94,7 @@ class Simulation:
 
         verbose : bool
         """
+        # TODO: comment attrs
         t0 = time.time()
         self.verbose = verbose
         self.model = model
@@ -172,9 +173,13 @@ class Simulation:
         self.load_dat(reload=reload, save=save)
         self.load_all_profiles(reload=reload, save=save)
         self.get_tracers(reload=reload, save=save)
+        # TODO: load chk_table
 
         if self.trans_dens is not None:
+            # TODO: check if in chk_table
             self.find_trans_idxs()
+
+        # TODO: save chk_table
 
     def get_bounce_time(self):
         """Get bounce time (s) from log file
@@ -185,8 +190,7 @@ class Simulation:
     def update_chk_list(self):
         """Update the list of checkpoint files available
         """
-        self.chk_table['chk'] = load_save.find_chk(model=self.model,
-                                                   match_str=f'{self.run}_hdf5_chk_')
+        self.chk_table['chk'] = load_save.find_chk(model=self.model, run=self.run)
         self.chk_table.set_index('chk', inplace=True)
         self.n_chk = len(self.chk_table)
 

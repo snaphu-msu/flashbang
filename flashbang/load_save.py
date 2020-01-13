@@ -214,7 +214,7 @@ def get_multiprofile(model, run='run', chk_list=None, params=None, derived_param
             save_multiprofile_cache(multiprofile, model=model, run=run, verbose=verbose)
 
     if chk_list is None:
-        chk_list = find_chk(model=model, match_str=f'{run}_hdf5_chk_')
+        chk_list = find_chk(model=model, run=run)
 
     # 1. Try loading multiprofile
     multiprofile = try_load_multiprofile(model, run=run, verbose=verbose)
@@ -266,7 +266,7 @@ def get_all_profiles(model, run='run', chk_list=None, params=None, derived_param
     printv(f'Loading chk profiles', verbose=verbose)
 
     if chk_list is None:
-        chk_list = find_chk(model=model, match_str=f'{run}_hdf5_chk_')
+        chk_list = find_chk(model=model, run=run)
 
     profiles = {}
     chk_max = chk_list[-1]
@@ -509,20 +509,20 @@ def load_profile_cache(chk, model, run='run', verbose=True):
 # ===============================================================
 #                      Chk files
 # ===============================================================
-def find_chk(model, match_str='hdf5_chk_', n_digits=4):
+def find_chk(model, run='run', n_digits=4):
     """Return list of checkpoint (chk) files available in given directory
         returns as nparray of checkpoint numbers
 
     parameters
     ----------
     model : str
-    match_str : str
-        string common to all chk filenames
+    run : str
     n_digits : int
         number of digits at end of filename corresponding to checkpoint ID
     """
     output_path = paths.output_path(model=model)
     file_list = os.listdir(output_path)
+    match_str = f'{run}_hdf5_chk_'
     chks = []
 
     for file in file_list:
@@ -619,7 +619,7 @@ def get_timesteps(model, run='run', params=('time', 'nstep'),
 
     # fall back on loading from raw chk files
     if timesteps is None:
-        chk_list = find_chk(model=model, match_str=f'{run}_hdf5_chk_')
+        chk_list = find_chk(model=model, run=run)
         timesteps = extract_timesteps(chk_list, model, run=run, params=params)
 
         if save:
@@ -776,7 +776,7 @@ def get_tracers(model, run='run', profiles=None, params=None, mass_grid=None,
             params = c['tracers']['params']
 
         if profiles is None:
-            chk_list = find_chk(model=model, match_str=f'{run}_hdf5_chk_')
+            chk_list = find_chk(model=model, run=run)
             profiles = get_multiprofile(model=model, run=run, chk_list=chk_list,
                                         params=params, verbose=verbose)
 
