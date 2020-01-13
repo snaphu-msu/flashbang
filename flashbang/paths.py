@@ -163,6 +163,23 @@ def chk_filepath(chk, model, run='run', o_path=None):
 
 
 # ===============================================================
+#                      chk_table
+# ===============================================================
+def chk_table_filename(model, run):
+    """Return filename for checkpoint data-table file
+    """
+    return f'{model}_{run}_chk_table.pickle'
+
+
+def chk_table_filepath(model, run='run'):
+    """Return filepath to checkpoint data-table file
+    """
+    path = temp_path(model)
+    filename = chk_table_filename(model=model, run=run)
+    return os.path.join(path, filename)
+
+
+# ===============================================================
 #                      Profiles
 # ===============================================================
 def multiprofile_filename(model, run):
