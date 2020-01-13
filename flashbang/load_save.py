@@ -552,6 +552,37 @@ def load_chk(chk, model, run='run'):
 # ===============================================================
 #                      chk_table
 # ===============================================================
+def get_chk_table(model, run='run', reload=False, save=True, verbose=True):
+    """Get table of scalar chk properties
+
+    Returns: pd.DataFrame
+
+    parameters
+    ----------
+    model : str
+    run : str
+    reload : bool
+    save : bool
+    verbose : bool
+    """
+    chk_table = pd.DataFrame()
+
+    if not reload:
+        try:
+            chk_table = load_chk_table_cache(model=model, run=run, verbose=verbose)
+        except FileNotFoundError:
+            pass
+
+    if chk_table.empty:
+        chk_table['chk'] = find_chk(model=model, run=run)
+        chk_table.set_index('chk', inplace=True)
+
+        if save:
+            save_chk_table_cache(chk_table, model=model, run=run, verbose=verbose)
+
+    return chk_table
+
+
 def load_chk_table_cache(model, run='run', verbose=True):
     """Load pre-extracted chk timesteps to file
 
