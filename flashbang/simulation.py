@@ -92,8 +92,8 @@ class Simulation:
             save extracted model data to temporary files (for faster loading)
 
         verbose : bool
+            print information to terminal
         """
-        # TODO: comment attrs
         t0 = time.time()
         self.verbose = verbose
         self.model = model
@@ -102,14 +102,14 @@ class Simulation:
         self.model_path = paths.model_path(model=model)
         self.output_path = os.path.join(self.model_path, output_dir)
 
-        self.config = None
-        self.dat = None
-        self.bounce_time = None
-        self.trans_dens = None
-        self.mass_grid = None
-        self.chk_table = pd.DataFrame()
-        self.profiles = xr.Dataset()
-        self.tracers = None
+        self.config = None               # model-specific configuration; see load_config()
+        self.dat = None                  # time-integrated data from .dat; see load_dat()
+        self.bounce_time = None          # core-bound in simulation time (s)
+        self.trans_dens = None           # transition densities (helmholtz runs)
+        self.mass_grid = None            # masses shells used to extract tracers
+        self.chk_table = pd.DataFrame()  # scalar chk quantities (trans_dens, time, etc.)
+        self.profiles = xr.Dataset()     # radial profile data for each timestep
+        self.tracers = None              # mass tracers/trajectories
 
         self.load_config(config=config)
         self.load_chk_table(reload=reload, save=save)
@@ -228,7 +228,6 @@ class Simulation:
     def check_chk_table(self, save=True):
         """Checks that pre-saved data is up to date with any new chk files
         """
-        # TODO: check other consistency (tracers, etc.)
         chk_list = load_save.find_chk(model=self.model, run=self.run)
 
         if len(chk_list) != len(self.chk_table):
