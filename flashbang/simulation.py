@@ -106,7 +106,6 @@ class Simulation:
         self.dat = None
         self.bounce_time = None
         self.trans_dens = None
-        self.n_chk = None
         self.mass_grid = None
         self.chk_table = pd.DataFrame()
         self.profiles = xr.Dataset()
@@ -194,7 +193,7 @@ class Simulation:
         self.chk_table = load_save.get_chk_table(model=self.model, run=self.run,
                                                  reload=reload, save=save,
                                                  verbose=self.verbose)
-        self.check_chk_list(save=save)
+        self.check_chk_table(save=save)
 
     def load_dat(self, reload=False, save=True):
         """Load .dat file
@@ -274,7 +273,7 @@ class Simulation:
         self.printv('Finding transition zones')
 
         for key, trans_dens in self.trans_dens.items():
-            idx_list = np.zeros(self.n_chk, dtype=int)
+            idx_list = np.zeros_like(self.chk_table.index)
 
             for i, chk in enumerate(self.chk_table.index):
                 profile = self.profiles.sel(chk=chk)
