@@ -97,7 +97,7 @@ def get_dat(model, cols_dict, run='run', reload=False, save=True, verbose=True):
         try:
             dat_table = load_dat_cache(model=model, run=run, verbose=verbose)
         except FileNotFoundError:
-            pass
+            printv('dat cache not found, reloading', verbose)
 
     # fall back on loading raw .dat
     if dat_table is None:
@@ -295,7 +295,7 @@ def try_load_multiprofile(model, run='run', verbose=True):
     try:
         multiprofile = load_multiprofile_cache(model=model, run=run, verbose=verbose)
     except FileNotFoundError:
-        printv('multiprofile cache not found', verbose=verbose)
+        printv('multiprofile cache not found, reloading', verbose=verbose)
         pass
 
     return multiprofile
@@ -331,7 +331,7 @@ def get_profile(chk, model, run='run', params=None, derived_params=None, config=
         try:
             profile = load_profile_cache(chk, model=model, run=run, verbose=verbose)
         except FileNotFoundError:
-            pass
+            printv('profile cache not found, reloading', verbose)
 
     # fall back on loading raw chk
     if profile is None:
@@ -573,7 +573,7 @@ def get_chk_table(model, run='run', reload=False, save=True, verbose=True):
         try:
             chk_table = load_chk_table_cache(model=model, run=run, verbose=verbose)
         except FileNotFoundError:
-            pass
+            printv('chk_table cache not found, reloading', verbose)
 
     if chk_table.empty:
         chk_table['chk'] = find_chk(model=model, run=run)
@@ -648,7 +648,7 @@ def get_timesteps(model, run='run', params=('time', 'nstep'),
         try:
             timesteps = load_timesteps_cache(model=model, run=run, verbose=verbose)
         except FileNotFoundError:
-            pass
+            printv('timesteps cache not found, reloading', verbose)
 
     # fall back on loading from raw chk files
     if timesteps is None:
@@ -795,7 +795,7 @@ def get_tracers(model, run='run', profiles=None, params=None, mass_grid=None,
         try:
             tracers = load_tracers_cache(model=model, run=run, verbose=verbose)
         except FileNotFoundError:
-            pass
+            printv('tracers cache not found, reloading', verbose)
 
     # fall back on re-extracting
     if tracers is None:
