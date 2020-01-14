@@ -114,7 +114,7 @@ class Simulation:
         self.tracers = None
 
         self.load_config(config=config)
-        self.update_chk_list()
+        self.load_chk_table(reload=reload, save=save)
 
         if load_all:
             self.load_all(reload=reload, save=save)
@@ -173,13 +173,7 @@ class Simulation:
         self.load_dat(reload=reload, save=save)
         self.load_all_profiles(reload=reload, save=save)
         self.get_tracers(reload=reload, save=save)
-        # TODO: load chk_table
-
-        if self.trans_dens is not None:
-            # TODO: check if in chk_table
-            self.find_trans_idxs()
-
-        # TODO: save chk_table
+        self.get_transition_zones(reload=reload, save=save)
 
     def get_bounce_time(self):
         """Get bounce time (s) from log file
@@ -187,16 +181,22 @@ class Simulation:
         self.bounce_time = load_save.get_bounce_time(self.model, run=self.run,
                                                      verbose=self.verbose)
 
-    def update_chk_list(self):
-        """Update the list of checkpoint files available
-        """
-        self.chk_table['chk'] = load_save.find_chk(model=self.model, run=self.run)
-        self.chk_table.set_index('chk', inplace=True)
-        self.n_chk = len(self.chk_table)
-
     # =======================================================
     #                   Loading Data
     # =======================================================
+    def load_chk_table(self, reload=False, save=True):
+        """Load DataFrame of chk scalars
+
+        parameters
+        ----------
+        reload : bool
+        save : bool
+        """
+        self.chk_table = load_save.get_chk_table(model=self.model, run=self.run,
+                                                 reload=reload, save=save,
+                                                 verbose=self.verbose)
+        # TODO: check chk list
+
     def load_dat(self, reload=False, save=True):
         """Load .dat file
 
@@ -227,14 +227,41 @@ class Simulation:
                                 derived_params=config['derived_params'],
                                 reload=reload, save=save, verbose=self.verbose)
 
+    def save_chk_table(self):
+        """Saves chk_table DataFrame to file
+        """
+        load_save.save_chk_table_cache(self.chk_table, model=self.model, run=self.run,
+                                       verbose=self.verbose)
+
     # =======================================================
     #                 Analysis & Postprocessing
     # =======================================================
-    def find_trans_idxs(self):
-        """Find idxs for zones closest to the helmholtz transition densities
-        for each chk profile
+    def get_transition_zones(self, reload=False, save=True):
+        """Handles obtaining density transition zones (if specified)
+
+        parameters
+        ----------
+        reload : bool
+        save : bool
         """
-        # TODO: save to cache
+        if self.trans_dens is not None:
+            trans_missing = False
+
+            # check if already in chk_table
+            for key in self.trans_dens:
+                if f'{key}_i' not in self.chk_table.columns:
+                    trans_missing = True
+
+            if trans_missing or reload:
+                self.find_trans_idxs()
+
+                if save:
+                    self.save_chk_table()
+
+    def find_trans_idxs(self):
+        """Find indexes of zones closest to specified transition densities,
+        for each profile timestep
+        """
         self.printv('Finding transition zones')
 
         for key, trans_dens in self.trans_dens.items():
