@@ -509,7 +509,7 @@ def load_profile_cache(chk, model, run='run', verbose=True):
 # ===============================================================
 #                      Chk files
 # ===============================================================
-def find_chk(model, run='run', n_digits=4):
+def find_chk(model, run='run', n_digits=4, verbose=True):
     """Return list of checkpoint (chk) files available in given directory
         returns as nparray of checkpoint numbers
 
@@ -519,11 +519,13 @@ def find_chk(model, run='run', n_digits=4):
     run : str
     n_digits : int
         number of digits at end of filename corresponding to checkpoint ID
+    verbose : bool
     """
     output_path = paths.output_path(model=model)
     file_list = os.listdir(output_path)
     match_str = f'{run}_hdf5_chk_'
     chks = []
+    printv(f'Searching for chk files: {output_path}/{match_str}'+ n_digits*'*', verbose)
 
     for file in file_list:
         if match_str in file:
