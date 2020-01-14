@@ -56,10 +56,9 @@ from . import tools
 #       - n_step
 #       - n_zones
 #       - rsh_avg, other dat params
-
-# TODO: plotting
-#   - find max/min y-values over all chk --> set slider ylim
-#   - plot tracers
+#   - plotting:
+#       - find max/min y-values over all chk --> set slider ylim
+#       - plot tracers
 
 
 # noinspection PyTypeChecker
@@ -195,7 +194,7 @@ class Simulation:
         self.chk_table = load_save.get_chk_table(model=self.model, run=self.run,
                                                  reload=reload, save=save,
                                                  verbose=self.verbose)
-        # TODO: check chk list
+        self.check_chk_list(save=save)
 
     def load_dat(self, reload=False, save=True):
         """Load .dat file
@@ -226,6 +225,16 @@ class Simulation:
                                 params=config['params'] + config['isotopes'],
                                 derived_params=config['derived_params'],
                                 reload=reload, save=save, verbose=self.verbose)
+
+    def check_chk_table(self, save=True):
+        """Checks that pre-saved data is up to date with any new chk files
+        """
+        # TODO: check other consistency (tracers, etc.)
+        chk_list = load_save.find_chk(model=self.model, run=self.run)
+
+        if len(chk_list) != len(self.chk_table):
+            self.printv('chk files missing from table, reloading')
+            self.load_chk_table(reload=True, save=save)
 
     def save_chk_table(self):
         """Saves chk_table DataFrame to file
