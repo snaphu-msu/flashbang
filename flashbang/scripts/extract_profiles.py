@@ -27,9 +27,9 @@ def main(model, run, multithread=True, reload=False, save=True,
 
     chk_list = load_save.find_chk(model=model, run=run)
     conf = load_save.load_config(name=config)
-    
-    params = conf['params'] + conf['isotopes']
-    derived_params = conf['derived_params']
+
+    params = conf['profiles']['params'] + conf['profiles']['isotopes']
+    derived_params = conf['profiles']['derived_params']
 
     if multithread:
         args = []
