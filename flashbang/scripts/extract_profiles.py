@@ -25,20 +25,21 @@ def main(model, run, multithread=True, reload=False, save=True,
     reload = tools.str_to_bool(reload)
     save = tools.str_to_bool(save)
 
-    sim = simulation.Simulation(run=run, model=model, config=config, load_all=False)
-    conf = sim.config['profiles']
+    chk_list = load_save.find_chk(model=model, run=run)
+    conf = load_save.load_config(name=config)
+    
     params = conf['params'] + conf['isotopes']
     derived_params = conf['derived_params']
 
     if multithread:
         args = []
-        for chk in sim.chk_table.index:
+        for chk in chk_list:
             args.append((chk, model, run, reload, save, params, derived_params))
 
         with mp.Pool(processes=4) as pool:
             pool.starmap(extract_profiles, args)
     else:
-        for chk in sim.chk_table.index:
+        for chk in chk_list:
             extract_profiles(chk, model=model, run=run, reload=reload,
                              save=save, params=params, derived_params=derived_params)
 
