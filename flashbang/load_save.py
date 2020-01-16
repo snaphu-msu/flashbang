@@ -217,7 +217,9 @@ def get_multiprofile(model, run='run', chk_list=None, params=None, derived_param
         chk_list = find_chk(model=model, run=run)
 
     # 1. Try loading multiprofile
-    multiprofile = try_load_multiprofile(model, run=run, verbose=verbose)
+    multiprofile = None
+    if not reload:
+        multiprofile = try_load_multiprofile(model, run=run, verbose=verbose)
 
     # 2. Reload individual profiles
     if multiprofile is None:
