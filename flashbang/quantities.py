@@ -45,6 +45,10 @@ def get_mass_between(radius, density):
     density : np.ndarray
         1D array of density values
     """
+    # TODO: This is not quite right:
+    #           - Calculates volume *between* cell centres
+    #           - Averages density at point halfway between cell centres
+    #           - need to account for each cell size (do by blocks?)
     if len(radius) != len(density):
         raise ValueError('radius and density arrays are not the same length ' 
                          f'({len(radius)} and {len(radius)})')
