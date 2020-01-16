@@ -5,6 +5,8 @@ from astropy import units
 Module for calculating physical quantities
 """
 
+g_to_msun = units.g.to(units.M_sun)
+
 
 def get_mass_interior(radius, density):
     """Return interior (i.e. enclosed) mass for given radius/density profile
@@ -57,4 +59,4 @@ def get_mass_between(radius, density):
     dv = volume[1:] - volume[:-1]
     avg_dens = 0.5 * (density[1:] + density[:-1])
 
-    return dv * avg_dens
+    return dv * avg_dens * g_to_msun
