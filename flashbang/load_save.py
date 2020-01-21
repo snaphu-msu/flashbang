@@ -194,7 +194,7 @@ def print_dat_colnames(model, run='run'):
 #                      Profiles
 # ===============================================================
 def get_multiprofile(model, run='run', chk_list=None, params=None, derived_params=None,
-                     reload=False, save=True, verbose=True):
+                     config=None, reload=False, save=True, verbose=True):
     """Get all available profiles as multiprofile Dataset
         see: get_all_profiles()
 
@@ -205,6 +205,7 @@ def get_multiprofile(model, run='run', chk_list=None, params=None, derived_param
     chk_list : [int]
     params : [str]
     derived_params : [str]
+    config : str
     reload : bool
     save : bool
     verbose : bool
@@ -224,8 +225,8 @@ def get_multiprofile(model, run='run', chk_list=None, params=None, derived_param
     # 2. Reload individual profiles
     if multiprofile is None:
         profiles = get_all_profiles(model, run=run, chk_list=chk_list, params=params,
-                                    derived_params=derived_params, reload=reload,
-                                    save=save, verbose=verbose)
+                                    derived_params=derived_params, save=save,
+                                    verbose=verbose, config=config)
 
         multiprofile = join_profiles(profiles, verbose=verbose)
         save_cache()
@@ -238,8 +239,8 @@ def get_multiprofile(model, run='run', chk_list=None, params=None, derived_param
         if len(missing_chk) > 0:
             printv('Loading missing profiles', verbose=verbose)
             missing_profiles = get_all_profiles(model, run=run, chk_list=missing_chk,
-                                                params=params, derived_params=derived_params,
-                                                reload=reload, save=save, verbose=verbose)
+                                                params=params, save=save, verbose=verbose,
+                                                derived_params=derived_params, config=config)
 
             multiprofile = append_to_multiprofile(multiprofile, profiles=missing_profiles)
             save_cache()
@@ -248,7 +249,7 @@ def get_multiprofile(model, run='run', chk_list=None, params=None, derived_param
 
 
 def get_all_profiles(model, run='run', chk_list=None, params=None, derived_params=None,
-                     reload=False, save=True, verbose=True):
+                     config=None, reload=False, save=True, verbose=True):
     """Get all available chk profiles
         see: get_profile()
 
@@ -261,6 +262,7 @@ def get_all_profiles(model, run='run', chk_list=None, params=None, derived_param
     chk_list : [int]
     params : [str]
     derived_params : [str]
+    config : str
     reload : bool
     save : bool
     verbose : bool
@@ -276,7 +278,7 @@ def get_all_profiles(model, run='run', chk_list=None, params=None, derived_param
     for chk in chk_list:
         printv(f'\rchk: {chk}/{chk_max}', end='', verbose=verbose)
         profiles[chk] = get_profile(chk, model=model, run=run, params=params,
-                                    derived_params=derived_params,
+                                    derived_params=derived_params, config=config,
                                     reload=reload, save=save, verbose=False)
     printv('', verbose=verbose)
     return profiles
