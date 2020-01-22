@@ -1,11 +1,35 @@
 import numpy as np
 from astropy import units
 
+# flashbang
+from . import tools
+
 """
 Module for calculating physical quantities
 """
 
 g_to_msun = units.g.to(units.M_sun)
+
+
+def get_density_zone(dens_array, dens):
+    """Return index of the zone closest to the given density
+
+    Note: Assumes density is decreasing from left to right
+
+    parameters
+    ----------
+    dens_array : 1D array
+        zone density values, ordered from inner to outer zone
+    dens : flt
+        density to search for
+    """
+    dens_reverse = np.flip(dens_array)  # need increasing density
+    trans_idx = tools.find_nearest_idx(dens_reverse, dens)
+
+    max_idx = len(dens_reverse) - 1
+    zone_idx = max_idx - trans_idx  # flip back
+
+    return zone_idx
 
 
 def get_mass_interior(radius, density):
