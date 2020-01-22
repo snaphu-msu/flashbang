@@ -44,6 +44,7 @@ from . import load_save
 from . import paths
 from . import plot_tools
 from . import tools
+from . import quantities
 
 # TODO:
 #   - load progenitor model
@@ -276,11 +277,7 @@ class Simulation:
 
             for i, chk in enumerate(self.chk_table.index):
                 profile = self.profiles.sel(chk=chk)
-                dens_reverse = np.flip(profile['dens'])  # need increasing density
-                max_idx = len(dens_reverse) - 1
-
-                trans_idx = tools.find_nearest_idx(dens_reverse, trans_dens)
-                idx_list[i] = max_idx - trans_idx  # flip back
+                idx_list[i] = quantities.get_density_zone(profile['dens'], trans_dens)
 
             self.chk_table[f'{key}_i'] = idx_list
 
