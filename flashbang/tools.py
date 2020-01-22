@@ -20,6 +20,9 @@ def ensure_sequence(x):
 def find_nearest_idx(array, value):
     """Return idx for the array element nearest to the given value
 
+    Note: array assumed to be monotonically increasing (not enforced),
+          will use the first element that exceeds the given value
+
     parameters
     ----------
     array : 1D array
