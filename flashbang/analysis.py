@@ -91,7 +91,7 @@ def extract_tracers(mass_grid, profile, params):
     out_array = np.zeros([len(mass_grid), len(params)])
 
     for i, par in enumerate(params):
-        interp_func = interp1d(profile['mass'] * g_to_msun, profile[par])
+        interp_func = interp1d(profile['mass'], profile[par])
         out_array[:, i] = interp_func(mass_grid)
 
     return out_array
