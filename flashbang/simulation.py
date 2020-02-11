@@ -577,6 +577,34 @@ class Simulation:
         if display:
             plt.show(block=False)
 
+    def plot_tracers(self, y_var, y_scale=None, display=True, ax=None, figsize=(8, 6),
+                     linestyle='-', marker='', legend=False):
+        """Plot quantity from dat file
+
+        parameters
+        ----------
+        y_var : str
+        y_scale : {'log', 'linear'}
+        figsize : [width, height]
+        display : bool
+        ax : Axes
+        linestyle : str
+        marker : str
+        legend : bool
+        """
+        fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
+        self._set_ax_scales(ax, y_var, y_scale=y_scale, x_var=None, x_scale='linear')
+        self._set_ax_labels(ax, x_var='chk', y_var=y_var)
+
+        for mass in self.tracers['mass']:
+            ax.plot(self.tracers['chk'], self.tracers.sel(mass=mass)[y_var],
+                    linestyle=linestyle, marker=marker, label=f'{mass.values:.3f}')
+
+        if legend:
+            ax.legend()
+        if display:
+            plt.show(block=False)
+
     # =======================================================
     #                      Plotting Tools
     # =======================================================
