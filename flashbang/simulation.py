@@ -291,6 +291,9 @@ class Simulation:
         """
         # TODO:
         #   - include chk timesteps
+        if len(self.config['tracers']['params']) == 0:
+            return
+
         self.tracers = load_save.get_tracers(model=self.model, run=self.run,
                                              mass_grid=self.mass_grid,
                                              params=self.config['tracers']['params'],
