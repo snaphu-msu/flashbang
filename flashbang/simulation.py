@@ -600,8 +600,7 @@ class Simulation:
             ax.plot(self.tracers['chk'], self.tracers.sel(mass=mass)[y_var],
                     linestyle=linestyle, marker=marker, label=f'{mass.values:.3f}')
 
-        if legend:
-            ax.legend()
+        self._set_ax_legend(ax, legend=legend)
         if display:
             plt.show(block=False)
 
@@ -730,6 +729,18 @@ class Simulation:
         """
         ax.set_xlabel(self.get_label(x_var))
         ax.set_ylabel(self.get_label(y_var))
+
+    def _set_ax_legend(self, ax, legend, loc=None):
+        """Set axis labels
+
+        parameters
+        ----------
+        ax : Axes
+        legend : bool
+        """
+        c = self.config['plotting']
+        if legend:
+            ax.legend(loc=loc)
 
     def _setup_fig_ax(self, ax, figsize):
         """Setup fig, ax, checking if ax already provided
