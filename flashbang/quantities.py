@@ -11,8 +11,31 @@ Module for calculating physical quantities
 g_to_msun = units.g.to(units.M_sun)
 
 
-def get_mass_cut_idx(ener, gpot):
+def get_mass_cut(mass, ener, gpot):
     """Estimates ejecta mass cut given a radial profile of total energy
+    and gravitational potential
+
+    NOTE: Just heuristic, use with caution
+
+    parameters
+    ----------
+    mass : 1D array
+        profile of mass coordinate
+    ener : 1D array
+        profile of total energy
+    gpot : 1D array
+        profile of gravitational potential
+    """
+    idx = get_mass_cut_idx(ener=ener, gpot=gpot)
+
+    if idx is None:
+        raise ValueError('No mass cut detected. Does the model actually explode?')
+
+    return mass[idx]
+
+
+def get_mass_cut_idx(ener, gpot):
+    """Gets index of mass cut given a radial profile of total energy
     and gravitational potential
 
     NOTE: Just heuristic, use with caution
