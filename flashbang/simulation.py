@@ -331,7 +331,7 @@ class Simulation:
         chk = tools.ensure_sequence(chk)
         y_var_list = tools.ensure_sequence(y_var_list)
         n_var = len(y_var_list)
-        fig, ax = plot_tools.setup_subplots(n_var, max_cols=max_cols,
+        fig, ax = plot_tools.setup_subplots(n_var, max_cols=max_cols, sharex=True,
                                             sub_figsize=sub_figsize, squeeze=False)
 
         for i, y_var in enumerate(y_var_list):
