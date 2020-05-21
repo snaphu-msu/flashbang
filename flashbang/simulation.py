@@ -340,7 +340,8 @@ class Simulation:
 
             self.plot_profile(chk, y_var=y_var, x_var=x_var, y_scale=y_scale,
                               x_scale=x_scale, ax=ax[row, col], trans=trans,
-                              legend=legend if i == 0 else False)
+                              legend=legend if i == 0 else False,
+                              title=True if i == 0 else False)
         return fig
 
     def plot_profile(self, chk, y_var, x_var='r', y_scale=None, x_scale=None,
