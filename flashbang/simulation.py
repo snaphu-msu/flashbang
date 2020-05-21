@@ -310,7 +310,7 @@ class Simulation:
     #                      Plotting
     # =======================================================
     def plot_profiles(self, chk, y_var_list, x_var='r', y_scale=None, x_scale=None,
-                      max_cols=2, sub_figsize=(6, 5), trans=True, legend=False,
+                      max_cols=2, sub_figsize=(6, 5), trans=False, legend=False,
                       title=True):
         """Plot one or more profile variables
 
@@ -348,7 +348,7 @@ class Simulation:
         return fig
 
     def plot_profile(self, chk, y_var, x_var='r', y_scale=None, x_scale=None,
-                     ax=None, legend=False, trans=True, title=True,
+                     ax=None, legend=False, trans=False, title=True,
                      ylims=None, xlims=None, figsize=(8, 6), label=None,
                      linestyle='-', marker=''):
         """Plot given profile variable
@@ -441,7 +441,7 @@ class Simulation:
 
         return fig
 
-    def plot_slider(self, y_var, x_var='r', y_scale=None, x_scale=None, trans=True,
+    def plot_slider(self, y_var, x_var='r', y_scale=None, x_scale=None, trans=False,
                     figsize=(8, 6), title=True, xlims=None, ylims=None, legend=True,
                     linestyle='-', marker=''):
         """Plot interactive slider of profile for given variable
