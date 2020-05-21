@@ -310,7 +310,8 @@ class Simulation:
     #                      Plotting
     # =======================================================
     def plot_profiles(self, chk, y_var_list, x_var='r', y_scale=None, x_scale=None,
-                      max_cols=2, sub_figsize=(6, 5), trans=True, legend=False):
+                      max_cols=2, sub_figsize=(6, 5), trans=True, legend=False,
+                      title=True):
         """Plot one or more profile variables
 
         parameters
@@ -327,6 +328,7 @@ class Simulation:
         max_cols : bool
         sub_figsize : tuple
         trans : bool
+        title : bool
         """
         chk = tools.ensure_sequence(chk)
         y_var_list = tools.ensure_sequence(y_var_list)
@@ -337,11 +339,12 @@ class Simulation:
         for i, y_var in enumerate(y_var_list):
             row = int(np.floor(i / max_cols))
             col = i % max_cols
+            show_legend = legend if i == 0 else False
+            show_title = title if i == 0 else False
 
             self.plot_profile(chk, y_var=y_var, x_var=x_var, y_scale=y_scale,
                               x_scale=x_scale, ax=ax[row, col], trans=trans,
-                              legend=legend if i == 0 else False,
-                              title=True if i == 0 else False)
+                              legend=show_legend, title=show_title)
         return fig
 
     def plot_profile(self, chk, y_var, x_var='r', y_scale=None, x_scale=None,
