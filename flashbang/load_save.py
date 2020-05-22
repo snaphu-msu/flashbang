@@ -147,7 +147,7 @@ def save_dat_cache(dat, model, run='run', verbose=True):
     run : str
     verbose : bool
     """
-    ensure_temp_dir_exists(model, verbose=False)
+    ensure_cache_dir_exists(model, verbose=False)
     filepath = paths.dat_temp_filepath(model=model, run=run)
 
     printv(f'Saving dat cache: {filepath}', verbose)
@@ -455,7 +455,7 @@ def save_multiprofile_cache(multiprofile, model, run='run', verbose=True):
     run : str
     verbose : bool
     """
-    ensure_temp_dir_exists(model, verbose=False)
+    ensure_cache_dir_exists(model, verbose=False)
     filepath = paths.multiprofile_filepath(model=model, run=run)
 
     printv(f'Saving multiprofile cache: {filepath}', verbose)
@@ -488,7 +488,7 @@ def save_profile_cache(profile, chk, model, run='run', verbose=True):
     run : str
     verbose : bool
     """
-    ensure_temp_dir_exists(model, verbose=False)
+    ensure_cache_dir_exists(model, verbose=False)
     filepath = paths.profile_filepath(chk=chk, model=model, run=run)
 
     printv(f'Saving profile cache: {filepath}', verbose)
@@ -616,7 +616,7 @@ def save_chk_table_cache(chk_table, model, run='run', verbose=True):
     run : str
     verbose : bool
     """
-    ensure_temp_dir_exists(model, verbose=False)
+    ensure_cache_dir_exists(model, verbose=False)
     filepath = paths.chk_table_filepath(model=model, run=run)
     printv(f'Saving chk_table cache: {filepath}', verbose)
     chk_table.to_pickle(filepath)
@@ -714,7 +714,7 @@ def save_timesteps_cache(timesteps, model, run='run', verbose=True):
     run : str
     verbose : bool
     """
-    ensure_temp_dir_exists(model, verbose=False)
+    ensure_cache_dir_exists(model, verbose=False)
     filepath = paths.timesteps_filepath(model, run=run)
 
     printv(f'Saving timesteps cache: {filepath}', verbose)
@@ -888,7 +888,7 @@ def try_mkdir(path, skip=False, verbose=True):
         subprocess.run(['mkdir', '-p', path], check=True)
 
 
-def ensure_temp_dir_exists(model, verbose=True):
+def ensure_cache_dir_exists(model, verbose=True):
     """Ensure temp directory exists (create if not)
 
     parameters
