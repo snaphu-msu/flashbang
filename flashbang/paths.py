@@ -61,6 +61,13 @@ def config_filepath(name=None):
     return os.path.join(path, 'flashbang', 'config', f'{name}.ini')
 
 
+def cache_path(model):
+    """Path to directory for temporary file saving
+    """
+    m_path = model_path(model)
+    return os.path.join(m_path, 'temp')
+
+
 # ===============================================================
 #                      Models
 # ===============================================================
@@ -80,13 +87,6 @@ def model_path(model):
                                "'export FLASH_MODELS=${HOME}/BANG/runs'")
 
     return os.path.join(flash_models_path, model)
-
-
-def temp_path(model):
-    """Path to directory for temporary file saving
-    """
-    m_path = model_path(model)
-    return os.path.join(m_path, 'temp')
 
 
 def output_path(model, output_dir='output'):
@@ -127,7 +127,7 @@ def dat_temp_filename(model, run):
 def dat_temp_filepath(model, run='run'):
     """Return filepath to reduced dat table
     """
-    path = temp_path(model)
+    path = cache_path(model)
     filename = dat_temp_filename(model, run)
     return os.path.join(path, filename)
 
@@ -181,7 +181,7 @@ def chk_table_filename(model, run):
 def chk_table_filepath(model, run='run'):
     """Return filepath to checkpoint data-table file
     """
-    path = temp_path(model)
+    path = cache_path(model)
     filename = chk_table_filename(model=model, run=run)
     return os.path.join(path, filename)
 
@@ -198,7 +198,7 @@ def multiprofile_filename(model, run):
 def multiprofile_filepath(model, run='run'):
     """Return filepath for pre-extracted multiprofile
     """
-    path = temp_path(model)
+    path = cache_path(model)
     filename = multiprofile_filename(model=model, run=run)
     return os.path.join(path, filename)
 
@@ -212,7 +212,7 @@ def profile_filename(chk, model, run):
 def profile_filepath(chk, model, run='run'):
     """Return filepath to pre-extracted profile
     """
-    path = temp_path(model)
+    path = cache_path(model)
     filename = profile_filename(chk, model=model, run=run)
     return os.path.join(path, filename)
 
@@ -239,7 +239,7 @@ def timesteps_filepath(model, run='run'):
     model : str
     run : str
     """
-    path = temp_path(model)
+    path = cache_path(model)
     filename = timesteps_filename(model=model, run=run)
     return os.path.join(path, filename)
 
@@ -266,6 +266,6 @@ def tracers_filepath(model, run='run'):
     model : str
     run : str
     """
-    path = temp_path(model)
+    path = cache_path(model)
     filename = tracers_filename(model=model, run=run)
     return os.path.join(path, filename)
