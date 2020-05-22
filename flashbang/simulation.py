@@ -87,7 +87,7 @@ class Simulation:
             immediately load all model data (chk profiles, dat)
 
         reload : bool
-            force reload model data from raw files (don't load from temp/)
+            force reload from raw model files (don't load from cache/)
 
         save : bool
             save extracted model data to temporary files (for faster loading)

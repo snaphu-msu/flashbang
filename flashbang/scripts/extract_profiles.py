@@ -12,7 +12,7 @@ import time
 from flashbang import simulation, load_save, tools
 
 # TODO:
-#   - check for existing tempfiles, only load missing
+#   - check for existing cache files, only load missing
 #   - extract tracers
 #   - disable try_mkdir temp
 #   - integrate with multiprofile

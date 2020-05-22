@@ -92,7 +92,7 @@ def get_dat(model, cols_dict, run='run', reload=False, save=True, verbose=True):
     """
     dat_table = None
 
-    # attempt to load temp file
+    # attempt to load cache file
     if not reload:
         try:
             dat_table = load_dat_cache(model=model, run=run, verbose=verbose)
@@ -148,7 +148,7 @@ def save_dat_cache(dat, model, run='run', verbose=True):
     verbose : bool
     """
     ensure_cache_dir_exists(model, verbose=False)
-    filepath = paths.dat_temp_filepath(model=model, run=run)
+    filepath = paths.dat_cache_filepath(model=model, run=run)
 
     printv(f'Saving dat cache: {filepath}', verbose)
     dat.to_pickle(filepath)
@@ -163,7 +163,7 @@ def load_dat_cache(model, run='run', verbose=True):
     run : str
     verbose : bool
     """
-    filepath = paths.dat_temp_filepath(model=model, run=run)
+    filepath = paths.dat_cache_filepath(model=model, run=run)
     printv(f'Loading dat cache: {filepath}', verbose)
     return pd.read_pickle(filepath)
 
@@ -285,7 +285,7 @@ def get_all_profiles(model, run='run', chk_list=None, params=None, derived_param
 
 
 def try_load_multiprofile(model, run='run', verbose=True):
-    """Attempt to load pre-extracted multiprofile
+    """Attempt to load cached multiprofile
 
    Returns : xr.Dataset, or None
 
@@ -330,7 +330,7 @@ def get_profile(chk, model, run='run', params=None, derived_params=None, config=
     """
     profile = None
 
-    # attempt to load temp file
+    # attempt to load cache file
     if not reload:
         try:
             profile = load_profile_cache(chk, model=model, run=run, verbose=verbose)
@@ -647,7 +647,7 @@ def get_timesteps(model, run='run', params=('time', 'nstep'),
     """
     timesteps = None
 
-    # attempt to load temp file
+    # attempt to load cache file
     if not reload:
         try:
             timesteps = load_timesteps_cache(model=model, run=run, verbose=verbose)
@@ -889,7 +889,7 @@ def try_mkdir(path, skip=False, verbose=True):
 
 
 def ensure_cache_dir_exists(model, verbose=True):
-    """Ensure temp directory exists (create if not)
+    """Create cache directory if it doesn't exist
 
     parameters
     ----------

@@ -62,7 +62,7 @@ def config_filepath(name=None):
 
 
 def cache_path():
-    """Path to directory for temporary file saving
+    """Path to directory for cached files
     """
     path = flashbang_path()
     return os.path.join(path, 'cache')
@@ -125,17 +125,17 @@ def dat_filepath(model, run='run'):
     return os.path.join(m_path, filename)
 
 
-def dat_temp_filename(model, run):
-    """Return filename for temporary (cached) dat file
+def dat_cache_filename(model, run):
+    """Return filename for cached dat file
     """
     return f'{model}_{run}_dat.pickle'
 
 
-def dat_temp_filepath(model, run='run'):
-    """Return filepath to reduced dat table
+def dat_cache_filepath(model, run='run'):
+    """Return filepath to cached dat table
     """
     path = model_cache_path(model)
-    filename = dat_temp_filename(model, run)
+    filename = dat_cache_filename(model, run)
     return os.path.join(path, filename)
 
 
