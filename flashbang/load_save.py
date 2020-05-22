@@ -896,5 +896,5 @@ def ensure_temp_dir_exists(model, verbose=True):
     model : str
     verbose : bool
     """
-    temp_path = paths.temp_path(model)
-    try_mkdir(temp_path, skip=True, verbose=verbose)
+    path = paths.model_cache_path(model)
+    try_mkdir(path, skip=True, verbose=verbose)
