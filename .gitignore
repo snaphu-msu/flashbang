@@ -1,8 +1,13 @@
+# flashbang
+anim/
+temp/
+cache/
+!cache/REAME.md
+
+# misc.
 .idea
 __pycache__
 *.pyc
 .DS_Store
-anim/
-temp/
 .vscode/
 *.code-workspace
