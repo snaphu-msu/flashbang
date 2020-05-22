@@ -2,7 +2,7 @@
 Script to extract chk profiles en-masse using multithreading
 
 Usage:
-    python extract_profiles [run] [model]
+    python extract_profiles [model] [run]
 """
 import sys
 import multiprocessing as mp
