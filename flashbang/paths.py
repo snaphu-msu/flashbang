@@ -32,6 +32,18 @@ import os
 # ===============================================================
 #                      Flashbang
 # ===============================================================
+def flashbang_path():
+    """Return path to flashbang repo
+    """
+    try:
+        path = os.environ['FLASHBANG']
+    except KeyError:
+        raise EnvironmentError('Environment variable FLASHBANG not set. '
+                               'Set path to flashbang directory, e.g., '
+                               "'export FLASHBANG=${HOME}/codes/flashbang'")
+    return path
+
+
 def config_filepath(name=None):
     """Return path to config file
 
@@ -41,17 +53,12 @@ def config_filepath(name=None):
         base name of config file
         defaults to 'default' (for config file 'default.ini')
     """
+    path = flashbang_path()
+
     if name is None:
         name = 'default'
 
-    try:
-        flashbang_path = os.environ['FLASHBANG']
-    except KeyError:
-        raise EnvironmentError('Environment variable FLASHBANG not set. '
-                               'Set path to flashbang directory, e.g., '
-                               "'export FLASHBANG=${HOME}/codes/flashbang'")
-
-    return os.path.join(flashbang_path, 'flashbang', 'config', f'{name}.ini')
+    return os.path.join(path, 'flashbang', 'config', f'{name}.ini')
 
 
 # ===============================================================
