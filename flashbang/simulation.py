@@ -73,30 +73,22 @@ class Simulation:
         ----------
         model : str
             The name of the main model directory
-
         run : str
             The label that's used in chk and .dat filenames, e.g. 'run' for 'run.dat'
-
         config : str
             Base name of config file to use, e.g. 'default' for 'config/default.ini'
-
         output_dir : str
-            name of subdirectory containing model output files
-
+            Name of subdirectory containing model output files
         load_all : bool
-            immediately load all model data (chk profiles, dat)
-
+            Immediately load all model data (chk profiles, dat)
         load_tracers : bool
             Extract mass tracers/trajectories from profiles
-
         reload : bool
-            force reload from raw model files (don't load from cache/)
-
+            Force reload from raw model files (don't load from cache/)
         save : bool
-            save extracted model data to temporary files (for faster loading)
-
+            Save extracted model data to temporary files (for faster loading)
         verbose : bool
-            print information to terminal
+            Print information to terminal
         """
         t0 = time.time()
         self.verbose = verbose
