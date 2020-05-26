@@ -581,6 +581,8 @@ class Simulation:
         if display:
             plt.show(block=False)
 
+        return fig, ax
+
     def plot_tracers(self, y_var, y_scale=None, display=True, ax=None, figsize=(8, 6),
                      linestyle='-', marker='', legend=False):
         """Plot quantity from dat file
