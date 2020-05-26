@@ -66,7 +66,7 @@ from . import quantities
 class Simulation:
     def __init__(self, model, run='run', config='default',
                  output_dir='output', verbose=True, load_all=True,
-                 reload=False, save=True):
+                 reload=False, save=True, load_tracers=False):
         """Object representing a 1D flash simulation
 
         parameters
@@ -85,6 +85,9 @@ class Simulation:
 
         load_all : bool
             immediately load all model data (chk profiles, dat)
+
+        load_tracers : bool
+            Extract mass tracers/trajectories from profiles
 
         reload : bool
             force reload from raw model files (don't load from cache/)
@@ -117,6 +120,8 @@ class Simulation:
 
         if load_all:
             self.load_all(reload=reload, save=save)
+        if load_tracers:
+            self.get_tracers(reload=reload, save=save)
 
         t1 = time.time()
         self.printv(f'Model load time: {t1-t0:.3f} s')
@@ -171,7 +176,6 @@ class Simulation:
         self.get_bounce_time()
         self.load_dat(reload=reload, save=save)
         self.load_all_profiles(reload=reload, save=save)
-        self.get_tracers(reload=reload, save=save)
         self.get_transition_zones(reload=reload, save=save)
 
     def get_bounce_time(self):
