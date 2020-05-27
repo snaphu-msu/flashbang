@@ -71,13 +71,14 @@ def cache_path():
 # ===============================================================
 #                      Models
 # ===============================================================
-def model_path(model):
+def model_path(model, model_set=''):
     """Return path to model directory
 
     parameters
     ----------
     model : str
         name of flash model
+    model_set : str
     """
     try:
         flash_models_path = os.environ['FLASH_MODELS']
@@ -86,21 +87,26 @@ def model_path(model):
                                'Set path to directory containing flash models, e.g., '
                                "'export FLASH_MODELS=${HOME}/BANG/runs'")
 
-    return os.path.join(flash_models_path, model)
+    return os.path.join(flash_models_path, model_set, model)
 
 
-def output_path(model, output_dir='output'):
+def output_path(model, model_set='', output_dir='output'):
     """Return path to model output directory
     """
-    m_path = model_path(model)
+    m_path = model_path(model, model_set=model_set)
     return os.path.join(m_path, output_dir)
 
 
-def model_cache_path(model):
+def model_cache_path(model, model_set=''):
     """Path to directory for keeping cached files
+
+    Parameters
+    ----------
+    model : str
+    model_set : str
     """
     path = cache_path()
-    return os.path.join(path, model)
+    return os.path.join(path, model_set, model)
 
 
 # ===============================================================
@@ -112,16 +118,17 @@ def dat_filename(run):
     return f'{run}.dat'
 
 
-def dat_filepath(model, run='run'):
+def dat_filepath(model, model_set='', run='run'):
     """Return filepath to .dat file
 
     parameters
     ----------
-    run : str
     model : str
+    run : str
+    model_set : str
     """
     filename = dat_filename(run)
-    m_path = model_path(model)
+    m_path = model_path(model, model_set=model_set)
     return os.path.join(m_path, filename)
 
 
@@ -131,10 +138,10 @@ def dat_cache_filename(model, run):
     return f'{model}_{run}_dat.pickle'
 
 
-def dat_cache_filepath(model, run='run'):
+def dat_cache_filepath(model, run='run', model_set=''):
     """Return filepath to cached dat table
     """
-    path = model_cache_path(model)
+    path = model_cache_path(model, model_set=model_set)
     filename = dat_cache_filename(model, run)
     return os.path.join(path, filename)
 
@@ -148,11 +155,11 @@ def log_filename(run):
     return f'{run}.log'
 
 
-def log_filepath(model, run='run'):
+def log_filepath(model, run='run', model_set=''):
     """Return filepath to .log file
     """
     filename = log_filename(run)
-    m_path = model_path(model)
+    m_path = model_path(model, model_set=model_set)
     return os.path.join(m_path, filename)
 
 
@@ -165,13 +172,13 @@ def chk_filename(chk, run):
     return f'{run}_hdf5_chk_{chk:04d}'
 
 
-def chk_filepath(chk, model, run='run', o_path=None):
+def chk_filepath(chk, model, run='run', model_set='', o_path=None):
     """Return filepath to checkpoint file
     """
     filename = chk_filename(chk=chk, run=run)
 
     if o_path is None:
-        o_path = output_path(model)
+        o_path = output_path(model, model_set=model_set)
 
     return os.path.join(o_path, filename)
 
@@ -185,10 +192,10 @@ def chk_table_filename(model, run):
     return f'{model}_{run}_chk_table.pickle'
 
 
-def chk_table_filepath(model, run='run'):
+def chk_table_filepath(model, run='run', model_set=''):
     """Return filepath to checkpoint data-table file
     """
-    path = model_cache_path(model)
+    path = model_cache_path(model, model_set=model_set)
     filename = chk_table_filename(model=model, run=run)
     return os.path.join(path, filename)
 
@@ -202,10 +209,10 @@ def multiprofile_filename(model, run):
     return f'{model}_{run}_multiprofile.nc'
 
 
-def multiprofile_filepath(model, run='run'):
+def multiprofile_filepath(model, run='run', model_set=''):
     """Return filepath for pre-extracted multiprofile
     """
-    path = model_cache_path(model)
+    path = model_cache_path(model, model_set=model_set)
     filename = multiprofile_filename(model=model, run=run)
     return os.path.join(path, filename)
 
@@ -216,10 +223,10 @@ def profile_filename(chk, model, run):
     return f'{model}_{run}_profile_{chk:04d}.nc'
 
 
-def profile_filepath(chk, model, run='run'):
+def profile_filepath(chk, model, run='run', model_set=''):
     """Return filepath to pre-extracted profile
     """
-    path = model_cache_path(model)
+    path = model_cache_path(model, model_set=model_set)
     filename = profile_filename(chk, model=model, run=run)
     return os.path.join(path, filename)
 
@@ -238,15 +245,16 @@ def timesteps_filename(model, run='run'):
     return f'{model}_{run}_timesteps.pickle'
 
 
-def timesteps_filepath(model, run='run'):
+def timesteps_filepath(model, run='run', model_set=''):
     """Return filename for pre-extracted timestep table
 
     parameters
     ----------
     model : str
     run : str
+    model_set : str
     """
-    path = model_cache_path(model)
+    path = model_cache_path(model, model_set=model_set)
     filename = timesteps_filename(model=model, run=run)
     return os.path.join(path, filename)
 
@@ -265,14 +273,15 @@ def tracers_filename(model, run='run'):
     return f'{model}_{run}_tracers.nc'
 
 
-def tracers_filepath(model, run='run'):
+def tracers_filepath(model, run='run', model_set=''):
     """Return filepath for pre-extracted mass tracers dataset
 
     parameters
     ----------
     model : str
     run : str
+    model_set : str
     """
-    path = model_cache_path(model)
+    path = model_cache_path(model, model_set=model_set)
     filename = tracers_filename(model=model, run=run)
     return os.path.join(path, filename)
