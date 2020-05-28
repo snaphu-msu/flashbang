@@ -75,7 +75,8 @@ def load_config(name=None, verbose=True):
 # =======================================================================
 #                      Dat files
 # =======================================================================
-def get_dat(model, cols_dict, run='run', reload=False, save=True, verbose=True):
+def get_dat(model, cols_dict, run='run', model_set='',
+            reload=False, save=True, verbose=True):
     """Get reduced set of integrated quantities, as contained in [run].dat file
 
     Returns : pandas.DataFrame
@@ -86,6 +87,7 @@ def get_dat(model, cols_dict, run='run', reload=False, save=True, verbose=True):
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
     run: str
+    model_set : str
     reload : bool
     save : bool
     verbose : bool
@@ -95,7 +97,8 @@ def get_dat(model, cols_dict, run='run', reload=False, save=True, verbose=True):
     # attempt to load cache file
     if not reload:
         try:
-            dat_table = load_dat_cache(model=model, run=run, verbose=verbose)
+            dat_table = load_dat_cache(model=model, run=run, model_set=model_set,
+                                       verbose=verbose)
         except FileNotFoundError:
             printv('dat cache not found, reloading', verbose)
 
@@ -109,7 +112,7 @@ def get_dat(model, cols_dict, run='run', reload=False, save=True, verbose=True):
     return dat_table
 
 
-def extract_dat(model, cols_dict, run='run', verbose=True):
+def extract_dat(model, cols_dict, run='run', model_set='', verbose=True):
     """Extract and reduce data from .dat file
 
     Returns : dict of 1D quantities
@@ -120,9 +123,10 @@ def extract_dat(model, cols_dict, run='run', verbose=True):
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
     run: str
+    model_set : str
     verbose : bool
     """
-    filepath = paths.dat_filepath(model=model, run=run)
+    filepath = paths.dat_filepath(model=model, run=run, model_set=model_set)
     printv(f'Extracting dat: {filepath}', verbose=verbose)
 
     idxs = []
@@ -136,7 +140,7 @@ def extract_dat(model, cols_dict, run='run', verbose=True):
                        delim_whitespace=True, low_memory=False)
 
 
-def save_dat_cache(dat, model, run='run', verbose=True):
+def save_dat_cache(dat, model, run='run', model_set='', verbose=True):
     """Save pre-extracted .dat quantities, for faster loading
 
     parameters
@@ -145,38 +149,41 @@ def save_dat_cache(dat, model, run='run', verbose=True):
         data table as returned by extract_dat()
     model : str
     run : str
+    model_set : str
     verbose : bool
     """
     ensure_cache_dir_exists(model, verbose=False)
-    filepath = paths.dat_cache_filepath(model=model, run=run)
+    filepath = paths.dat_cache_filepath(model=model, run=run, model_set=model_set)
 
     printv(f'Saving dat cache: {filepath}', verbose)
     dat.to_pickle(filepath)
 
 
-def load_dat_cache(model, run='run', verbose=True):
+def load_dat_cache(model, run='run', model_set='', verbose=True):
     """Load pre-extracted .dat quantities (see: save_dat_cache)
 
     parameters
     ----------
     model : str
     run : str
+    model_set : str
     verbose : bool
     """
-    filepath = paths.dat_cache_filepath(model=model, run=run)
+    filepath = paths.dat_cache_filepath(model=model, run=run, model_set=model_set)
     printv(f'Loading dat cache: {filepath}', verbose)
     return pd.read_pickle(filepath)
 
 
-def print_dat_colnames(model, run='run'):
+def print_dat_colnames(model, run='run', model_set=''):
     """Print all column names from .dat file
 
     parameters
     ----------
     model : str
     run : str
+    model_set : str
     """
-    filepath = paths.dat_filepath(run=run, model=model)
+    filepath = paths.dat_filepath(run=run, model=model, model_set=model_set)
 
     with open(filepath, 'r') as f:
         colnames = f.readline().split()
@@ -193,8 +200,9 @@ def print_dat_colnames(model, run='run'):
 # ===============================================================
 #                      Profiles
 # ===============================================================
-def get_multiprofile(model, run='run', chk_list=None, params=None, derived_params=None,
-                     config=None, reload=False, save=True, verbose=True):
+def get_multiprofile(model, run='run', model_set='', chk_list=None, params=None,
+                     derived_params=None, config=None, reload=False,
+                     save=True, verbose=True):
     """Get all available profiles as multiprofile Dataset
         see: get_all_profiles()
 
@@ -202,6 +210,7 @@ def get_multiprofile(model, run='run', chk_list=None, params=None, derived_param
     ----------
     model : str
     run : str
+    model_set : str
     chk_list : [int]
     params : [str]
     derived_params : [str]
@@ -212,19 +221,22 @@ def get_multiprofile(model, run='run', chk_list=None, params=None, derived_param
     """
     def save_cache():
         if save:
-            save_multiprofile_cache(multiprofile, model=model, run=run, verbose=verbose)
+            save_multiprofile_cache(multiprofile, model=model, run=run,
+                                    model_set=model_set, verbose=verbose)
 
     if chk_list is None:
-        chk_list = find_chk(model=model, run=run)
+        chk_list = find_chk(model=model, run=run, model_set=model_set)
 
     # 1. Try loading multiprofile
     multiprofile = None
     if not reload:
-        multiprofile = try_load_multiprofile(model, run=run, verbose=verbose)
+        multiprofile = try_load_multiprofile(model, run=run, model_set=model_set,
+                                             verbose=verbose)
 
     # 2. Reload individual profiles
     if multiprofile is None:
-        profiles = get_all_profiles(model, run=run, chk_list=chk_list, params=params,
+        profiles = get_all_profiles(model, run=run, model_set=model_set,
+                                    chk_list=chk_list, params=params,
                                     derived_params=derived_params, save=save,
                                     verbose=verbose, config=config)
 
@@ -238,9 +250,11 @@ def get_multiprofile(model, run='run', chk_list=None, params=None, derived_param
 
         if len(missing_chk) > 0:
             printv('Loading missing profiles', verbose=verbose)
-            missing_profiles = get_all_profiles(model, run=run, chk_list=missing_chk,
-                                                params=params, save=save, verbose=verbose,
-                                                derived_params=derived_params, config=config)
+            missing_profiles = get_all_profiles(model, run=run, model_set=model_set,
+                                                chk_list=missing_chk, params=params,
+                                                save=save, verbose=verbose,
+                                                derived_params=derived_params,
+                                                config=config)
 
             multiprofile = append_to_multiprofile(multiprofile, profiles=missing_profiles)
             save_cache()
@@ -248,8 +262,9 @@ def get_multiprofile(model, run='run', chk_list=None, params=None, derived_param
     return multiprofile
 
 
-def get_all_profiles(model, run='run', chk_list=None, params=None, derived_params=None,
-                     config=None, reload=False, save=True, verbose=True):
+def get_all_profiles(model, run='run', model_set='', chk_list=None,
+                     params=None, derived_params=None, config=None,
+                     reload=False, save=True, verbose=True):
     """Get all available chk profiles
         see: get_profile()
 
@@ -259,6 +274,7 @@ def get_all_profiles(model, run='run', chk_list=None, params=None, derived_param
     ----------
     model : str
     run : str
+    model_set : str
     chk_list : [int]
     params : [str]
     derived_params : [str]
@@ -270,21 +286,23 @@ def get_all_profiles(model, run='run', chk_list=None, params=None, derived_param
     printv(f'Loading chk profiles', verbose=verbose)
 
     if chk_list is None:
-        chk_list = find_chk(model=model, run=run)
+        chk_list = find_chk(model=model, run=run, model_set=model_set)
 
     profiles = {}
     chk_max = chk_list[-1]
 
     for chk in chk_list:
         printv(f'\rchk: {chk}/{chk_max}', end='', verbose=verbose)
-        profiles[chk] = get_profile(chk, model=model, run=run, params=params,
-                                    derived_params=derived_params, config=config,
-                                    reload=reload, save=save, verbose=False)
+
+        profiles[chk] = get_profile(chk, model=model, run=run, model_set=model_set,
+                                    params=params, derived_params=derived_params,
+                                    config=config, reload=reload, save=save,
+                                    verbose=False)
     printv('', verbose=verbose)
     return profiles
 
 
-def try_load_multiprofile(model, run='run', verbose=True):
+def try_load_multiprofile(model, run='run', model_set='', verbose=True):
     """Attempt to load cached multiprofile
 
    Returns : xr.Dataset, or None
@@ -293,11 +311,13 @@ def try_load_multiprofile(model, run='run', verbose=True):
    ----------
    model : str
    run : str
+   model_set : str
    verbose : bool
    """
     multiprofile = None
     try:
-        multiprofile = load_multiprofile_cache(model=model, run=run, verbose=verbose)
+        multiprofile = load_multiprofile_cache(model=model, run=run, model_set=model_set,
+                                               verbose=verbose)
     except FileNotFoundError:
         printv('multiprofile cache not found, reloading', verbose=verbose)
         pass
@@ -305,7 +325,7 @@ def try_load_multiprofile(model, run='run', verbose=True):
     return multiprofile
 
 
-def get_profile(chk, model, run='run', params=None, derived_params=None, config=None,
+def get_profile(chk, model, run='run', model_set='', params=None, derived_params=None, config=None,
                 reload=False, save=True, verbose=True):
     """Get reduced radial profile, as contained in checkpoint file
     Loads pre-extracted profile if available, otherwise from raw file
@@ -317,6 +337,7 @@ def get_profile(chk, model, run='run', params=None, derived_params=None, config=
     chk : int
     model : str
     run : str
+    model_set : str
     params : [str]
         profile parameters to extract and return from chk file
     derived_params : [str]
@@ -333,16 +354,19 @@ def get_profile(chk, model, run='run', params=None, derived_params=None, config=
     # attempt to load cache file
     if not reload:
         try:
-            profile = load_profile_cache(chk, model=model, run=run, verbose=verbose)
+            profile = load_profile_cache(chk, model=model, run=run,
+                                         model_set='', verbose=verbose)
         except FileNotFoundError:
             printv('profile cache not found, reloading', verbose)
 
     # fall back on loading raw chk
     if profile is None:
-        profile = extract_profile(chk, model=model, run=run, config=config,
-                                  params=params, derived_params=derived_params)
+        profile = extract_profile(chk, model=model, run=run, model_set=model_set,
+                                  config=config, params=params,
+                                  derived_params=derived_params)
         if save:
-            save_profile_cache(profile, chk=chk, model=model, run=run, verbose=verbose)
+            save_profile_cache(profile, chk=chk, model=model, run=run,
+                               model_set=model_set, verbose=verbose)
 
     return profile
 
@@ -389,7 +413,7 @@ def append_to_multiprofile(multiprofile, profiles, verbose=True):
     return joined
 
 
-def extract_profile(chk, model, run='run', params=None, derived_params=None,
+def extract_profile(chk, model, run='run', model_set='', params=None, derived_params=None,
                     config=None, verbose=True):
     """Extract and reduce profile data from chk file
 
@@ -400,6 +424,7 @@ def extract_profile(chk, model, run='run', params=None, derived_params=None,
     chk : int
     model : str
     run : str
+    model_set : str
     params : [str]
         profile parameters to extract and return from chk file
     derived_params : [str]
@@ -413,7 +438,7 @@ def extract_profile(chk, model, run='run', params=None, derived_params=None,
         derived_params = c['profiles']['derived_params']
 
     profile = xr.Dataset()
-    chk_raw = load_chk(chk=chk, model=model, run=run)
+    chk_raw = load_chk(chk=chk, model=model, run=run, model_set=model_set)
     chk_data = chk_raw.all_data()
 
     for var in params:
@@ -444,7 +469,7 @@ def add_mass_profile(profile):
     profile['mass'] = ('zone', mass)
 
 
-def save_multiprofile_cache(multiprofile, model, run='run', verbose=True):
+def save_multiprofile_cache(multiprofile, model, run='run', model_set='', verbose=True):
     """Save multiprofile to file for faster loading
 
     parameters
@@ -453,30 +478,32 @@ def save_multiprofile_cache(multiprofile, model, run='run', verbose=True):
             Dataset of multiple profiles
     model : str
     run : str
+    model_set : str
     verbose : bool
     """
-    ensure_cache_dir_exists(model, verbose=False)
-    filepath = paths.multiprofile_filepath(model=model, run=run)
+    ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
+    filepath = paths.multiprofile_filepath(model=model, run=run, model_set=model_set)
 
     printv(f'Saving multiprofile cache: {filepath}', verbose)
     multiprofile.to_netcdf(filepath)
 
 
-def load_multiprofile_cache(model, run='run', verbose=True):
+def load_multiprofile_cache(model, run='run', model_set='', verbose=True):
     """Load pre-extracted profile (see: save_profile_cache)
 
     parameters
     ----------
     model : str
     run : str
+    model_set : str
     verbose : bool
     """
-    filepath = paths.multiprofile_filepath(model=model, run=run)
+    filepath = paths.multiprofile_filepath(model=model, run=run, model_set=model_set)
     printv(f'Loading multiprofile cache: {filepath}', verbose)
     return xr.load_dataset(filepath)
 
 
-def save_profile_cache(profile, chk, model, run='run', verbose=True):
+def save_profile_cache(profile, chk, model, run='run', model_set='', verbose=True):
     """Save profile to file for faster loading
 
     parameters
@@ -486,16 +513,17 @@ def save_profile_cache(profile, chk, model, run='run', verbose=True):
     chk : int
     model : str
     run : str
+    model_set : str
     verbose : bool
     """
-    ensure_cache_dir_exists(model, verbose=False)
-    filepath = paths.profile_filepath(chk=chk, model=model, run=run)
+    ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
+    filepath = paths.profile_filepath(chk=chk, model=model, run=run, model_set=model_set)
 
     printv(f'Saving profile cache: {filepath}', verbose)
     profile.to_netcdf(filepath)
 
 
-def load_profile_cache(chk, model, run='run', verbose=True):
+def load_profile_cache(chk, model, run='run', model_set='', verbose=True):
     """Load pre-extracted profile (see: save_profile_cache)
 
     parameters
@@ -503,9 +531,10 @@ def load_profile_cache(chk, model, run='run', verbose=True):
     chk : int
     model : str
     run : str
+    model_set : str
     verbose : bool
     """
-    filepath = paths.profile_filepath(chk=chk, model=model, run=run)
+    filepath = paths.profile_filepath(chk=chk, model=model, run=run, model_set=model_set)
     printv(f'Loading profile cache: {filepath}', verbose)
     return xr.load_dataset(filepath)
 
@@ -513,7 +542,7 @@ def load_profile_cache(chk, model, run='run', verbose=True):
 # ===============================================================
 #                      Chk files
 # ===============================================================
-def find_chk(model, run='run', n_digits=4, verbose=True):
+def find_chk(model, run='run', model_set='', n_digits=4, verbose=True):
     """Return list of checkpoint (chk) files available in given directory
         returns as nparray of checkpoint numbers
 
@@ -521,15 +550,16 @@ def find_chk(model, run='run', n_digits=4, verbose=True):
     ----------
     model : str
     run : str
+    model_set : str
     n_digits : int
         number of digits at end of filename corresponding to checkpoint ID
     verbose : bool
     """
-    output_path = paths.output_path(model=model)
+    output_path = paths.output_path(model=model, model_set=model_set)
     file_list = os.listdir(output_path)
     match_str = f'{run}_hdf5_chk_'
     chks = []
-    printv(f'Searching for chk files: {output_path}/{match_str}'+ n_digits*'*', verbose)
+    printv(f'Searching for chk files: {output_path}/{match_str}' + n_digits*'*', verbose)
 
     for file in file_list:
         if match_str in file:
@@ -538,7 +568,7 @@ def find_chk(model, run='run', n_digits=4, verbose=True):
     return np.sort(chks)
 
 
-def load_chk(chk, model, run='run'):
+def load_chk(chk, model, run='run', model_set=''):
     """Load checkpoint file using yt
 
     parameters
@@ -546,8 +576,9 @@ def load_chk(chk, model, run='run'):
     chk : int
     model : str
     run : str
+    model_set : str
     """
-    filepath = paths.chk_filepath(chk=chk, model=model, run=run)
+    filepath = paths.chk_filepath(chk=chk, model=model, run=run, model_set=model_set)
 
     if not os.path.exists(filepath):
         raise FileNotFoundError(f'checkpoint {chk:04d} file does not exist: {filepath}')
@@ -558,7 +589,7 @@ def load_chk(chk, model, run='run'):
 # ===============================================================
 #                      chk_table
 # ===============================================================
-def get_chk_table(model, run='run', reload=False, save=True, verbose=True):
+def get_chk_table(model, run='run', model_set='', reload=False, save=True, verbose=True):
     """Get table of scalar chk properties
 
     Returns: pd.DataFrame
@@ -567,6 +598,7 @@ def get_chk_table(model, run='run', reload=False, save=True, verbose=True):
     ----------
     model : str
     run : str
+    model_set : str
     reload : bool
     save : bool
     verbose : bool
@@ -575,21 +607,23 @@ def get_chk_table(model, run='run', reload=False, save=True, verbose=True):
 
     if not reload:
         try:
-            chk_table = load_chk_table_cache(model=model, run=run, verbose=verbose)
+            chk_table = load_chk_table_cache(model=model, run=run, model_set=model_set,
+                                             verbose=verbose)
         except FileNotFoundError:
             printv('chk_table cache not found, reloading', verbose)
 
     if chk_table.empty:
-        chk_table['chk'] = find_chk(model=model, run=run)
+        chk_table['chk'] = find_chk(model, run=run, model_set=model_set)
         chk_table.set_index('chk', inplace=True)
 
         if save:
-            save_chk_table_cache(chk_table, model=model, run=run, verbose=verbose)
+            save_chk_table_cache(chk_table, model=model, run=run,
+                                 model_set=model_set, verbose=verbose)
 
     return chk_table
 
 
-def load_chk_table_cache(model, run='run', verbose=True):
+def load_chk_table_cache(model, run='run', model_set='', verbose=True):
     """Load pre-extracted chk timesteps to file
 
     Returns: pd.Dataframe
@@ -598,15 +632,16 @@ def load_chk_table_cache(model, run='run', verbose=True):
     ----------
     model : str
     run : str
+    model_set : str
     verbose : bool
     """
-    filepath = paths.chk_table_filepath(model=model, run=run)
+    filepath = paths.chk_table_filepath(model, run=run, model_set=model_set)
     printv(f'Loading chk_table cache: {filepath}', verbose)
     chk_table = pd.read_pickle(filepath)
     return chk_table
 
 
-def save_chk_table_cache(chk_table, model, run='run', verbose=True):
+def save_chk_table_cache(chk_table, model, run='run', model_set='', verbose=True):
     """Saves pre-extracted chk_table to file
 
     parameters
@@ -614,10 +649,11 @@ def save_chk_table_cache(chk_table, model, run='run', verbose=True):
     chk_table : pd.Dataframe
     model : str
     run : str
+    model_set : str
     verbose : bool
     """
-    ensure_cache_dir_exists(model, verbose=False)
-    filepath = paths.chk_table_filepath(model=model, run=run)
+    ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
+    filepath = paths.chk_table_filepath(model=model, run=run, model_set=model_set)
     printv(f'Saving chk_table cache: {filepath}', verbose)
     chk_table.to_pickle(filepath)
 
@@ -630,7 +666,7 @@ def save_chk_table_cache(chk_table, model, run='run', verbose=True):
 #       - or reading chk without loading fully
 #       - incorporating into multiprofile
 # ===============================================================
-def get_timesteps(model, run='run', params=('time', 'nstep'),
+def get_timesteps(model, run='run', model_set='', params=('time', 'nstep'),
                   reload=False, save=True, verbose=True):
     """Get table of timestep quantities (time, n_steps, etc.) from chk files
 
@@ -640,6 +676,7 @@ def get_timesteps(model, run='run', params=('time', 'nstep'),
     ----------
     model : str
     run: str
+    model_set : str
     params : [str]
     reload : bool
     save : bool
@@ -650,22 +687,26 @@ def get_timesteps(model, run='run', params=('time', 'nstep'),
     # attempt to load cache file
     if not reload:
         try:
-            timesteps = load_timesteps_cache(model=model, run=run, verbose=verbose)
+            timesteps = load_timesteps_cache(model=model, run=run, model_set=model_set,
+                                             verbose=verbose)
         except FileNotFoundError:
             printv('timesteps cache not found, reloading', verbose)
 
     # fall back on loading from raw chk files
     if timesteps is None:
-        chk_list = find_chk(model=model, run=run)
-        timesteps = extract_timesteps(chk_list, model, run=run, params=params)
+        chk_list = find_chk(model, run=run, model_set=model_set)
+
+        timesteps = extract_timesteps(chk_list, model=model, run=run,
+                                      model_set=model_set, params=params)
 
         if save:
-            save_timesteps_cache(timesteps, model=model, run=run, verbose=verbose)
+            save_timesteps_cache(timesteps, model=model, run=run, model_set=model_set,
+                                 verbose=verbose)
 
     return timesteps
 
 
-def extract_timesteps(chk_list, model, run='run', params=('time', 'nstep')):
+def extract_timesteps(chk_list, model, run='run', model_set='', params=('time', 'nstep')):
     """Extract timestep quantities from chk files
 
     Returns: pd.DataFrame()
@@ -675,18 +716,19 @@ def extract_timesteps(chk_list, model, run='run', params=('time', 'nstep')):
     chk_list : [int]
     model : str
     run : str
+    model_set : str
     params : [str]
     """
     t0 = time.time()
     arrays = dict.fromkeys(params)
-    chk0 = load_chk(chk_list[0], model=model, run=run)
+    chk0 = load_chk(chk_list[0], model=model, run=run, model_set=model_set)
 
     for par in params:
         par_type = type(chk0.parameters[par])
         arrays[par] = np.zeros_like(chk_list, dtype=par_type)
 
     for i, chk in enumerate(chk_list[1:]):
-        chk_raw = load_chk(chk, model=model, run=run)
+        chk_raw = load_chk(chk, model=model, run=run, model_set=model_set)
         for par in params:
             arrays[par][i+1] = chk_raw.parameters[par]
 
@@ -703,7 +745,7 @@ def extract_timesteps(chk_list, model, run='run', params=('time', 'nstep')):
     return timesteps
 
 
-def save_timesteps_cache(timesteps, model, run='run', verbose=True):
+def save_timesteps_cache(timesteps, model, run='run', model_set='', verbose=True):
     """Save pre-extracted chk timesteps to file
 
     parameters
@@ -712,26 +754,28 @@ def save_timesteps_cache(timesteps, model, run='run', verbose=True):
         table of chk timesteps, as returned by extract_timesteps()
     model : str
     run : str
+    model_set : str
     verbose : bool
     """
-    ensure_cache_dir_exists(model, verbose=False)
-    filepath = paths.timesteps_filepath(model, run=run)
+    ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
+    filepath = paths.timesteps_filepath(model, run=run, model_set=model_set)
 
     printv(f'Saving timesteps cache: {filepath}', verbose)
     timesteps_out = timesteps.reset_index()
     timesteps_out.to_pickle(filepath)
 
 
-def load_timesteps_cache(model, run='run', verbose=True):
+def load_timesteps_cache(model, run='run', model_set='', verbose=True):
     """Load pre-extracted chk timesteps to file
 
     parameters
     ----------
     model : str
     run : str
+    model_set : str
     verbose : bool
     """
-    filepath = paths.timesteps_filepath(model=model, run=run)
+    filepath = paths.timesteps_filepath(model=model, run=run, model_set=model_set)
     printv(f'Loading timesteps cache: {filepath}', verbose)
 
     timesteps = pd.read_pickle(filepath)
@@ -742,18 +786,19 @@ def load_timesteps_cache(model, run='run', verbose=True):
 # ===============================================================
 #                      Log files
 # ===============================================================
-def get_bounce_time(model, run='run', match_str='Bounce', verbose=True):
+def get_bounce_time(model, run='run', model_set='', match_str='Bounce', verbose=True):
     """Get bounce time (s) from .log file
 
     parameters
     ----------
     model : str
     run : str
+    model_set : str
     match_str : str
         String which immediately precedes the bounce time
     verbose : bool
     """
-    filepath = paths.log_filepath(run=run, model=model)
+    filepath = paths.log_filepath(model, run=run, model_set=model_set)
     bounce_time = 0.0
     printv(f'Getting bounce time: {filepath}', verbose)
 
@@ -774,7 +819,7 @@ def get_bounce_time(model, run='run', match_str='Bounce', verbose=True):
 # ===============================================================
 #                      Mass Tracers
 # ===============================================================
-def get_tracers(model, run='run', profiles=None, params=None, mass_grid=None,
+def get_tracers(model, run='run', model_set='', profiles=None, params=None, mass_grid=None,
                 reload=False, save=True, config=None, verbose=True):
     """Get mass tracers from interpolated chk profiles
 
@@ -784,6 +829,7 @@ def get_tracers(model, run='run', profiles=None, params=None, mass_grid=None,
     ----------
     model : str
     run: str
+    model_set : str
     profiles : xr.Dataset
     params : [str]
     mass_grid : [float]
@@ -797,7 +843,7 @@ def get_tracers(model, run='run', profiles=None, params=None, mass_grid=None,
     # attempt to load from cache
     if not reload:
         try:
-            tracers = load_tracers_cache(model=model, run=run, verbose=verbose)
+            tracers = load_tracers_cache(model, run=run, model_set=model_set, verbose=verbose)
         except FileNotFoundError:
             printv('tracers cache not found, reloading', verbose)
 
@@ -813,21 +859,22 @@ def get_tracers(model, run='run', profiles=None, params=None, mass_grid=None,
             params = c['tracers']['params']
 
         if profiles is None:
-            chk_list = find_chk(model=model, run=run)
-            profiles = get_multiprofile(model=model, run=run, chk_list=chk_list,
-                                        params=params, verbose=verbose)
+            chk_list = find_chk(model=model, run=run, model_set=model_set)
+
+            profiles = get_multiprofile(model=model, run=run, model_set=model_set,
+                                        chk_list=chk_list, params=params, verbose=verbose)
 
         tracers = analysis.extract_multi_tracers(mass_grid,
                                                  profiles=profiles,
                                                  params=params,
                                                  verbose=verbose)
         if save:
-            save_tracers_cache(tracers, model=model, run=run, verbose=verbose)
-
+            save_tracers_cache(tracers, model=model, run=run,
+                               model_set=model_set, verbose=verbose)
     return tracers
 
 
-def save_tracers_cache(tracers, model, run='run', verbose=True):
+def save_tracers_cache(tracers, model, run='run', model_set='', verbose=True):
     """Save pre-extracted mass tracers to file
 
     parameters
@@ -836,23 +883,25 @@ def save_tracers_cache(tracers, model, run='run', verbose=True):
         mass tracer data, as returned by analysis.extract_multi_tracers()
     model : str
     run : str
+    model_set : str
     verbose : bool
     """
-    filepath = paths.tracers_filepath(model=model, run=run)
+    filepath = paths.tracers_filepath(model, run=run, model_set=model_set)
     printv(f'Saving tracers cache: {filepath}', verbose)
     tracers.to_netcdf(filepath)
 
 
-def load_tracers_cache(model, run='run', verbose=True):
+def load_tracers_cache(model, run='run', model_set='', verbose=True):
     """Load pre-extracted mass tracers from file
 
     parameters
     ----------
     model : str
     run : str
+    model_set : str
     verbose : bool
     """
-    filepath = paths.tracers_filepath(model=model, run=run)
+    filepath = paths.tracers_filepath(model=model, run=run, model_set=model_set)
     printv(f'Loading tracers cache: {filepath}', verbose)
     return xr.load_dataset(filepath)
 
@@ -888,13 +937,14 @@ def try_mkdir(path, skip=False, verbose=True):
         subprocess.run(['mkdir', '-p', path], check=True)
 
 
-def ensure_cache_dir_exists(model, verbose=True):
+def ensure_cache_dir_exists(model, model_set='', verbose=True):
     """Create cache directory if it doesn't exist
 
     parameters
     ----------
     model : str
+    model_set : str
     verbose : bool
     """
-    path = paths.model_cache_path(model)
+    path = paths.model_cache_path(model, model_set=model_set)
     try_mkdir(path, skip=True, verbose=verbose)
