@@ -554,7 +554,7 @@ class Simulation:
         return fig, slider
 
     def plot_dat(self, y_var, y_scale='log', display=True, ax=None, figsize=(8, 6),
-                 linestyle='-', marker=''):
+                 linestyle='-', marker='', label=None, legend=False):
         """Plot quantity from dat file
 
         parameters
@@ -566,14 +566,19 @@ class Simulation:
         ax : Axes
         linestyle : str
         marker : str
+        label : str
+        legend : bool
         """
         # TODO: subtract bounce_time
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
-        ax.plot(self.dat['time'], self.dat[y_var], linestyle=linestyle, marker=marker)
+        ax.plot(self.dat['time'], self.dat[y_var], linestyle=linestyle,
+                marker=marker, label=label)
 
         ax.set_yscale(y_scale)
         self._set_ax_labels(ax, x_var='$t$ (s)', y_var=y_var)
 
+        if legend:
+            ax.legend()
         if display:
             plt.show(block=False)
 
