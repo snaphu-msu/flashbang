@@ -104,10 +104,11 @@ def get_dat(model, cols_dict, run='run', model_set='',
 
     # fall back on loading raw .dat
     if dat_table is None:
-        dat_table = extract_dat(model, cols_dict=cols_dict, run=run, verbose=verbose)
+        dat_table = extract_dat(model, cols_dict=cols_dict, run=run,
+                                model_set=model_set, verbose=verbose)
         if save:
-            save_dat_cache(dat_table, model=model, run=run, 
-                           verbose=verbose)
+            save_dat_cache(dat_table, model=model, run=run,
+                           model_set=model_set, verbose=verbose)
 
     return dat_table
 
@@ -355,7 +356,7 @@ def get_profile(chk, model, run='run', model_set='', params=None, derived_params
     if not reload:
         try:
             profile = load_profile_cache(chk, model=model, run=run,
-                                         model_set='', verbose=verbose)
+                                         model_set=model_set, verbose=verbose)
         except FileNotFoundError:
             printv('profile cache not found, reloading', verbose)
 
