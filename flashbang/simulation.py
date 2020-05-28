@@ -231,7 +231,8 @@ class Simulation:
     def check_chk_table(self, save=True):
         """Checks that pre-saved data is up to date with any new chk files
         """
-        chk_list = load_save.find_chk(model=self.model, run=self.run)
+        chk_list = load_save.find_chk(model=self.model, run=self.run,
+                                      model_set=self.model_set)
 
         if len(chk_list) != len(self.chk_table):
             self.printv('chk files missing from table, reloading')
