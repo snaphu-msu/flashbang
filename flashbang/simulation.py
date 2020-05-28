@@ -64,7 +64,7 @@ from . import quantities
 
 # noinspection PyTypeChecker
 class Simulation:
-    def __init__(self, model, run='run', config='default',
+    def __init__(self, model, run='run', model_set='', config='default',
                  output_dir='output', verbose=True, load_all=True,
                  reload=False, save=True, load_tracers=False):
         """Object representing a 1D flash simulation
@@ -75,6 +75,8 @@ class Simulation:
             The name of the main model directory
         run : str
             The label that's used in chk and .dat filenames, e.g. 'run' for 'run.dat'
+        model_set : str
+            Higher-level label of model collection
         config : str
             Base name of config file to use, e.g. 'default' for 'config/default.ini'
         output_dir : str
@@ -94,8 +96,9 @@ class Simulation:
         self.verbose = verbose
         self.model = model
         self.run = run
+        self.model_set = model_set
 
-        self.model_path = paths.model_path(model=model)
+        self.model_path = paths.model_path(model, model_set=model_set)
         self.output_path = os.path.join(self.model_path, output_dir)
 
         self.config = None               # model-specific configuration; see load_config()
@@ -174,6 +177,7 @@ class Simulation:
         """Get bounce time (s) from log file
         """
         self.bounce_time = load_save.get_bounce_time(self.model, run=self.run,
+                                                     model_set=self.model_set,
                                                      verbose=self.verbose)
 
     # =======================================================
@@ -188,6 +192,7 @@ class Simulation:
         save : bool
         """
         self.chk_table = load_save.get_chk_table(model=self.model, run=self.run,
+                                                 model_set=self.model_set,
                                                  reload=reload, save=save,
                                                  verbose=self.verbose)
         self.check_chk_table(save=save)
@@ -200,10 +205,10 @@ class Simulation:
         reload : bool
         save : bool
         """
-        self.dat = load_save.get_dat(
-                        model=self.model, run=self.run,
-                        cols_dict=self.config['dat_columns'], reload=reload,
-                        save=save, verbose=self.verbose)
+        self.dat = load_save.get_dat(model=self.model, run=self.run,
+                                     model_set=self.model_set,
+                                     cols_dict=self.config['dat_columns'],
+                                     reload=reload, save=save, verbose=self.verbose)
 
     def load_all_profiles(self, reload=False, save=True):
         """Load profiles for all available checkpoints
@@ -217,6 +222,7 @@ class Simulation:
 
         self.profiles = load_save.get_multiprofile(
                                 model=self.model, run=self.run,
+                                model_set=self.model_set,
                                 chk_list=self.chk_table.index,
                                 params=config['params'] + config['isotopes'],
                                 derived_params=config['derived_params'],
@@ -234,7 +240,8 @@ class Simulation:
     def save_chk_table(self):
         """Saves chk_table DataFrame to file
         """
-        load_save.save_chk_table_cache(self.chk_table, model=self.model, run=self.run,
+        load_save.save_chk_table_cache(self.chk_table, model=self.model,
+                                       run=self.run, model_set=self.model_set,
                                        verbose=self.verbose)
 
     # =======================================================
@@ -291,6 +298,7 @@ class Simulation:
             return
 
         self.tracers = load_save.get_tracers(model=self.model, run=self.run,
+                                             model_set=self.model_set,
                                              mass_grid=self.mass_grid,
                                              params=self.config['tracers']['params'],
                                              profiles=self.profiles,
