@@ -18,7 +18,7 @@ from flashbang import simulation, load_save, tools
 #   - integrate with multiprofile
 
 
-def main(model, run, multithread=True, reload=False, save=True,
+def main(model, run, model_set='', multithread=True, reload=False, save=True,
          config='default'):
     t0 = time.time()
 
@@ -26,7 +26,7 @@ def main(model, run, multithread=True, reload=False, save=True,
     reload = tools.str_to_bool(reload)
     save = tools.str_to_bool(save)
 
-    chk_list = load_save.find_chk(model=model, run=run)
+    chk_list = load_save.find_chk(model=model, run=run, model_set=model_set)
     conf = load_save.load_config(name=config)
 
     params = conf['profiles']['params'] + conf['profiles']['isotopes']
@@ -35,22 +35,25 @@ def main(model, run, multithread=True, reload=False, save=True,
     if multithread:
         args = []
         for chk in chk_list:
-            args.append((chk, model, run, reload, save, params, derived_params))
+            args.append((chk, model, run, model_set, reload, save, params, derived_params))
 
         with mp.Pool(processes=4) as pool:
             pool.starmap(extract_profiles, args)
     else:
         for chk in chk_list:
-            extract_profiles(chk, model=model, run=run, reload=reload,
-                             save=save, params=params, derived_params=derived_params)
+            extract_profiles(chk, model=model, run=run,
+                             model_set=model_set, reload=reload, save=save,
+                             params=params, derived_params=derived_params)
 
     t1 = time.time()
     print(f'Time taken: {t1-t0:.2f} s')
 
 
-def extract_profiles(chk, model, run, reload, save, params, derived_params):
-    load_save.get_profile(chk, model=model, run=run, reload=reload, save=save,
-                          params=params, derived_params=derived_params)
+def extract_profiles(chk, model, run, model_set, reload, save, params, derived_params):
+    load_save.get_profile(chk, model=model, run=run,
+                          model_set=model_set, reload=reload,
+                          save=save, params=params,
+                          derived_params=derived_params)
 
 
 if __name__ == "__main__":
