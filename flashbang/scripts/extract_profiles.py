@@ -2,7 +2,7 @@
 Script to extract chk profiles en-masse using multithreading
 
 Usage:
-    python extract_profiles [model] [run]
+    python extract_profiles <model> <run>
 """
 import sys
 import multiprocessing as mp
@@ -20,6 +20,17 @@ from flashbang import simulation, load_save, tools
 
 def main(model, run, model_set='', multithread=True, reload=False, save=True,
          config='default'):
+    """
+    Parameters
+    ----------
+    model : str
+    run : str
+    model_set : str
+    multithread : bool
+    reload : bool
+    save : bool
+    config : str
+    """
     t0 = time.time()
 
     multithread = tools.str_to_bool(multithread)
@@ -50,6 +61,8 @@ def main(model, run, model_set='', multithread=True, reload=False, save=True,
 
 
 def extract_profiles(chk, model, run, model_set, reload, save, params, derived_params):
+    """Function for multithread pool
+    """
     load_save.get_profile(chk, model=model, run=run,
                           model_set=model_set, reload=reload,
                           save=save, params=params,
