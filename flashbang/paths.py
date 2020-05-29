@@ -3,7 +3,7 @@
 
 For this module to work, you must set the bash environment variables:
     - FLASHBANG (path to flashbang repo)
-    - FLASH_MODELS (path to directory containing FLASH models
+    - FLASH_MODELS (path to directory containing FLASH models)
 
 Function naming convention:
   - "_filename" name of file only
@@ -205,7 +205,7 @@ def chk_filename(chk, run):
     return f'{run}_hdf5_chk_{chk:04d}'
 
 
-def chk_filepath(chk, model, run, model_set='', o_path=None):
+def chk_filepath(chk, model, run, model_set=''):
     """Return filepath to checkpoint file
 
     Parameters
@@ -214,14 +214,10 @@ def chk_filepath(chk, model, run, model_set='', o_path=None):
     model : str
     run : str
     model_set : str
-    o_path : str
     """
+    path = output_path(model, model_set=model_set)
     filename = chk_filename(chk=chk, run=run)
-
-    if o_path is None:
-        o_path = output_path(model, model_set=model_set)
-
-    return os.path.join(o_path, filename)
+    return os.path.join(path, filename)
 
 
 # ===============================================================
