@@ -1,5 +1,5 @@
-"""Functions that return standardised strings for paths and files for
-    FLASH models
+"""Functions that return standardised strings for paths and filenames for
+    FLASH models and their extracted datafiles
 
 For this module to work, you must set the bash environment variables:
     - FLASHBANG (path to flashbang repo)
@@ -10,10 +10,11 @@ Function naming convention:
   - "_path" full path to a directory
   - "_filepath" full path to a file (i.e., path + filename)
 
-Default model directory structure expected:
+Model directory structure expected:
     <FLASH_MODELS>
-        /<model>
-            /output
+        /<model_set> (if provided)
+            /<model>
+                /output
 
     where:
         - '.dat' and '.log' files are located in directory '<model>'
@@ -24,9 +25,6 @@ Default model directory structure expected:
 """
 
 import os
-
-# TODO:
-#   - replace default run=None
 
 
 # ===============================================================
@@ -118,7 +116,7 @@ def dat_filename(run):
     return f'{run}.dat'
 
 
-def dat_filepath(model, model_set='', run='run'):
+def dat_filepath(model, run, model_set=''):
     """Return filepath to .dat file
 
     parameters
@@ -138,7 +136,7 @@ def dat_cache_filename(model, run):
     return f'{model}_{run}_dat.pickle'
 
 
-def dat_cache_filepath(model, run='run', model_set=''):
+def dat_cache_filepath(model, run, model_set=''):
     """Return filepath to cached dat table
     """
     path = model_cache_path(model, model_set=model_set)
@@ -155,7 +153,7 @@ def log_filename(run):
     return f'{run}.log'
 
 
-def log_filepath(model, run='run', model_set=''):
+def log_filepath(model, run, model_set=''):
     """Return filepath to .log file
     """
     filename = log_filename(run)
@@ -172,7 +170,7 @@ def chk_filename(chk, run):
     return f'{run}_hdf5_chk_{chk:04d}'
 
 
-def chk_filepath(chk, model, run='run', model_set='', o_path=None):
+def chk_filepath(chk, model, run, model_set='', o_path=None):
     """Return filepath to checkpoint file
     """
     filename = chk_filename(chk=chk, run=run)
@@ -192,7 +190,7 @@ def chk_table_filename(model, run):
     return f'{model}_{run}_chk_table.pickle'
 
 
-def chk_table_filepath(model, run='run', model_set=''):
+def chk_table_filepath(model, run, model_set=''):
     """Return filepath to checkpoint data-table file
     """
     path = model_cache_path(model, model_set=model_set)
@@ -209,7 +207,7 @@ def multiprofile_filename(model, run):
     return f'{model}_{run}_multiprofile.nc'
 
 
-def multiprofile_filepath(model, run='run', model_set=''):
+def multiprofile_filepath(model, run, model_set=''):
     """Return filepath for pre-extracted multiprofile
     """
     path = model_cache_path(model, model_set=model_set)
@@ -223,7 +221,7 @@ def profile_filename(chk, model, run):
     return f'{model}_{run}_profile_{chk:04d}.nc'
 
 
-def profile_filepath(chk, model, run='run', model_set=''):
+def profile_filepath(chk, model, run, model_set=''):
     """Return filepath to pre-extracted profile
     """
     path = model_cache_path(model, model_set=model_set)
@@ -234,7 +232,7 @@ def profile_filepath(chk, model, run='run', model_set=''):
 # ===============================================================
 #                      Timesteps
 # ===============================================================
-def timesteps_filename(model, run='run'):
+def timesteps_filename(model, run):
     """Return filename for pre-extracted timestep table
 
     parameters
@@ -245,7 +243,7 @@ def timesteps_filename(model, run='run'):
     return f'{model}_{run}_timesteps.pickle'
 
 
-def timesteps_filepath(model, run='run', model_set=''):
+def timesteps_filepath(model, run, model_set=''):
     """Return filename for pre-extracted timestep table
 
     parameters
@@ -262,7 +260,7 @@ def timesteps_filepath(model, run='run', model_set=''):
 # ===============================================================
 #                      Mass Tracers
 # ===============================================================
-def tracers_filename(model, run='run'):
+def tracers_filename(model, run):
     """Return filename for pre-extracted mass tracers dataset
 
     parameters
@@ -273,7 +271,7 @@ def tracers_filename(model, run='run'):
     return f'{model}_{run}_tracers.nc'
 
 
-def tracers_filepath(model, run='run', model_set=''):
+def tracers_filepath(model, run, model_set=''):
     """Return filepath for pre-extracted mass tracers dataset
 
     parameters
