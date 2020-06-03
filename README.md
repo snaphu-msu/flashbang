@@ -32,37 +32,41 @@ In order to import with ipython etc., append to your python path: `export PYTHON
 # Getting Started
 Everything is structured around the `Simulation` class, located in `flashbang/simulation.py`. This object represents a single FLASH simulation, and is intended to facilitate the loading/analysing/plotting of the model data.
 
-`flashbang` generally assumes your model directory is structured like so:
+`flashbang` assumes your model directories are structured like so:
 ```
 $FLASH_MODELS
 │
-└───flash_model_1
-│   │   run.dat
-│   │   run.log
-│   │   ...
-│   │
-│   └───output
-│       │   run_hdf5_chk_0000
-│       │   run_hdf5_chk_0001
-│       │   ...
-│
-│___flash_model_2
-│   ...
+└───model_grid_1
+|   |
+|   └───flash_model_1
+|   │   │   run_1.dat
+|   │   │   run_1.log
+|   │   │   ...
+|   │   │
+|   │   └───output
+|   │       │   run_1_hdf5_chk_0000
+|   │       │   run_1_hdf5_chk_0001
+|   │       │   ...
+|
+|   │___flash_model_2
+|   │   ...
 ```
 
-You can then initialise the Simulation object in python using:
+For this example, you can initialise the Simulation object in python using:
 ```
 import flashbang
 
 sim = flashbang.simulation.Simulation(model='flash_model_1', 
-                                      run='run', 
+                                      run='run_1', 
+                                      model_set='model_grid_1',
                                       output_dir='output')
 ```
-Where `model` is the name of the model directory, `run` is the prefix used in the output filenames (defaults to `'run'`), and `output` is the name of the output directory containing the `chk` and `plt` files (defaults to `'output'`).
+Where `model` is the name of the model directory, `run` is the prefix used in the output filenames, `model_set` is the name of the directory containing `model`, and `output` is the name of the directory containing the `chk` and `plt` files (defaults to `'output'`).
 
-**Warning:** If your model has more than a few `chk` files (like >10), this could take a long time (~2 sec per file). In that case use the arg `load_all=False` to skip loading for now. Look at `flashbang/scripts/extract_profiles.py` to "pre-load" a large number of `chk` files with multithreading (more detail to come soon...)
+**Warning:** If your model has more than a few `chk` files this could take a long time (~2 sec per file). In that case you can use the arg `load_all=False` to skip loading for now. Look at `flashbang/scripts/extract_profiles.py` to pre-extract a large number of `chk` files with multithreading (more detail to come soon...)
 
 # (To be continued...)
+* preloading files with `extract_profiles`
 * config files (look in `flashbang/config/`)
 * plotting
 * jupyter notebook tutorial
