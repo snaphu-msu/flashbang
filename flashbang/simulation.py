@@ -1,13 +1,31 @@
 """Main flashbang class for the Simulation object.
 
-A Simulation instance represents a single 1D FLASH model.
-It can load model data files, manipulate/extract that data,
-and plot it across various "dimensions".
+The Simulation object represents a single 1D FLASH model.
+It can load model datafiles, manipulate/extract that data,
+and plot it across various axes.
 
-General terminology
+Expected model directory structure
+----------------------------------
+$FLASH_MODELS
+│
+└───<model_set>
+|   |
+|   └───<model>
+|   │   │   <run>.dat
+|   │   │   <run>.log
+|   │   │   ...
+|   │   │
+|   │   └───<output_dir>
+|   │       │   <run>_hdf5_chk_0000
+|   │       │   <run>_hdf5_chk_0001
+|   │       │   ...
+
+
+Nomenclature
 -------------------
-    Setup arguments
+    Setup arguments (see `Expected model directory structure` above)
     ---------------
+
     model: Name of the FLASH model (i.e. the directory name).
         Typically corresponds to a particular compiled `flash4` executable.
 
@@ -16,16 +34,18 @@ General terminology
         Multiple simulations may have been executed under the
         same umbrella "model". Use this to distinguish between them.
 
+    model_set: Name of directory containing the set of models.
+
     Data structures
     ---------------
-    dat: Integrated time-series quantities found in the `[run].dat` file.
+    dat: Integrated time-series quantities found in the `<run>.dat` file.
 
     chk: Checkpoint data found in `chk` files.
 
     profile: Radial profiles as extracted from chk files.
         Each profile corresponds to a chk file.
 
-    log: Data printed to terminal during model, stored in the `[run].log` file.
+    log: Data printed to terminal during model, stored in the `<run>.log` file.
 
     tracers: Trajectories/tracers for given mass shells.
         Extracted using profile mass coordinates, for a chosen mass grid.
@@ -45,21 +65,6 @@ from . import paths
 from . import plot_tools
 from . import tools
 from . import quantities
-
-# TODO:
-#   - load progenitor model
-#   - create an rcparams for default values of run, etc.
-#   - generalised axis plotting
-#       - save/show plot
-#   - change mass units to m_sun
-#   - chk_table, add columns: (add to multiprofile metadata?)
-#       - time
-#       - n_step
-#       - n_zones
-#       - rsh_avg, other dat params
-#   - plotting:
-#       - find max/min y-values over all chk --> set slider ylim
-#       - plot tracers
 
 
 # noinspection PyTypeChecker
@@ -103,9 +108,9 @@ class Simulation:
 
         self.config = None               # model-specific configuration; see load_config()
         self.dat = None                  # time-integrated data from .dat; see load_dat()
-        self.bounce_time = None          # core-bound in simulation time (s)
-        self.trans_dens = None           # transition densities (helmholtz runs)
-        self.mass_grid = None            # masses shells used to extract tracers
+        self.bounce_time = None          # core-bounce in simulation time (s)
+        self.trans_dens = None           # transition densities (helmholtz models)
+        self.mass_grid = None            # mass shells of tracers
         self.chk_table = pd.DataFrame()  # scalar chk quantities (trans_dens, time, etc.)
         self.profiles = xr.Dataset()     # radial profile data for each timestep
         self.tracers = None              # mass tracers/trajectories
@@ -124,23 +129,6 @@ class Simulation:
     # =======================================================
     #                      Setup/init
     # =======================================================
-    def printv(self, string, verbose=None, **kwargs):
-        """Verbose-aware print
-
-        parameters
-        ----------
-        string : str
-            string to print if verbose=True
-        verbose : bool
-            override self.verbose setting
-        **kwargs
-            args for print()
-        """
-        if verbose is None:
-            verbose = self.verbose
-        if verbose:
-            print(string, **kwargs)
-
     def load_config(self, config='default'):
         """Load config parameters from file
 
@@ -795,3 +783,23 @@ class Simulation:
         chk_min = self.chk_table.index[0]
         chk_init = chk_max
         return chk_max, chk_min, chk_init
+
+    # =======================================================
+    #                   Convenience
+    # =======================================================
+    def printv(self, string, verbose=None, **kwargs):
+        """Verbose-aware print
+
+        parameters
+        ----------
+        string : str
+            string to print if verbose=True
+        verbose : bool
+            override self.verbose setting
+        **kwargs
+            args for print()
+        """
+        if verbose is None:
+            verbose = self.verbose
+        if verbose:
+            print(string, **kwargs)
