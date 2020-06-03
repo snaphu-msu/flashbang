@@ -69,7 +69,7 @@ from . import quantities
 
 # noinspection PyTypeChecker
 class Simulation:
-    def __init__(self, model, run='run', model_set='', config='default',
+    def __init__(self, model, run, model_set, config='default',
                  output_dir='output', verbose=True, load_all=True,
                  reload=False, save=True, load_tracers=False):
         """Object representing a 1D flash simulation

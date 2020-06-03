@@ -11,14 +11,8 @@ import time
 # flashbang
 from flashbang import simulation, load_save, tools
 
-# TODO:
-#   - check for existing cache files, only load missing
-#   - extract tracers
-#   - disable try_mkdir temp
-#   - integrate with multiprofile
 
-
-def main(model, run, model_set='', multithread=True, reload=False, save=True,
+def main(model, run, model_set, multithread=True, reload=False, save=True,
          config='default'):
     """
     Parameters
@@ -70,13 +64,15 @@ def extract_profiles(chk, model, run, model_set, reload, save, params, derived_p
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 4:
         print('Parameters:'
               + '\n1. model'
               + '\n2. run'
+              + '\n3. model_set'
               )
         sys.exit(0)
-    if len(sys.argv) == 3:
-        main(sys.argv[1], sys.argv[2])
+    if len(sys.argv) == 4:
+        main(sys.argv[1], sys.argv[2], sys.argv[3])
     else:
-        main(sys.argv[1], sys.argv[2], **dict(arg.split('=') for arg in sys.argv[3:]))
+        main(sys.argv[1], sys.argv[2], sys.argv[3],
+             **dict(arg.split('=') for arg in sys.argv[3:]))

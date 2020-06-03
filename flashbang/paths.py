@@ -69,7 +69,7 @@ def cache_path():
 # ===============================================================
 #                      Models
 # ===============================================================
-def model_path(model, model_set=''):
+def model_path(model, model_set):
     """Return path to model directory
 
     parameters
@@ -87,7 +87,7 @@ def model_path(model, model_set=''):
     return os.path.join(flash_models_path, model_set, model)
 
 
-def output_path(model, model_set='', output_dir='output'):
+def output_path(model, model_set, output_dir='output'):
     """Return path to model output directory
 
     Parameters
@@ -100,7 +100,7 @@ def output_path(model, model_set='', output_dir='output'):
     return os.path.join(m_path, output_dir)
 
 
-def model_cache_path(model, model_set=''):
+def model_cache_path(model, model_set):
     """Path to directory for keeping cached files
 
     Parameters
@@ -125,7 +125,7 @@ def dat_filename(run):
     return f'{run}.dat'
 
 
-def dat_filepath(model, run, model_set=''):
+def dat_filepath(model, run, model_set):
     """Return filepath to .dat file
 
     parameters
@@ -150,7 +150,7 @@ def dat_cache_filename(model, run):
     return f'{model}_{run}_dat.pickle'
 
 
-def dat_cache_filepath(model, run, model_set=''):
+def dat_cache_filepath(model, run, model_set):
     """Return filepath to cached dat table
 
     Parameters
@@ -177,7 +177,7 @@ def log_filename(run):
     return f'{run}.log'
 
 
-def log_filepath(model, run, model_set=''):
+def log_filepath(model, run, model_set):
     """Return filepath to .log file
 
     Parameters
@@ -205,7 +205,7 @@ def chk_filename(chk, run):
     return f'{run}_hdf5_chk_{chk:04d}'
 
 
-def chk_filepath(chk, model, run, model_set=''):
+def chk_filepath(chk, model, run, model_set):
     """Return filepath to checkpoint file
 
     Parameters
@@ -234,7 +234,7 @@ def chk_table_filename(model, run):
     return f'{model}_{run}_chk_table.pickle'
 
 
-def chk_table_filepath(model, run, model_set=''):
+def chk_table_filepath(model, run, model_set):
     """Return filepath to checkpoint data-table file
 
     Parameters
@@ -262,7 +262,7 @@ def multiprofile_filename(model, run):
     return f'{model}_{run}_multiprofile.nc'
 
 
-def multiprofile_filepath(model, run, model_set=''):
+def multiprofile_filepath(model, run, model_set):
     """Return filepath for pre-extracted multiprofile
 
     Parameters
@@ -288,7 +288,7 @@ def profile_filename(chk, model, run):
     return f'{model}_{run}_profile_{chk:04d}.nc'
 
 
-def profile_filepath(chk, model, run, model_set=''):
+def profile_filepath(chk, model, run, model_set):
     """Return filepath to pre-extracted profile
 
     Parameters
@@ -317,7 +317,7 @@ def timesteps_filename(model, run):
     return f'{model}_{run}_timesteps.pickle'
 
 
-def timesteps_filepath(model, run, model_set=''):
+def timesteps_filepath(model, run, model_set):
     """Return filename for pre-extracted timestep table
 
     parameters
@@ -345,7 +345,7 @@ def tracers_filename(model, run):
     return f'{model}_{run}_tracers.nc'
 
 
-def tracers_filepath(model, run, model_set=''):
+def tracers_filepath(model, run, model_set):
     """Return filepath for pre-extracted mass tracers dataset
 
     parameters
