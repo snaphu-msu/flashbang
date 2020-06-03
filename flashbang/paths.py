@@ -244,7 +244,7 @@ def chk_table_filepath(run, model, model_set):
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
-    filename = chk_table_filename(model=model, run=run)
+    filename = chk_table_filename(run=run, model=model)
     return os.path.join(path, filename)
 
 
@@ -272,7 +272,7 @@ def multiprofile_filepath(run, model, model_set):
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
-    filename = multiprofile_filename(model=model, run=run)
+    filename = multiprofile_filename(run=run, model=model)
     return os.path.join(path, filename)
 
 
@@ -299,7 +299,7 @@ def profile_filepath(chk, run, model, model_set):
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
-    filename = profile_filename(chk, model=model, run=run)
+    filename = profile_filename(chk, run=run, model=model)
     return os.path.join(path, filename)
 
 
@@ -327,7 +327,7 @@ def timesteps_filepath(run, model, model_set):
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
-    filename = timesteps_filename(model=model, run=run)
+    filename = timesteps_filename(run=run, model=model)
     return os.path.join(path, filename)
 
 
@@ -355,5 +355,5 @@ def tracers_filepath(run, model, model_set):
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
-    filename = tracers_filename(model=model, run=run)
+    filename = tracers_filename(run=run, model=model)
     return os.path.join(path, filename)
