@@ -125,13 +125,13 @@ def dat_filename(run):
     return f'{run}.dat'
 
 
-def dat_filepath(model, run, model_set):
+def dat_filepath(run, model, model_set):
     """Return filepath to .dat file
 
     parameters
     ----------
-    model : str
     run : str
+    model : str
     model_set : str
     """
     filename = dat_filename(run)
@@ -139,28 +139,28 @@ def dat_filepath(model, run, model_set):
     return os.path.join(m_path, filename)
 
 
-def dat_cache_filename(model, run):
+def dat_cache_filename(run, model):
     """Return filename for cached dat file
 
     Parameters
     ----------
-    model : str
     run : str
+    model : str
     """
     return f'{model}_{run}_dat.pickle'
 
 
-def dat_cache_filepath(model, run, model_set):
+def dat_cache_filepath(run, model, model_set):
     """Return filepath to cached dat table
 
     Parameters
     ----------
-    model : str
     run : str
+    model : str
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
-    filename = dat_cache_filename(model, run)
+    filename = dat_cache_filename(run, model)
     return os.path.join(path, filename)
 
 
@@ -177,13 +177,13 @@ def log_filename(run):
     return f'{run}.log'
 
 
-def log_filepath(model, run, model_set):
+def log_filepath(run, model, model_set):
     """Return filepath to .log file
 
     Parameters
     ----------
-    model : str
     run : str
+    model : str
     model_set : str
     """
     filename = log_filename(run)
@@ -205,14 +205,14 @@ def chk_filename(chk, run):
     return f'{run}_hdf5_chk_{chk:04d}'
 
 
-def chk_filepath(chk, model, run, model_set):
+def chk_filepath(chk, run, model, model_set):
     """Return filepath to checkpoint file
 
     Parameters
     ----------
     chk : int
-    model : str
     run : str
+    model : str
     model_set : str
     """
     path = output_path(model, model_set=model_set)
@@ -223,24 +223,24 @@ def chk_filepath(chk, model, run, model_set):
 # ===============================================================
 #                      chk_table
 # ===============================================================
-def chk_table_filename(model, run):
+def chk_table_filename(run, model):
     """Return filename for checkpoint data-table file
 
     Parameters
     ----------
-    model : str
     run : str
+    model : str
     """
     return f'{model}_{run}_chk_table.pickle'
 
 
-def chk_table_filepath(model, run, model_set):
+def chk_table_filepath(run, model, model_set):
     """Return filepath to checkpoint data-table file
 
     Parameters
     ----------
-    model : str
     run : str
+    model : str
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
@@ -251,24 +251,24 @@ def chk_table_filepath(model, run, model_set):
 # ===============================================================
 #                      Profiles
 # ===============================================================
-def multiprofile_filename(model, run):
+def multiprofile_filename(run, model):
     """Return filename for pre-extracted multiprofile
 
     Parameters
     ----------
-    model : str
     run : str
+    model : str
     """
     return f'{model}_{run}_multiprofile.nc'
 
 
-def multiprofile_filepath(model, run, model_set):
+def multiprofile_filepath(run, model, model_set):
     """Return filepath for pre-extracted multiprofile
 
     Parameters
     ----------
-    model : str
     run : str
+    model : str
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
@@ -276,26 +276,26 @@ def multiprofile_filepath(model, run, model_set):
     return os.path.join(path, filename)
 
 
-def profile_filename(chk, model, run):
+def profile_filename(chk, run, model):
     """Return filename for pre-extracted profile
 
     Parameters
     ----------
     chk : int
-    model : str
     run : str
+    model : str
     """
     return f'{model}_{run}_profile_{chk:04d}.nc'
 
 
-def profile_filepath(chk, model, run, model_set):
+def profile_filepath(chk, run, model, model_set):
     """Return filepath to pre-extracted profile
 
     Parameters
     ----------
     chk : int
-    model : str
     run : str
+    model : str
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
@@ -306,24 +306,24 @@ def profile_filepath(chk, model, run, model_set):
 # ===============================================================
 #                      Timesteps
 # ===============================================================
-def timesteps_filename(model, run):
+def timesteps_filename(run, model):
     """Return filename for pre-extracted timestep table
 
     parameters
     ----------
-    model : str
     run : str
+    model : str
     """
     return f'{model}_{run}_timesteps.pickle'
 
 
-def timesteps_filepath(model, run, model_set):
+def timesteps_filepath(run, model, model_set):
     """Return filename for pre-extracted timestep table
 
     parameters
     ----------
-    model : str
     run : str
+    model : str
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
@@ -334,24 +334,24 @@ def timesteps_filepath(model, run, model_set):
 # ===============================================================
 #                      Mass Tracers
 # ===============================================================
-def tracers_filename(model, run):
+def tracers_filename(run, model):
     """Return filename for pre-extracted mass tracers dataset
 
     parameters
     ----------
-    model : str
     run : str
+    model : str
     """
     return f'{model}_{run}_tracers.nc'
 
 
-def tracers_filepath(model, run, model_set):
+def tracers_filepath(run, model, model_set):
     """Return filepath for pre-extracted mass tracers dataset
 
     parameters
     ----------
-    model : str
     run : str
+    model : str
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)

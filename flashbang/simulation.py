@@ -69,17 +69,17 @@ from . import quantities
 
 # noinspection PyTypeChecker
 class Simulation:
-    def __init__(self, model, run, model_set, config='default',
+    def __init__(self, run, model, model_set, config='default',
                  output_dir='output', verbose=True, load_all=True,
                  reload=False, save=True, load_tracers=False):
         """Object representing a 1D flash simulation
 
         parameters
         ----------
-        model : str
-            The name of the main model directory
         run : str
             The label that's used in chk and .dat filenames, e.g. 'run' for 'run.dat'
+        model : str
+            The name of the main model directory
         model_set : str
             Higher-level label of model collection
         config : str
@@ -99,8 +99,8 @@ class Simulation:
         """
         t0 = time.time()
         self.verbose = verbose
-        self.model = model
         self.run = run
+        self.model = model
         self.model_set = model_set
 
         self.model_path = paths.model_path(model, model_set=model_set)
@@ -164,7 +164,8 @@ class Simulation:
     def get_bounce_time(self):
         """Get bounce time (s) from log file
         """
-        self.bounce_time = load_save.get_bounce_time(self.model, run=self.run,
+        self.bounce_time = load_save.get_bounce_time(run=self.run,
+                                                     model=self.model,
                                                      model_set=self.model_set,
                                                      verbose=self.verbose)
 
@@ -179,9 +180,11 @@ class Simulation:
         reload : bool
         save : bool
         """
-        self.chk_table = load_save.get_chk_table(model=self.model, run=self.run,
+        self.chk_table = load_save.get_chk_table(run=self.run,
+                                                 model=self.model,
                                                  model_set=self.model_set,
-                                                 reload=reload, save=save,
+                                                 reload=reload,
+                                                 save=save,
                                                  verbose=self.verbose)
         self.check_chk_table(save=save)
 
@@ -193,10 +196,13 @@ class Simulation:
         reload : bool
         save : bool
         """
-        self.dat = load_save.get_dat(model=self.model, run=self.run,
+        self.dat = load_save.get_dat(run=self.run,
+                                     model=self.model,
                                      model_set=self.model_set,
                                      cols_dict=self.config['dat_columns'],
-                                     reload=reload, save=save, verbose=self.verbose)
+                                     reload=reload,
+                                     save=save,
+                                     verbose=self.verbose)
 
     def load_all_profiles(self, reload=False, save=True):
         """Load profiles for all available checkpoints
@@ -209,17 +215,21 @@ class Simulation:
         config = self.config['profiles']
 
         self.profiles = load_save.get_multiprofile(
-                                model=self.model, run=self.run,
+                                run=self.run,
+                                model=self.model,
                                 model_set=self.model_set,
                                 chk_list=self.chk_table.index,
                                 params=config['params'] + config['isotopes'],
                                 derived_params=config['derived_params'],
-                                reload=reload, save=save, verbose=self.verbose)
+                                reload=reload,
+                                save=save,
+                                verbose=self.verbose)
 
     def check_chk_table(self, save=True):
         """Checks that pre-saved data is up to date with any new chk files
         """
-        chk_list = load_save.find_chk(model=self.model, run=self.run,
+        chk_list = load_save.find_chk(run=self.run,
+                                      model=self.model,
                                       model_set=self.model_set)
 
         if len(chk_list) != len(self.chk_table):
@@ -229,8 +239,10 @@ class Simulation:
     def save_chk_table(self):
         """Saves chk_table DataFrame to file
         """
-        load_save.save_chk_table_cache(self.chk_table, model=self.model,
-                                       run=self.run, model_set=self.model_set,
+        load_save.save_chk_table_cache(self.chk_table,
+                                       run=self.run,
+                                       model=self.model,
+                                       model_set=self.model_set,
                                        verbose=self.verbose)
 
     # =======================================================
@@ -286,12 +298,14 @@ class Simulation:
         if len(self.config['tracers']['params']) == 0:
             return
 
-        self.tracers = load_save.get_tracers(model=self.model, run=self.run,
+        self.tracers = load_save.get_tracers(run=self.run,
+                                             model=self.model,
                                              model_set=self.model_set,
                                              mass_grid=self.mass_grid,
                                              params=self.config['tracers']['params'],
                                              profiles=self.profiles,
-                                             reload=reload, save=save,
+                                             reload=reload,
+                                             save=save,
                                              verbose=self.verbose)
 
         # force reload if chks are missing
@@ -335,8 +349,10 @@ class Simulation:
             show_legend = legend if i == 0 else False
             show_title = title if i == 0 else False
 
-            self.plot_profile(chk, y_var=y_var, x_var=x_var, y_scale=y_scale,
-                              x_scale=x_scale, ax=ax[row, col], trans=trans,
+            self.plot_profile(chk=chk,
+                              y_var=y_var, x_var=x_var,
+                              y_scale=y_scale, x_scale=x_scale,
+                              ax=ax[row, col], trans=trans,
                               legend=show_legend, title=show_title)
         return fig
 
@@ -416,7 +432,8 @@ class Simulation:
             y_var_list = self.config['plotting']['isotopes']
 
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
-        self._set_ax_scales(ax, y_var_list[0], x_var=x_var, y_scale=y_scale, x_scale=x_scale)
+        self._set_ax_scales(ax, y_var_list[0], x_var=x_var,
+                            y_scale=y_scale, x_scale=x_scale)
         self._set_ax_title(ax, chk=chk, title=title)
         self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
         self._set_ax_labels(ax, x_var=x_var, y_var='$X$')
@@ -460,10 +477,14 @@ class Simulation:
 
         slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_init, valstep=1)
 
-        self.plot_profile(chk_init, y_var=y_var, x_var=x_var, y_scale=y_scale,
-                          x_scale=x_scale, ax=profile_ax, legend=legend, trans=trans,
-                          title=title, ylims=ylims, xlims=xlims, figsize=figsize,
-                          linestyle=linestyle, marker=marker)
+        self.plot_profile(chk=chk_init,
+                          y_var=y_var, x_var=x_var,
+                          y_scale=y_scale, x_scale=x_scale,
+                          ylims=ylims, xlims=xlims,
+                          ax=profile_ax, legend=legend,
+                          trans=trans, title=title,
+                          figsize=figsize, linestyle=linestyle,
+                          marker=marker)
 
         def update(chk):
             idx = int(chk)
