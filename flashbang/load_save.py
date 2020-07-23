@@ -24,6 +24,7 @@ import subprocess
 import sys
 import yt
 import time
+import h5py
 
 # flashbang
 from .strings import printv
@@ -572,7 +573,7 @@ def find_chk(run, model, model_set, n_digits=4, verbose=True):
     return np.sort(chks)
 
 
-def load_chk(chk, run, model, model_set):
+def load_chk(chk, run, model, model_set, use_h5py=False):
     """Load checkpoint file using yt
 
     parameters
@@ -581,13 +582,17 @@ def load_chk(chk, run, model, model_set):
     run : str
     model : str
     model_set : str
+    use_h5py : bool
     """
     filepath = paths.chk_filepath(chk=chk, run=run, model=model, model_set=model_set)
 
     if not os.path.exists(filepath):
         raise FileNotFoundError(f'checkpoint {chk:04d} file does not exist: {filepath}')
 
-    return yt.load(filepath)
+    if use_h5py:
+        return h5py.File(filepath, 'r')
+    else:
+        return yt.load(filepath)
 
 
 # ===============================================================
