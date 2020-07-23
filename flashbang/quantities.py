@@ -133,3 +133,25 @@ def get_mass_between(radius, density):
     avg_dens = 0.5 * (density[1:] + density[:-1])
 
     return dv * avg_dens * g_to_msun
+
+
+def get_radius_low(chk_h5py):
+    """Return radii of lower cell edges
+
+    parameters
+    ----------
+    chk_h5py : h5py.File
+    """
+    # no. of cells per block
+    nbx = chk_h5py['integer scalars'][0][1]
+
+    # leaf block indices
+    leaf_i = np.where(np.array(chk_h5py['node type']) == 1)[0]
+
+    block_edges = chk_h5py['bounding box'][:, 0][leaf_i]
+    cell_edges = np.linspace(block_edges[:, 0], block_edges[:, 1], nbx+1)
+
+    # reshape cell edges into 1d array of lower edges
+    r_low = cell_edges[:-1].transpose().reshape((1, -1))[0]
+
+    return r_low
