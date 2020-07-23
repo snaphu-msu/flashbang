@@ -9,25 +9,6 @@ from .strings import printv
 g_to_msun = units.g.to(units.M_sun)
 
 
-def get_mass_grid(mass_low, mass_high, n_points):
-    """Create array of mass values (M_sun) from given mass grid definition
-
-    Based on np.linspace,
-        e.g. get_mass_grid(mass_low=1.4, mass_high=1.7, n_points=4)
-        will return [1.4, 1.5, 1.6, 1.7]
-
-    parameters
-    ----------
-    mass_low : float
-        lower bound of mass grid
-    mass_high : float
-        upper bound of mass grid
-    n_points : int
-        number of points in mass grid
-    """
-    return np.linspace(mass_low, mass_high, n_points)
-
-
 def extract_multi_tracers(mass_grid, profiles, params, verbose=True):
     """Iterate over chk profiles and interpolate mass shell tracers for each
 

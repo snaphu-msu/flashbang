@@ -144,9 +144,7 @@ class Simulation:
         """Generate mass grid from config definition
         """
         mass_def = self.config['tracers']['mass_grid']
-        self.mass_grid = analysis.get_mass_grid(mass_low=mass_def[0],
-                                                mass_high=mass_def[1],
-                                                n_points=mass_def[2])
+        self.mass_grid = np.linspace(mass_def[0], mass_def[1], mass_def[2])
 
     def load_all(self, reload=False, save=True):
         """Load all model data

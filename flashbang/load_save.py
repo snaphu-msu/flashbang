@@ -859,7 +859,7 @@ def get_tracers(run, model, model_set, profiles=None, params=None, mass_grid=Non
 
         if mass_grid is None:
             mass_def = c['tracers']['mass_grid']
-            mass_grid = analysis.get_mass_grid(mass_def[0], mass_def[1], mass_def[2])
+            mass_grid = np.linspace(mass_def[0], mass_def[1], mass_def[2])
 
         if params is None:
             params = c['tracers']['params']
