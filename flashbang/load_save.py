@@ -450,7 +450,10 @@ def extract_profile(chk, run, model, model_set, params=None, derived_params=None
         profile[var.strip()] = ('zone', np.array(chk_data[var]))
 
     if 'mass' in derived_params:
-        add_mass_profile(profile)
+        chk_h5py = load_chk(chk=chk, run=run, model=model, model_set=model_set,
+                            use_h5py=True)
+        add_mass_profile(profile=profile, chk_h5py=chk_h5py)
+        chk_h5py.close()
 
     n_zones = len(profile['zone'])
     profile.coords['zone'] = np.arange(n_zones)  # set coords (mostly for concat later)
@@ -458,19 +461,21 @@ def extract_profile(chk, run, model, model_set, params=None, derived_params=None
     return profile
 
 
-def add_mass_profile(profile):
+def add_mass_profile(profile, chk_h5py):
     """Calculate interior/enclosed mass profile, and adds to given table
 
     parameters
     ----------
     profile : xr.Dataset
         table as returned by extract_profile()
+    chk_h5py : h5py.File
     """
     if ('r' not in profile) or ('dens' not in profile):
         raise ValueError(f'Need radius and density columns (r, dens) to calculate mass')
 
     mass = quantities.get_mass_interior(radius=np.array(profile['r']),
-                                        density=np.array(profile['dens']))
+                                        density=np.array(profile['dens']),
+                                        chk_h5py=chk_h5py)
     profile['mass'] = ('zone', mass)
 
 

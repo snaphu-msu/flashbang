@@ -81,7 +81,7 @@ def get_density_zone(dens_array, dens):
     return zone_idx
 
 
-def get_mass_interior(radius, density):
+def get_mass_interior(radius, density, chk_h5py):
     """Return interior (i.e. enclosed) mass for given radius/density profile
 
     Note
@@ -94,45 +94,56 @@ def get_mass_interior(radius, density):
         1D array of radius values
     density : np.ndarray
         1D array of density values
+    chk_h5py : h5py.File
     """
     n_points = len(radius)
     mass = np.zeros(n_points)
-    mass_between = get_mass_between(radius=radius, density=density)
+    cell_edges = get_cell_edges(chk_h5py)
 
-    for i, dm in enumerate(mass_between):
-        mass[i+1] = mass[i] + dm
+    mass_left, mass_right = get_mass_halves(radius=radius,
+                                            density=density,
+                                            cell_edges=cell_edges)
 
-    return mass
+    mass[0] = mass_left[0]
+    for i in range(1, n_points):
+        mass[i] = mass[i-1] + mass_right[i-1] + mass_left[i]
+
+    return mass * g_to_msun
 
 
-def get_mass_between(radius, density):
-    """Return mass contained between each point of given radius/density profile,
-    using trapezoidal rule
+def get_mass_halves(radius, density, cell_edges):
+    """Return mass contained in left and right halves of each cell
 
     Note
     -----
     Assumes radius and density have same length units
 
+    Returns: mass_left, mass_right
+
     parameters
     ----------
     radius : np.ndarray
-        1D array of radius values
+        1D array of radii of cell centres
     density : np.ndarray
-        1D array of density values
+        1D array of cell densities
+    cell_edges : np.ndarray
+        1D array of raddii of cell edges
     """
-    # TODO: This is not quite right:
-    #           - Calculates volume *between* cell centres
-    #           - Averages density at point halfway between cell centres
-    #           - need to account for each cell size (do by blocks?)
     if len(radius) != len(density):
         raise ValueError('radius and density arrays are not the same length ' 
                          f'({len(radius)} and {len(radius)})')
 
-    volume = 4/3 * np.pi * radius**3
-    dv = volume[1:] - volume[:-1]
-    avg_dens = 0.5 * (density[1:] + density[:-1])
+    if len(radius) != len(cell_edges[1:]):
+        raise ValueError(f'array length of cell_edges ({len(cell_edges)}) must be '
+                         f'one longer than radius ({len(radius)})')
 
-    return dv * avg_dens * g_to_msun
+    vol_left = 4/3 * np.pi * (radius**3 - cell_edges[:-1]**3)
+    vol_right = 4/3 * np.pi * (cell_edges[1:]**3 - radius**3)
+
+    mass_left = vol_left * density
+    mass_right = vol_right * density
+
+    return mass_left, mass_right
 
 
 def get_cell_edges(chk_h5py):
