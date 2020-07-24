@@ -19,9 +19,6 @@ Model directory structure expected:
     where:
         - '.dat' and '.log' files are located in directory '<model>'
         - 'chk' and 'plt' files are located in directory 'output'
-
-    Note:
-        - name of 'output' directory can be manually set with arg 'output_dir'
 """
 
 import os
@@ -80,17 +77,16 @@ def model_path(model, model_set):
     return os.path.join(flash_models_path, model_set, model)
 
 
-def output_path(model, model_set, output_dir='output'):
+def output_path(model, model_set):
     """Return path to model output directory
 
     Parameters
     ----------
     model : str
     model_set : str
-    output_dir : str
     """
-    m_path = model_path(model, model_set=model_set)
-    return os.path.join(m_path, output_dir)
+    path = model_path(model, model_set=model_set)
+    return os.path.join(path, 'output')
 
 
 # ===============================================================
