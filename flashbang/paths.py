@@ -59,13 +59,6 @@ def config_filepath(name=None):
     return os.path.join(path, 'flashbang', 'config', f'{name}.ini')
 
 
-def cache_path():
-    """Path to directory for cached files
-    """
-    path = flashbang_path()
-    return os.path.join(path, 'cache')
-
-
 # ===============================================================
 #                      Models
 # ===============================================================
@@ -98,18 +91,6 @@ def output_path(model, model_set, output_dir='output'):
     """
     m_path = model_path(model, model_set=model_set)
     return os.path.join(m_path, output_dir)
-
-
-def model_cache_path(model, model_set):
-    """Path to directory for keeping cached files
-
-    Parameters
-    ----------
-    model : str
-    model_set : str
-    """
-    path = cache_path()
-    return os.path.join(path, model_set, model)
 
 
 # ===============================================================
@@ -194,6 +175,25 @@ def log_filepath(run, model, model_set):
 # ===============================================================
 #                      Cache files
 # ===============================================================
+def cache_path():
+    """Path to directory for cached files
+    """
+    path = flashbang_path()
+    return os.path.join(path, 'cache')
+
+
+def model_cache_path(model, model_set):
+    """Path to directory for keeping cached files
+
+    Parameters
+    ----------
+    model : str
+    model_set : str
+    """
+    path = cache_path()
+    return os.path.join(path, model_set, model)
+
+
 def cache_filename(name, run, model, chk=None):
     """Return filename for cache file
 
