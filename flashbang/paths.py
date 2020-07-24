@@ -116,22 +116,8 @@ def flash_filename(name, run, chk=-1):
 
     if name not in filenames:
         raise ValueError(f"'{name}' not a valid FLASH file type")
-    
+
     return filenames[name]
-
-
-# ===============================================================
-#                      Chk files
-# ===============================================================
-def chk_filename(chk, run):
-    """Return filename for checkpoint (chk) file
-
-    Parameters
-    ----------
-    chk : int
-    run : str
-    """
-    return f'{run}_hdf5_chk_{chk:04d}'
 
 
 def chk_filepath(chk, run, model, model_set):
@@ -145,21 +131,8 @@ def chk_filepath(chk, run, model, model_set):
     model_set : str
     """
     path = output_path(model, model_set=model_set)
-    filename = chk_filename(chk=chk, run=run)
+    filename = flash_filename('chk', chk=chk, run=run)
     return os.path.join(path, filename)
-
-
-# ===============================================================
-#                      Dat files
-# ===============================================================
-def dat_filename(run):
-    """Return filename for .dat file
-
-    Parameters
-    ----------
-    run : str
-    """
-    return f'{run}.dat'
 
 
 def dat_filepath(run, model, model_set):
@@ -171,22 +144,9 @@ def dat_filepath(run, model, model_set):
     model : str
     model_set : str
     """
-    filename = dat_filename(run)
+    filename = flash_filename('dat', run=run)
     m_path = model_path(model, model_set=model_set)
     return os.path.join(m_path, filename)
-
-
-# ===============================================================
-#                      Log files
-# ===============================================================
-def log_filename(run):
-    """Return filename for .log file
-
-    Parameters
-    ----------
-    run : str
-    """
-    return f'{run}.log'
 
 
 def log_filepath(run, model, model_set):
@@ -198,7 +158,7 @@ def log_filepath(run, model, model_set):
     model : str
     model_set : str
     """
-    filename = log_filename(run)
+    filename = flash_filename('log', run=run)
     m_path = model_path(model, model_set=model_set)
     return os.path.join(m_path, filename)
 
