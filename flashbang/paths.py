@@ -120,6 +120,26 @@ def flash_filename(name, run, chk=-1):
     return filenames[name]
 
 
+def flash_filepath(name, run, model, model_set, chk=-1):
+    """Return filepath to raw FLASH data file
+
+    Parameters
+    ----------
+    name : str
+    chk : int
+    run : str
+    model : str
+    model_set : str
+    """
+    if name == 'chk':
+        path = output_path(model, model_set=model_set)
+    else:
+        path = model_path(model, model_set=model_set)
+
+    filename = flash_filename(name, run=run, chk=chk)
+    return os.path.join(path, filename)
+
+
 def chk_filepath(chk, run, model, model_set):
     """Return filepath to checkpoint file
 
