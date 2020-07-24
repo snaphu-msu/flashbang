@@ -120,17 +120,6 @@ def dat_filepath(run, model, model_set):
     return os.path.join(m_path, filename)
 
 
-def dat_cache_filename(run, model):
-    """Return filename for cached dat file
-
-    Parameters
-    ----------
-    run : str
-    model : str
-    """
-    return f'{model}_{run}_dat.pickle'
-
-
 def dat_cache_filepath(run, model, model_set):
     """Return filepath to cached dat table
 
@@ -141,7 +130,7 @@ def dat_cache_filepath(run, model, model_set):
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
-    filename = dat_cache_filename(run, model)
+    filename = cache_filename('dat', run=run, model=model)
     return os.path.join(path, filename)
 
 
@@ -194,7 +183,7 @@ def model_cache_path(model, model_set):
     return os.path.join(path, model_set, model)
 
 
-def cache_filename(name, run, model, chk=None):
+def cache_filename(name, run, model, chk=-1):
     """Return filename for cache file
 
     Parameters
@@ -205,7 +194,7 @@ def cache_filename(name, run, model, chk=None):
     chk : int
     """
     requires_chk = ['profile']
-    if name in requires_chk and chk is None:
+    if (name in requires_chk) and (chk is -1):
         raise ValueError(f"must provide chk for cache name '{name}'")
 
     filenames = {
@@ -252,20 +241,6 @@ def chk_filepath(chk, run, model, model_set):
     return os.path.join(path, filename)
 
 
-# ===============================================================
-#                      chk_table
-# ===============================================================
-def chk_table_filename(run, model):
-    """Return filename for checkpoint data-table file
-
-    Parameters
-    ----------
-    run : str
-    model : str
-    """
-    return f'{model}_{run}_chk_table.pickle'
-
-
 def chk_table_filepath(run, model, model_set):
     """Return filepath to checkpoint data-table file
 
@@ -276,24 +251,13 @@ def chk_table_filepath(run, model, model_set):
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
-    filename = chk_table_filename(run=run, model=model)
+    filename = cache_filename('chk_table', run=run, model=model)
     return os.path.join(path, filename)
 
 
 # ===============================================================
 #                      Profiles
 # ===============================================================
-def multiprofile_filename(run, model):
-    """Return filename for pre-extracted multiprofile
-
-    Parameters
-    ----------
-    run : str
-    model : str
-    """
-    return f'{model}_{run}_multiprofile.nc'
-
-
 def multiprofile_filepath(run, model, model_set):
     """Return filepath for pre-extracted multiprofile
 
@@ -304,20 +268,8 @@ def multiprofile_filepath(run, model, model_set):
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
-    filename = multiprofile_filename(run=run, model=model)
+    filename = cache_filename('multiprofile', run=run, model=model)
     return os.path.join(path, filename)
-
-
-def profile_filename(chk, run, model):
-    """Return filename for pre-extracted profile
-
-    Parameters
-    ----------
-    chk : int
-    run : str
-    model : str
-    """
-    return f'{model}_{run}_profile_{chk:04d}.nc'
 
 
 def profile_filepath(chk, run, model, model_set):
@@ -331,24 +283,13 @@ def profile_filepath(chk, run, model, model_set):
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
-    filename = profile_filename(chk, run=run, model=model)
+    filename = cache_filename('profile', chk=chk, run=run, model=model)
     return os.path.join(path, filename)
 
 
 # ===============================================================
 #                      Timesteps
 # ===============================================================
-def timesteps_filename(run, model):
-    """Return filename for pre-extracted timestep table
-
-    parameters
-    ----------
-    run : str
-    model : str
-    """
-    return f'{model}_{run}_timesteps.pickle'
-
-
 def timesteps_filepath(run, model, model_set):
     """Return filename for pre-extracted timestep table
 
@@ -359,24 +300,13 @@ def timesteps_filepath(run, model, model_set):
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
-    filename = timesteps_filename(run=run, model=model)
+    filename = cache_filename('timesteps', run=run, model=model)
     return os.path.join(path, filename)
 
 
 # ===============================================================
 #                      Mass Tracers
 # ===============================================================
-def tracers_filename(run, model):
-    """Return filename for pre-extracted mass tracers dataset
-
-    parameters
-    ----------
-    run : str
-    model : str
-    """
-    return f'{model}_{run}_tracers.nc'
-
-
 def tracers_filepath(run, model, model_set):
     """Return filepath for pre-extracted mass tracers dataset
 
@@ -387,5 +317,5 @@ def tracers_filepath(run, model, model_set):
     model_set : str
     """
     path = model_cache_path(model, model_set=model_set)
-    filename = tracers_filename(run=run, model=model)
+    filename = cache_filename('tracers', run=run, model=model)
     return os.path.join(path, filename)
