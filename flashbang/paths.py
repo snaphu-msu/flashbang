@@ -192,6 +192,38 @@ def log_filepath(run, model, model_set):
 
 
 # ===============================================================
+#                      Cache files
+# ===============================================================
+def cache_filename(name, run, model, chk=None):
+    """Return filename for cache file
+
+    Parameters
+    ----------
+    name : str
+    run : str
+    model : str
+    chk : int
+    """
+    requires_chk = ['profile']
+    if name in requires_chk and chk is None:
+        raise ValueError(f"must provide chk for cache name '{name}'")
+
+    filenames = {
+        'dat': f'{model}_{run}_dat.pickle',
+        'chk_table': f'{model}_{run}_chk_table.pickle',
+        'multiprofile': f'{model}_{run}_multiprofile.nc',
+        'profile': f'{model}_{run}_profile_{chk:04d}.nc',
+        'timesteps': f'{model}_{run}_timesteps.pickle',
+        'tracers': f'{model}_{run}_tracers.nc',
+    }
+
+    if name not in filenames:
+        raise ValueError(f"'{name}' not a valid cache name")
+
+    return filenames[name]
+
+
+# ===============================================================
 #                      Chk files
 # ===============================================================
 def chk_filename(chk, run):
