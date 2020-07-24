@@ -89,8 +89,11 @@ def load_cache(name, run, model, model_set, chk=-1, verbose=True):
 
     printv(f'Loading {name} cache: {filepath}', verbose)
 
-    if name in ['dat', 'chk_table']:
+    if name in ['dat', 'chk_table', 'timesteps']:
         data = pd.read_pickle(filepath)
+
+        if name in ['timesteps']:
+            data.set_index('chk', inplace=True)
 
     return data
 
@@ -697,8 +700,8 @@ def get_timesteps(run, model, model_set, params=('time', 'nstep'),
     # attempt to load cache file
     if not reload:
         try:
-            timesteps = load_timesteps_cache(run=run, model=model, model_set=model_set,
-                                             verbose=verbose)
+            timesteps = load_cache('timesteps', run=run, model=model,
+                                   model_set=model_set, verbose=verbose)
         except FileNotFoundError:
             printv('timesteps cache not found, reloading', verbose)
 
@@ -773,24 +776,6 @@ def save_timesteps_cache(timesteps, run, model, model_set, verbose=True):
     printv(f'Saving timesteps cache: {filepath}', verbose)
     timesteps_out = timesteps.reset_index()
     timesteps_out.to_pickle(filepath)
-
-
-def load_timesteps_cache(run, model, model_set, verbose=True):
-    """Load pre-extracted chk timesteps to file
-
-    parameters
-    ----------
-    run : str
-    model : str
-    model_set : str
-    verbose : bool
-    """
-    filepath = paths.cache_filepath('timesteps', run=run, model=model, model_set=model_set)
-    printv(f'Loading timesteps cache: {filepath}', verbose)
-
-    timesteps = pd.read_pickle(filepath)
-    timesteps.set_index('chk', inplace=True)
-    return timesteps
 
 
 # ===============================================================
