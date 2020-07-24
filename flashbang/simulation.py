@@ -59,7 +59,6 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 
 # flashbang
-from . import analysis
 from . import load_save
 from . import paths
 from . import plot_tools
