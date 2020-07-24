@@ -35,8 +35,6 @@ from . import tools
 
 # TODO:
 #   - merge "get" functions into common class/function structure?
-#   - Refactor profiles dict into single xarray
-#       - add metadata, e.g. timesteps
 #   - multithread extract_timesteps
 #   - function to extract colnames
 
@@ -69,6 +67,32 @@ def load_config(name=None, verbose=True):
             config[section][option] = ast.literal_eval(ini.get(section, option))
 
     return config
+
+
+# ===============================================================
+#                      Cache files
+# ===============================================================
+def load_cache(name, run, model, model_set, chk=-1, verbose=True):
+    """Load pre-cached data
+
+    parameters
+    ----------
+    name : str
+    run : str
+    model : str
+    model_set : str
+    chk : int
+    verbose : bool
+    """
+    filepath = paths.cache_filepath(name, run=run, model=model,
+                                    model_set=model_set, chk=chk)
+
+    printv(f'Loading {name} cache: {filepath}', verbose)
+
+    if name in ['dat']:
+        data = pd.read_pickle(filepath)
+
+    return data
 
 
 # =======================================================================
