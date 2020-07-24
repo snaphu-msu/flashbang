@@ -84,18 +84,18 @@ def load_cache(name, run, model, model_set, chk=-1, verbose=True):
     chk : int
     verbose : bool
     """
+    data = None
     filepath = paths.cache_filepath(name, run=run, model=model,
                                     model_set=model_set, chk=chk)
 
     printv(f'Loading {name} cache: {filepath}', verbose)
-
     if name in ['dat', 'chk_table', 'timesteps']:
         data = pd.read_pickle(filepath)
 
         if name in ['timesteps']:
             data.set_index('chk', inplace=True)
 
-    elif name in ['multiprofile', 'profile']:
+    elif name in ['multiprofile', 'profile', 'tracers']:
         data = xr.load_dataset(filepath)
 
     return data
@@ -808,9 +808,8 @@ def get_tracers(run, model, model_set, profiles=None, params=None, mass_grid=Non
     # attempt to load from cache
     if not reload:
         try:
-            tracers = load_tracers_cache(run=run, model=model,
-                                         model_set=model_set,
-                                         verbose=verbose)
+            tracers = load_cache('tracers', run=run, model=model,
+                                 model_set=model_set, verbose=verbose)
         except FileNotFoundError:
             printv('tracers cache not found, reloading', verbose)
 
@@ -857,21 +856,6 @@ def save_tracers_cache(tracers, run, model, model_set, verbose=True):
     filepath = paths.cache_filepath('tracers', run=run, model=model, model_set=model_set)
     printv(f'Saving tracers cache: {filepath}', verbose)
     tracers.to_netcdf(filepath)
-
-
-def load_tracers_cache(run, model, model_set, verbose=True):
-    """Load pre-extracted mass tracers from file
-
-    parameters
-    ----------
-    run : str
-    model : str
-    model_set : str
-    verbose : bool
-    """
-    filepath = paths.cache_filepath('tracers', run=run, model=model, model_set=model_set)
-    printv(f'Loading tracers cache: {filepath}', verbose)
-    return xr.load_dataset(filepath)
 
 
 # ===============================================================
