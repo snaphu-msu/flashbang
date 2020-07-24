@@ -89,7 +89,7 @@ def load_cache(name, run, model, model_set, chk=-1, verbose=True):
 
     printv(f'Loading {name} cache: {filepath}', verbose)
 
-    if name in ['dat']:
+    if name in ['dat', 'chk_table']:
         data = pd.read_pickle(filepath)
 
     return data
@@ -635,8 +635,8 @@ def get_chk_table(run, model, model_set, reload=False, save=True, verbose=True):
 
     if not reload:
         try:
-            chk_table = load_chk_table_cache(run=run, model=model, model_set=model_set,
-                                             verbose=verbose)
+            chk_table = load_cache('chk_table', run=run, model=model,
+                                   model_set=model_set, verbose=verbose)
         except FileNotFoundError:
             printv('chk_table cache not found, reloading', verbose)
 
@@ -648,24 +648,6 @@ def get_chk_table(run, model, model_set, reload=False, save=True, verbose=True):
             save_chk_table_cache(chk_table, run=run, model=model,
                                  model_set=model_set, verbose=verbose)
 
-    return chk_table
-
-
-def load_chk_table_cache(run, model, model_set, verbose=True):
-    """Load pre-extracted chk timesteps to file
-
-    Returns: pd.Dataframe
-
-    parameters
-    ----------
-    run : str
-    model : str
-    model_set : str
-    verbose : bool
-    """
-    filepath = paths.cache_filepath('chk_table', run=run, model=model, model_set=model_set)
-    printv(f'Loading chk_table cache: {filepath}', verbose)
-    chk_table = pd.read_pickle(filepath)
     return chk_table
 
 
