@@ -94,6 +94,33 @@ def output_path(model, model_set, output_dir='output'):
 
 
 # ===============================================================
+#                      FLASH files
+# ===============================================================
+def flash_filename(name, run, chk=-1):
+    """Return filename for raw FLASH data file
+
+    Parameters
+    ----------
+    name : str
+    chk : int
+    run : str
+    """
+    if (name == 'chk') and (chk is -1):
+        raise ValueError(f"must provide chk")
+
+    filenames = {
+        'dat': f'{run}.dat',
+        'log': f'{run}.log',
+        'chk': f'{run}_hdf5_chk_{chk:04d}',
+    }
+
+    if name not in filenames:
+        raise ValueError(f"'{name}' not a valid FLASH file type")
+    
+    return filenames[name]
+
+
+# ===============================================================
 #                      Chk files
 # ===============================================================
 def chk_filename(chk, run):
@@ -228,7 +255,7 @@ def cache_filename(name, run, model, chk=-1):
 
 
 def cache_filepath(name, run, model, model_set, chk=-1):
-    """Return filepath to pre-extracted profile
+    """Return filepath to cache file
 
     Parameters
     ----------
