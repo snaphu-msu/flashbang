@@ -120,8 +120,8 @@ def get_dat(run, model, model_set, cols_dict,
     # attempt to load cache file
     if not reload:
         try:
-            dat_table = load_dat_cache(run=run, model=model, model_set=model_set,
-                                       verbose=verbose)
+            dat_table = load_cache('dat', run=run, model=model,
+                                   model_set=model_set, verbose=verbose)
         except FileNotFoundError:
             printv('dat cache not found, reloading', verbose)
 
@@ -182,21 +182,6 @@ def save_dat_cache(dat, run, model, model_set,
 
     printv(f'Saving dat cache: {filepath}', verbose)
     dat.to_pickle(filepath)
-
-
-def load_dat_cache(run, model, model_set, verbose=True):
-    """Load pre-extracted .dat quantities (see: save_dat_cache)
-
-    parameters
-    ----------
-    run : str
-    model : str
-    model_set : str
-    verbose : bool
-    """
-    filepath = paths.cache_filepath('dat', run=run, model=model, model_set=model_set)
-    printv(f'Loading dat cache: {filepath}', verbose)
-    return pd.read_pickle(filepath)
 
 
 def print_dat_colnames(run, model, model_set):
