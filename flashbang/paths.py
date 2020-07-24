@@ -212,6 +212,22 @@ def cache_filename(name, run, model, chk=-1):
     return filenames[name]
 
 
+def cache_filepath(name, run, model, model_set, chk=-1):
+    """Return filepath to pre-extracted profile
+
+    Parameters
+    ----------
+    name : str
+    run : str
+    model : str
+    model_set : str
+    chk : int
+    """
+    path = model_cache_path(model=model, model_set=model_set)
+    filename = cache_filename(name=name, run=run, model=model, chk=chk)
+    return os.path.join(path, filename)
+
+
 # ===============================================================
 #                      Chk files
 # ===============================================================
