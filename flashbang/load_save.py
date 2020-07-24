@@ -95,7 +95,7 @@ def load_cache(name, run, model, model_set, chk=-1, verbose=True):
         if name in ['timesteps']:
             data.set_index('chk', inplace=True)
 
-    elif name in ['multiprofile']:
+    elif name in ['multiprofile', 'profile']:
         data = xr.load_dataset(filepath)
 
     return data
@@ -374,8 +374,8 @@ def get_profile(chk, run, model, model_set, params=None,
     # attempt to load cache file
     if not reload:
         try:
-            profile = load_profile_cache(chk, run=run, model=model,
-                                         model_set=model_set, verbose=verbose)
+            profile = load_cache('profile', chk=chk, run=run, model=model,
+                                 model_set=model_set, verbose=verbose)
         except FileNotFoundError:
             printv('profile cache not found, reloading', verbose)
 
@@ -533,23 +533,6 @@ def save_profile_cache(profile, chk, run, model, model_set, verbose=True):
 
     printv(f'Saving profile cache: {filepath}', verbose)
     profile.to_netcdf(filepath)
-
-
-def load_profile_cache(chk, run, model, model_set, verbose=True):
-    """Load pre-extracted profile (see: save_profile_cache)
-
-    parameters
-    ----------
-    chk : int
-    run : str
-    model : str
-    model_set : str
-    verbose : bool
-    """
-    filepath = paths.cache_filepath('profile', chk=chk, run=run, model=model,
-                                    model_set=model_set)
-    printv(f'Loading profile cache: {filepath}', verbose)
-    return xr.load_dataset(filepath)
 
 
 # ===============================================================
