@@ -30,7 +30,7 @@ import h5py
 from .strings import printv
 from . import paths
 from . import quantities
-from . import analysis
+from . import extract_tracers
 from . import tools
 
 # TODO:
@@ -881,10 +881,10 @@ def get_tracers(run, model, model_set, profiles=None, params=None, mass_grid=Non
                                         model_set=model_set, chk_list=chk_list,
                                         params=params, verbose=verbose)
 
-        tracers = analysis.extract_multi_tracers(mass_grid,
-                                                 profiles=profiles,
-                                                 params=params,
-                                                 verbose=verbose)
+        tracers = extract_tracers.extract_multi_tracers(mass_grid,
+                                                        profiles=profiles,
+                                                        params=params,
+                                                        verbose=verbose)
         if save:
             save_tracers_cache(tracers, run=run, model=model,
                                model_set=model_set, verbose=verbose)
