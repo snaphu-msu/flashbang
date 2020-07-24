@@ -126,7 +126,7 @@ def extract_dat(run, model, model_set, cols_dict, verbose=True):
         dictionary with column names and indexes (Note: 1-indexed)
     verbose : bool
     """
-    filepath = paths.dat_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.flash_filepath('dat', run=run, model=model, model_set=model_set)
     printv(f'Extracting dat: {filepath}', verbose=verbose)
 
     idxs = []
@@ -184,7 +184,7 @@ def print_dat_colnames(run, model, model_set):
     model : str
     model_set : str
     """
-    filepath = paths.dat_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.flash_filepath('dat', run=run, model=model, model_set=model_set)
 
     with open(filepath, 'r') as f:
         colnames = f.readline().split()
@@ -593,7 +593,8 @@ def load_chk(chk, run, model, model_set, use_h5py=False):
     model_set : str
     use_h5py : bool
     """
-    filepath = paths.chk_filepath(chk=chk, run=run, model=model, model_set=model_set)
+    filepath = paths.flash_filepath('chk', chk=chk, run=run,
+                                    model=model, model_set=model_set)
 
     if not os.path.exists(filepath):
         raise FileNotFoundError(f'checkpoint {chk:04d} file does not exist: {filepath}')
@@ -816,7 +817,7 @@ def get_bounce_time(run, model, model_set, match_str='Bounce', verbose=True):
         String which immediately precedes the bounce time
     verbose : bool
     """
-    filepath = paths.log_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.flash_filepath('log', run=run, model=model, model_set=model_set)
     bounce_time = 0.0
     printv(f'Getting bounce time: {filepath}', verbose)
 

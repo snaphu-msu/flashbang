@@ -140,49 +140,6 @@ def flash_filepath(name, run, model, model_set, chk=-1):
     return os.path.join(path, filename)
 
 
-def chk_filepath(chk, run, model, model_set):
-    """Return filepath to checkpoint file
-
-    Parameters
-    ----------
-    chk : int
-    run : str
-    model : str
-    model_set : str
-    """
-    path = output_path(model, model_set=model_set)
-    filename = flash_filename('chk', chk=chk, run=run)
-    return os.path.join(path, filename)
-
-
-def dat_filepath(run, model, model_set):
-    """Return filepath to .dat file
-
-    parameters
-    ----------
-    run : str
-    model : str
-    model_set : str
-    """
-    filename = flash_filename('dat', run=run)
-    m_path = model_path(model, model_set=model_set)
-    return os.path.join(m_path, filename)
-
-
-def log_filepath(run, model, model_set):
-    """Return filepath to .log file
-
-    Parameters
-    ----------
-    run : str
-    model : str
-    model_set : str
-    """
-    filename = flash_filename('log', run=run)
-    m_path = model_path(model, model_set=model_set)
-    return os.path.join(m_path, filename)
-
-
 # ===============================================================
 #                      Cache files
 # ===============================================================
