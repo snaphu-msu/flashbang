@@ -89,6 +89,7 @@ def load_cache(name, run, model, model_set, chk=-1, verbose=True):
                                     model_set=model_set, chk=chk)
 
     printv(f'Loading {name} cache: {filepath}', verbose)
+
     if name in ['dat', 'chk_table', 'timesteps']:
         data = pd.read_pickle(filepath)
 
@@ -98,7 +99,42 @@ def load_cache(name, run, model, model_set, chk=-1, verbose=True):
     elif name in ['multiprofile', 'profile', 'tracers']:
         data = xr.load_dataset(filepath)
 
+    else:
+        raise ValueError(f"'{name}' not a valid cache type")
+
     return data
+
+
+def save_cache(name, data, run, model, model_set, chk=-1, verbose=True):
+    """Save data for faster loading
+
+    parameters
+    ----------
+    name : str
+    data : pd.DataFrame or xr.DataSet
+    run : str
+    model : str
+    model_set : str
+    chk : int
+    verbose : bool
+    """
+    ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
+    filepath = paths.cache_filepath(name, run=run, model=model,
+                                    model_set=model_set, chk=chk)
+
+    printv(f'Saving {name} cache: {filepath}', verbose)
+
+    if name in ['dat', 'chk_table', 'timesteps']:
+        if name in ['timesteps']:
+            data = data.reset_index()
+
+        data.to_pickle(filepath)
+
+    elif name in ['multiprofile', 'profile', 'tracers']:
+        data.to_netcdf(filepath)
+
+    else:
+        raise ValueError(f"'{name}' not a valid cache type")
 
 
 # =======================================================================
@@ -136,8 +172,8 @@ def get_dat(run, model, model_set, cols_dict,
         dat_table = extract_dat(run=run, model=model, model_set=model_set,
                                 cols_dict=cols_dict, verbose=verbose)
         if save:
-            save_dat_cache(dat_table, run=run, model=model,
-                           model_set=model_set, verbose=verbose)
+            save_cache('dat', data=dat_table, run=run, model=model,
+                       model_set=model_set, verbose=verbose)
 
     return dat_table
 
@@ -168,26 +204,6 @@ def extract_dat(run, model, model_set, cols_dict, verbose=True):
 
     return pd.read_csv(filepath, usecols=idxs, names=keys, skiprows=1, header=None,
                        delim_whitespace=True, low_memory=False)
-
-
-def save_dat_cache(dat, run, model, model_set,
-                   verbose=True):
-    """Save pre-extracted .dat quantities, for faster loading
-
-    parameters
-    ----------
-    dat : pd.DataFrame
-        data table as returned by extract_dat()
-    run : str
-    model : str
-    model_set : str
-    verbose : bool
-    """
-    ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
-    filepath = paths.cache_filepath('dat', run=run, model=model, model_set=model_set)
-
-    printv(f'Saving dat cache: {filepath}', verbose)
-    dat.to_pickle(filepath)
 
 
 def print_dat_colnames(run, model, model_set):
@@ -235,10 +251,10 @@ def get_multiprofile(run, model, model_set, chk_list=None, params=None,
     save : bool
     verbose : bool
     """
-    def save_cache():
+    def save_file():
         if save:
-            save_multiprofile_cache(multiprofile, run=run, model=model,
-                                    model_set=model_set, verbose=verbose)
+            save_cache('multiprofile', data=multiprofile, run=run, model=model,
+                       model_set=model_set, verbose=verbose)
 
     if chk_list is None:
         chk_list = find_chk(run=run, model=model, model_set=model_set)
@@ -258,7 +274,7 @@ def get_multiprofile(run, model, model_set, chk_list=None, params=None,
                                     verbose=verbose, config=config)
 
         multiprofile = join_profiles(profiles, verbose=verbose)
-        save_cache()
+        save_file()
 
     # 3. Check for missing profiles
     else:
@@ -276,7 +292,7 @@ def get_multiprofile(run, model, model_set, chk_list=None, params=None,
 
             multiprofile = append_to_multiprofile(multiprofile,
                                                   profiles=missing_profiles)
-            save_cache()
+            save_file()
 
     return multiprofile
 
@@ -385,8 +401,8 @@ def get_profile(chk, run, model, model_set, params=None,
                                   config=config, params=params,
                                   derived_params=derived_params)
         if save:
-            save_profile_cache(profile, chk=chk, run=run, model=model,
-                               model_set=model_set, verbose=verbose)
+            save_cache('profile', data=profile, chk=chk, run=run, model=model,
+                       model_set=model_set, verbose=verbose)
 
     return profile
 
@@ -494,47 +510,6 @@ def add_mass_profile(profile, chk_h5py):
     profile['mass'] = ('zone', mass)
 
 
-def save_multiprofile_cache(multiprofile, run, model, model_set, verbose=True):
-    """Save multiprofile to file for faster loading
-
-    parameters
-    ----------
-    multiprofile : xr.Dataset
-            Dataset of multiple profiles
-    run : str
-    model : str
-    model_set : str
-    verbose : bool
-    """
-    ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
-    filepath = paths.cache_filepath('multiprofile', run=run, model=model,
-                                    model_set=model_set)
-
-    printv(f'Saving multiprofile cache: {filepath}', verbose)
-    multiprofile.to_netcdf(filepath)
-
-
-def save_profile_cache(profile, chk, run, model, model_set, verbose=True):
-    """Save profile to file for faster loading
-
-    parameters
-    ----------
-    profile : xr.Dataset
-            table of profile properties as returned by extract_profile()
-    chk : int
-    run : str
-    model : str
-    model_set : str
-    verbose : bool
-    """
-    ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
-    filepath = paths.cache_filepath('profile', chk=chk, run=run, model=model,
-                                    model_set=model_set)
-
-    printv(f'Saving profile cache: {filepath}', verbose)
-    profile.to_netcdf(filepath)
-
-
 # ===============================================================
 #                      Chk files
 # ===============================================================
@@ -618,27 +593,10 @@ def get_chk_table(run, model, model_set, reload=False, save=True, verbose=True):
         chk_table.set_index('chk', inplace=True)
 
         if save:
-            save_chk_table_cache(chk_table, run=run, model=model,
-                                 model_set=model_set, verbose=verbose)
+            save_cache('chk_table', data=chk_table, run=run, model=model,
+                       model_set=model_set, verbose=verbose)
 
     return chk_table
-
-
-def save_chk_table_cache(chk_table, run, model, model_set, verbose=True):
-    """Saves pre-extracted chk_table to file
-
-    parameters
-    ----------
-    chk_table : pd.Dataframe
-    run : str
-    model : str
-    model_set : str
-    verbose : bool
-    """
-    ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
-    filepath = paths.cache_filepath('chk_table', run=run, model=model, model_set=model_set)
-    printv(f'Saving chk_table cache: {filepath}', verbose)
-    chk_table.to_pickle(filepath)
 
 
 # ===============================================================
@@ -683,8 +641,8 @@ def get_timesteps(run, model, model_set, params=('time', 'nstep'),
                                       model_set=model_set, params=params)
 
         if save:
-            save_timesteps_cache(timesteps, run=run, model=model, model_set=model_set,
-                                 verbose=verbose)
+            save_cache('timesteps', data=timesteps, run=run, model=model,
+                       model_set=model_set, verbose=verbose)
 
     return timesteps
 
@@ -726,26 +684,6 @@ def extract_timesteps(chk_list, run, model, model_set, params=('time', 'nstep'))
     t1 = time.time()
     print('='*20, f'\nTotal time: {t1-t0:.3f} s\n')
     return timesteps
-
-
-def save_timesteps_cache(timesteps, run, model, model_set, verbose=True):
-    """Save pre-extracted chk timesteps to file
-
-    parameters
-    ----------
-    timesteps : pd.DataFrame
-        table of chk timesteps, as returned by extract_timesteps()
-    run : str
-    model : str
-    model_set : str
-    verbose : bool
-    """
-    ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
-    filepath = paths.cache_filepath('timesteps', run=run, model=model, model_set=model_set)
-
-    printv(f'Saving timesteps cache: {filepath}', verbose)
-    timesteps_out = timesteps.reset_index()
-    timesteps_out.to_pickle(filepath)
 
 
 # ===============================================================
@@ -836,26 +774,9 @@ def get_tracers(run, model, model_set, profiles=None, params=None, mass_grid=Non
                                                         params=params,
                                                         verbose=verbose)
         if save:
-            save_tracers_cache(tracers, run=run, model=model,
-                               model_set=model_set, verbose=verbose)
+            save_cache('tracers', tracers, run=run, model=model,
+                       model_set=model_set, verbose=verbose)
     return tracers
-
-
-def save_tracers_cache(tracers, run, model, model_set, verbose=True):
-    """Save pre-extracted mass tracers to file
-
-    parameters
-    ----------
-    tracers : xr.Dataset
-        mass tracer data, as returned by analysis.extract_multi_tracers()
-    run : str
-    model : str
-    model_set : str
-    verbose : bool
-    """
-    filepath = paths.cache_filepath('tracers', run=run, model=model, model_set=model_set)
-    printv(f'Saving tracers cache: {filepath}', verbose)
-    tracers.to_netcdf(filepath)
 
 
 # ===============================================================
