@@ -154,7 +154,7 @@ def save_dat_cache(dat, run, model, model_set,
     verbose : bool
     """
     ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
-    filepath = paths.dat_cache_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.cache_filepath('dat', run=run, model=model, model_set=model_set)
 
     printv(f'Saving dat cache: {filepath}', verbose)
     dat.to_pickle(filepath)
@@ -170,7 +170,7 @@ def load_dat_cache(run, model, model_set, verbose=True):
     model_set : str
     verbose : bool
     """
-    filepath = paths.dat_cache_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.cache_filepath('dat', run=run, model=model, model_set=model_set)
     printv(f'Loading dat cache: {filepath}', verbose)
     return pd.read_pickle(filepath)
 
@@ -492,7 +492,8 @@ def save_multiprofile_cache(multiprofile, run, model, model_set, verbose=True):
     verbose : bool
     """
     ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
-    filepath = paths.multiprofile_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.cache_filepath('multiprofile', run=run, model=model,
+                                    model_set=model_set)
 
     printv(f'Saving multiprofile cache: {filepath}', verbose)
     multiprofile.to_netcdf(filepath)
@@ -508,7 +509,8 @@ def load_multiprofile_cache(run, model, model_set, verbose=True):
     model_set : str
     verbose : bool
     """
-    filepath = paths.multiprofile_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.cache_filepath('multiprofile', run=run, model=model,
+                                    model_set=model_set)
     printv(f'Loading multiprofile cache: {filepath}', verbose)
     return xr.load_dataset(filepath)
 
@@ -527,7 +529,8 @@ def save_profile_cache(profile, chk, run, model, model_set, verbose=True):
     verbose : bool
     """
     ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
-    filepath = paths.profile_filepath(chk=chk, run=run, model=model, model_set=model_set)
+    filepath = paths.cache_filepath('profile', chk=chk, run=run, model=model,
+                                    model_set=model_set)
 
     printv(f'Saving profile cache: {filepath}', verbose)
     profile.to_netcdf(filepath)
@@ -544,7 +547,8 @@ def load_profile_cache(chk, run, model, model_set, verbose=True):
     model_set : str
     verbose : bool
     """
-    filepath = paths.profile_filepath(chk=chk, run=run, model=model, model_set=model_set)
+    filepath = paths.cache_filepath('profile', chk=chk, run=run, model=model,
+                                    model_set=model_set)
     printv(f'Loading profile cache: {filepath}', verbose)
     return xr.load_dataset(filepath)
 
@@ -649,7 +653,7 @@ def load_chk_table_cache(run, model, model_set, verbose=True):
     model_set : str
     verbose : bool
     """
-    filepath = paths.chk_table_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.cache_filepath('chk_table', run=run, model=model, model_set=model_set)
     printv(f'Loading chk_table cache: {filepath}', verbose)
     chk_table = pd.read_pickle(filepath)
     return chk_table
@@ -667,7 +671,7 @@ def save_chk_table_cache(chk_table, run, model, model_set, verbose=True):
     verbose : bool
     """
     ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
-    filepath = paths.chk_table_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.cache_filepath('chk_table', run=run, model=model, model_set=model_set)
     printv(f'Saving chk_table cache: {filepath}', verbose)
     chk_table.to_pickle(filepath)
 
@@ -772,7 +776,7 @@ def save_timesteps_cache(timesteps, run, model, model_set, verbose=True):
     verbose : bool
     """
     ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
-    filepath = paths.timesteps_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.cache_filepath('timesteps', run=run, model=model, model_set=model_set)
 
     printv(f'Saving timesteps cache: {filepath}', verbose)
     timesteps_out = timesteps.reset_index()
@@ -789,7 +793,7 @@ def load_timesteps_cache(run, model, model_set, verbose=True):
     model_set : str
     verbose : bool
     """
-    filepath = paths.timesteps_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.cache_filepath('timesteps', run=run, model=model, model_set=model_set)
     printv(f'Loading timesteps cache: {filepath}', verbose)
 
     timesteps = pd.read_pickle(filepath)
@@ -903,7 +907,7 @@ def save_tracers_cache(tracers, run, model, model_set, verbose=True):
     model_set : str
     verbose : bool
     """
-    filepath = paths.tracers_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.cache_filepath('tracers', run=run, model=model, model_set=model_set)
     printv(f'Saving tracers cache: {filepath}', verbose)
     tracers.to_netcdf(filepath)
 
@@ -918,7 +922,7 @@ def load_tracers_cache(run, model, model_set, verbose=True):
     model_set : str
     verbose : bool
     """
-    filepath = paths.tracers_filepath(run=run, model=model, model_set=model_set)
+    filepath = paths.cache_filepath('tracers', run=run, model=model, model_set=model_set)
     printv(f'Loading tracers cache: {filepath}', verbose)
     return xr.load_dataset(filepath)
 
