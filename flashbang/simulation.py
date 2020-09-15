@@ -355,8 +355,8 @@ class Simulation:
 
     def plot_profile(self, chk, y_var, x_var='r', y_scale=None, x_scale=None,
                      ax=None, legend=False, trans=False, title=True,
-                     ylims=None, xlims=None, figsize=(8, 6), label=None,
-                     linestyle='-', marker=''):
+                     ylims=None, xlims=None, figsize=(6, 4), label=None,
+                     linestyle='-', marker='', title_str=None):
         """Plot given profile variable
 
         parameters
@@ -379,11 +379,12 @@ class Simulation:
         label : str
         linestyle : str
         marker : str
+        title_str : str
         """
         chk = tools.ensure_sequence(chk)
 
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
-        self._set_ax_title(ax, chk=chk[0], title=title)
+        self._set_ax_title(ax, chk=chk[0], title=title, title_str=title_str)
         self._set_ax_scales(ax, y_var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
         self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
         self._set_ax_labels(ax, x_var=x_var, y_var=y_var)
@@ -569,7 +570,8 @@ class Simulation:
         return fig, slider
 
     def plot_dat(self, y_var, y_scale='log', display=True, ax=None, figsize=(8, 6),
-                 linestyle='-', marker='', label=None, legend=False):
+                 linestyle='-', marker='', label=None, legend=False,
+                 zero_time=True, title_str=None):
         """Plot quantity from dat file
 
         parameters
@@ -583,6 +585,8 @@ class Simulation:
         marker : str
         label : str
         legend : bool
+        zero_time : bool
+        title_str : str
         """
         # TODO: subtract bounce_time
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
@@ -590,6 +594,7 @@ class Simulation:
                 marker=marker, label=label)
 
         ax.set_yscale(y_scale)
+        self._set_ax_title(ax, title=True, title_str=title_str)
         self._set_ax_labels(ax, x_var='$t$ (s)', y_var=y_var)
 
         if legend:
@@ -710,7 +715,7 @@ class Simulation:
         ax.set_xscale(x_scale)
         ax.set_yscale(y_scale)
 
-    def _set_ax_title(self, ax, chk, title):
+    def _set_ax_title(self, ax, title, chk=None, title_str=None):
         """Set axis title
 
         parameters
@@ -718,12 +723,16 @@ class Simulation:
         ax : Axes
         chk : int
         title : bool
+        title_str : str
         """
         # TODO: account for different zero points/starting times
         if title:
-            dt = self.config['plotting']['scales']['chk_dt']
-            timestep = dt * chk - self.bounce_time
-            ax.set_title(f't = {timestep:.3f} s')
+            if (title_str is None) and (chk is not None):
+                dt = self.config['plotting']['scales']['chk_dt']
+                timestep = dt * chk - self.bounce_time
+                title_str = f't = {timestep:.3f} s'
+
+            ax.set_title(title_str)
 
     def _set_ax_lims(self, ax, xlims, ylims):
         """Set x and y axis limits
