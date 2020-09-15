@@ -588,10 +588,13 @@ class Simulation:
         zero_time : bool
         title_str : str
         """
-        # TODO: subtract bounce_time
+        t_offset = 0
+        if zero_time:
+            t_offset = self.bounce_time
+
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
-        ax.plot(self.dat['time'], self.dat[y_var], linestyle=linestyle,
-                marker=marker, label=label)
+        ax.plot(self.dat['time'] - t_offset, self.dat[y_var],
+                linestyle=linestyle, marker=marker, label=label)
 
         ax.set_yscale(y_scale)
         self._set_ax_title(ax, title=True, title_str=title_str)
