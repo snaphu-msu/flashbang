@@ -135,7 +135,14 @@ class Simulation:
         ----------
         config : str
         """
-        self.config = load_save.load_config(name=config, verbose=self.verbose)
+        config = load_save.load_config(name=config, verbose=self.verbose)
+
+        # override any options from plotting.ini
+        plot_config = load_save.load_config(name='plotting', verbose=self.verbose)
+        plot_config['plotting'].update(config['plotting'])
+        config.update(plot_config)
+
+        self.config = config
         self.trans_dens = self.config['transitions']['dens']
         self.setup_mass_grid()
 
