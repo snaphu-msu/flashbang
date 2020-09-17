@@ -486,6 +486,9 @@ def extract_profile(chk, run, model, model_set, params=None, derived_params=None
         add_mass_profile(profile=profile, chk_h5py=chk_h5py)
         chk_h5py.close()
 
+    if 'yl' in derived_params:
+        add_yl_profile(profile)
+
     n_zones = len(profile['zone'])
     profile.coords['zone'] = np.arange(n_zones)  # set coords (mostly for concat later)
 
@@ -493,7 +496,7 @@ def extract_profile(chk, run, model, model_set, params=None, derived_params=None
 
 
 def add_mass_profile(profile, chk_h5py):
-    """Calculate interior/enclosed mass profile, and adds to given table
+    """Calculate enclosed mass profile, and adds to given table
 
     parameters
     ----------
@@ -508,6 +511,21 @@ def add_mass_profile(profile, chk_h5py):
                                         density=np.array(profile['dens']),
                                         chk_h5py=chk_h5py)
     profile['mass'] = ('zone', mass)
+
+
+def add_yl_profile(profile):
+    """Add lepton fraction (Y_l) to profile
+
+    parameters
+    ----------
+    profile : xr.Dataset
+    """
+    if ('ye' not in profile) or ('ynu' not in profile):
+        raise ValueError(f'Need electron- and nu- fraction columns (ye, ynu)'
+                         ' to calculate lepton fraction (yl)')
+
+    yl = profile['ye'] + profile['ynu']
+    profile['yl'] = ('zone', yl)
 
 
 # ===============================================================
