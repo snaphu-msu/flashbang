@@ -364,7 +364,7 @@ class Simulation:
     def plot_profile(self, chk, y_var, x_var='r', y_scale=None, x_scale=None,
                      ax=None, legend=False, trans=False, title=True,
                      ylims=None, xlims=None, figsize=(6, 4), label=None,
-                     linestyle='-', marker='', title_str=None):
+                     linestyle='-', marker='', title_str=None, color=None):
         """Plot given profile variable
 
         parameters
@@ -388,6 +388,7 @@ class Simulation:
         linestyle : str
         marker : str
         title_str : str
+        color : str
         """
         chk = tools.ensure_sequence(chk)
 
@@ -401,7 +402,8 @@ class Simulation:
             profile = self.profiles.sel(chk=i)
             y = profile[y_var]
 
-            ax.plot(profile[x_var], y, ls=linestyle, marker=marker, label=label)
+            ax.plot(profile[x_var], y, ls=linestyle, marker=marker,
+                    label=label, color=color)
             self._plot_trans_line(x_var, y=y, ax=ax, chk=i, trans=trans)
 
         if legend:
