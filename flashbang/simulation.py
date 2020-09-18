@@ -1,4 +1,4 @@
-"""Main flashbang class for the Simulation object.
+"""Main flashbang class
 
 The Simulation object represents a single 1D FLASH model.
 It can load model datafiles, manipulate/extract that data,
@@ -25,16 +25,16 @@ Nomenclature
 -------------------
     Setup arguments
     ---------------
-    (see `Expected model directory structure` above)
+    model_set: name of directory containing the set of models
+        If <model> is directly below $FLASH_MODELS,
+        i.e. there is no <model_set> level, just use model_set=''.
 
-    model_set: Name of directory containing the set of models.
-
-    model: Name of the FLASH model (i.e. the directory name).
+    model: name of the model directory
         Typically corresponds to a particular compiled `flash4` executable.
 
-    run: sub-model label (i.e. the prefix used in filenames, e.g. 'run2' for 'run2.dat').
-        Multiple simulations may have been executed under the
-        same umbrella "model". Use this to distinguish between them.
+    run: sub-model label (the actual prefix used in filenames)
+        This can also be used to distinguish between multiple "runs"
+        executed under the same umbrella "model".
 
 
     Data objects
@@ -43,12 +43,11 @@ Nomenclature
 
     chk: Checkpoint data found in `chk` files.
 
-    profile: Radial profiles as extracted from chk files.
-        Each profile corresponds to a chk file.
+    profile: Radial profiles extracted from chk files.
 
-    log: Data printed to terminal during model, stored in the `<run>.log` file.
+    log: Diagnostics printed during simulation, found in the `<run>.log` file.
 
-    tracers: Trajectories/tracers for given mass shells.
+    tracers: Time-dependent trajectories/tracers for given mass shells.
         Extracted from profiles for a chosen mass grid.
 """
 import os
