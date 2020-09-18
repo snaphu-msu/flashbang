@@ -23,20 +23,21 @@ $FLASH_MODELS
 
 Nomenclature
 -------------------
-    Setup arguments (see `Expected model directory structure` above)
+    Setup arguments
     ---------------
+    (see `Expected model directory structure` above)
+
+    model_set: Name of directory containing the set of models.
 
     model: Name of the FLASH model (i.e. the directory name).
         Typically corresponds to a particular compiled `flash4` executable.
 
-    run: sub-model label (i.e. the prefix used in filenames,
-        e.g. use 'run2' for 'run2.dat').
+    run: sub-model label (i.e. the prefix used in filenames, e.g. 'run2' for 'run2.dat').
         Multiple simulations may have been executed under the
         same umbrella "model". Use this to distinguish between them.
 
-    model_set: Name of directory containing the set of models.
 
-    Data structures
+    Data objects
     ---------------
     dat: Integrated time-series quantities found in the `<run>.dat` file.
 
@@ -48,7 +49,7 @@ Nomenclature
     log: Data printed to terminal during model, stored in the `<run>.log` file.
 
     tracers: Trajectories/tracers for given mass shells.
-        Extracted using profile mass coordinates, for a chosen mass grid.
+        Extracted from profiles for a chosen mass grid.
 """
 import os
 import time
@@ -243,11 +244,12 @@ class Simulation:
     def save_chk_table(self):
         """Saves chk_table DataFrame to file
         """
-        load_save.save_chk_table_cache(self.chk_table,
-                                       run=self.run,
-                                       model=self.model,
-                                       model_set=self.model_set,
-                                       verbose=self.verbose)
+        load_save.save_cache('chk_table',
+                             data=self.chk_table,
+                             run=self.run,
+                             model=self.model,
+                             model_set=self.model_set,
+                             verbose=self.verbose)
 
     # =======================================================
     #                 Analysis & Postprocessing
