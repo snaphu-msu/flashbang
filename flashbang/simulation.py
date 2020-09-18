@@ -364,7 +364,8 @@ class Simulation:
     def plot_profile(self, chk, y_var, x_var='r', y_scale=None, x_scale=None,
                      ax=None, legend=False, trans=False, title=True,
                      ylims=None, xlims=None, figsize=(6, 4), label=None,
-                     linestyle='-', marker='', title_str=None, color=None):
+                     linestyle='-', marker='', title_str=None, color=None,
+                     data_only=False):
         """Plot given profile variable
 
         parameters
@@ -389,14 +390,11 @@ class Simulation:
         marker : str
         title_str : str
         color : str
+        data_only : bool
+            whether to skip all titles/labels/scales and only plot data
         """
         chk = tools.ensure_sequence(chk)
-
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
-        self._set_ax_title(ax, chk=chk[0], title=title, title_str=title_str)
-        self._set_ax_scales(ax, y_var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
-        self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
-        self._set_ax_labels(ax, x_var=x_var, y_var=y_var)
 
         for i in chk:
             profile = self.profiles.sel(chk=i)
@@ -406,8 +404,14 @@ class Simulation:
                     label=label, color=color)
             self._plot_trans_line(x_var, y=y, ax=ax, chk=i, trans=trans)
 
-        if legend:
-            ax.legend()
+        if not data_only:
+            self._set_ax_title(ax, chk=chk[0], title=title, title_str=title_str)
+            self._set_ax_scales(ax, y_var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
+            self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
+            self._set_ax_labels(ax, x_var=x_var, y_var=y_var)
+
+            if legend:
+                ax.legend()
 
         return fig
 
