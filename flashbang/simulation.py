@@ -586,7 +586,7 @@ class Simulation:
     def plot_dat(self, y_var, y_scale='log', display=True, ax=None, figsize=(8, 6),
                  linestyle='-', marker='', label=None, legend=False,
                  zero_time=True, title_str=None, xlims=None, ylims=None,
-                 data_only=False):
+                 color=None, data_only=False):
         """Plot quantity from dat file
 
         parameters
@@ -604,6 +604,7 @@ class Simulation:
         title_str : str
         xlims : [min, max]
         ylims : [min, max]
+        color : str
         data_only : bool
         """
         t_offset = 0
@@ -611,8 +612,10 @@ class Simulation:
             t_offset = self.bounce_time
 
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
+
         ax.plot(self.dat['time'] - t_offset, self.dat[y_var],
-                linestyle=linestyle, marker=marker, label=label)
+                linestyle=linestyle, marker=marker,
+                color=color, label=label)
 
         if not data_only:
             ax.set_yscale(y_scale)
