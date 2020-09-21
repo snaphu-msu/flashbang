@@ -202,8 +202,12 @@ def extract_dat(run, model, model_set, cols_dict, verbose=True):
         idxs += [idx_1 - 1]  # change to zero-indexed
         keys += [key]
 
-    return pd.read_csv(filepath, usecols=idxs, names=keys, skiprows=1, header=None,
-                       delim_whitespace=True, low_memory=False)
+    dat = pd.read_csv(filepath, usecols=idxs, names=keys, skiprows=1, header=None,
+                      delim_whitespace=True, low_memory=False)
+
+    dat.sort_values('time', inplace=True)  # ensure monotonic
+
+    return dat
 
 
 def print_dat_colnames(run, model, model_set):
