@@ -585,7 +585,8 @@ class Simulation:
 
     def plot_dat(self, y_var, y_scale='log', display=True, ax=None, figsize=(8, 6),
                  linestyle='-', marker='', label=None, legend=False,
-                 zero_time=True, title_str=None, xlims=None, ylims=None):
+                 zero_time=True, title_str=None, xlims=None, ylims=None,
+                 data_only=False):
         """Plot quantity from dat file
 
         parameters
@@ -603,6 +604,7 @@ class Simulation:
         title_str : str
         xlims : [min, max]
         ylims : [min, max]
+        data_only : bool
         """
         t_offset = 0
         if zero_time:
@@ -612,13 +614,15 @@ class Simulation:
         ax.plot(self.dat['time'] - t_offset, self.dat[y_var],
                 linestyle=linestyle, marker=marker, label=label)
 
-        ax.set_yscale(y_scale)
-        self._set_ax_title(ax, title=True, title_str=title_str)
-        self._set_ax_labels(ax, x_var='$t$ (s)', y_var=y_var)
-        self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
+        if not data_only:
+            ax.set_yscale(y_scale)
+            self._set_ax_title(ax, title=True, title_str=title_str)
+            self._set_ax_labels(ax, x_var='$t$ (s)', y_var=y_var)
+            self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
 
-        if legend:
-            ax.legend()
+            if legend:
+                ax.legend()
+
         if display:
             plt.show(block=False)
 
