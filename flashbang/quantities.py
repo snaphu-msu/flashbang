@@ -81,19 +81,17 @@ def get_density_zone(dens_array, dens):
     return zone_idx
 
 
-def get_mass_interior(radius, density, chk_h5py):
-    """Return interior (i.e. enclosed) mass for given radius/density profile
+def get_mass_enclosed(radius, density, chk_h5py):
+    """Calculate profile of enclosed mass (Msun) over given radius/density
 
-    Note
-    ----
-    interior mass at first radial point will be zero
+    Returns: np.ndarray
 
     parameters
     ----------
     radius : np.ndarray
-        1D array of radius values
+        1D array of radius values (cell-centred)
     density : np.ndarray
-        1D array of density values
+        1D array of density values (cell-averaged)
     chk_h5py : h5py.File
     """
     n_points = len(radius)
@@ -112,20 +110,20 @@ def get_mass_interior(radius, density, chk_h5py):
 
 
 def get_mass_halves(radius, density, cell_edges):
-    """Return mass contained in left and right halves of each cell
+    """Calculate mass contained in left and right halves of each cell
+
+    Returns: mass_left, mass_right
 
     Note
     -----
     Assumes radius and density have same length units
 
-    Returns: mass_left, mass_right
-
     parameters
     ----------
     radius : np.ndarray
-        1D array of radii of cell centres
+        1D array of radius values (cell-centred)
     density : np.ndarray
-        1D array of cell densities
+        1D array of density values (cell-averaged)
     cell_edges : np.ndarray
         1D array of raddii of cell edges
     """
@@ -147,7 +145,9 @@ def get_mass_halves(radius, density, cell_edges):
 
 
 def get_cell_edges(chk_h5py):
-    """Return radii of cell edges (will be length n_cells + 1)
+    """Get radii of cell edges (will be length n_cells + 1)
+
+    Returns: np.ndarray
 
     parameters
     ----------

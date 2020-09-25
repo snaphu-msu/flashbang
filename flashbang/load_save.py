@@ -500,7 +500,7 @@ def extract_profile(chk, run, model, model_set, params=None, derived_params=None
 
 
 def add_mass_profile(profile, chk_h5py):
-    """Calculate enclosed mass profile, and adds to given table
+    """Calculate enclosed mass profile and add to profile table
 
     parameters
     ----------
@@ -511,7 +511,7 @@ def add_mass_profile(profile, chk_h5py):
     if ('r' not in profile) or ('dens' not in profile):
         raise ValueError(f'Need radius and density columns (r, dens) to calculate mass')
 
-    mass = quantities.get_mass_interior(radius=np.array(profile['r']),
+    mass = quantities.get_mass_enclosed(radius=np.array(profile['r']),
                                         density=np.array(profile['dens']),
                                         chk_h5py=chk_h5py)
     profile['mass'] = ('zone', mass)
