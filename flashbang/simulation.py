@@ -459,8 +459,8 @@ class Simulation:
         return fig
 
     def plot_slider(self, y_var, x_var='r', y_scale=None, x_scale=None, trans=False,
-                    figsize=(8, 6), title=True, xlims=None, ylims=None, legend=True,
-                    linestyle='-', marker=''):
+                    figsize=(8, 6), title=True, xlims=None, ylims=None, legend=False,
+                    linestyle='-', marker='', y_factor=1.0):
         """Plot interactive slider of profile for given variable
 
         parameters
@@ -478,6 +478,7 @@ class Simulation:
         legend : bool
         linestyle : str
         marker : str
+        y_factor : float
         """
         fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
         chk_max, chk_min, chk_init = self._get_slider_chk()
@@ -491,12 +492,12 @@ class Simulation:
                           ax=profile_ax, legend=legend,
                           trans=trans, title=title,
                           figsize=figsize, linestyle=linestyle,
-                          marker=marker)
+                          marker=marker, y_factor=y_factor)
 
         def update(chk):
             idx = int(chk)
             profile = self.profiles.sel(chk=idx)
-            y_profile = profile[y_var]
+            y_profile = profile[y_var] / y_factor
 
             profile_ax.lines[0].set_ydata(y_profile)
             profile_ax.lines[0].set_xdata(profile[x_var])
