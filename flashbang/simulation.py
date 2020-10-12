@@ -458,9 +458,10 @@ class Simulation:
 
         return fig
 
-    def plot_slider(self, y_var, x_var='r', y_scale=None, x_scale=None, trans=False,
-                    figsize=(8, 6), title=True, xlims=None, ylims=None, legend=False,
-                    linestyle='-', marker='', y_factor=1.0):
+    def plot_profile_slider(self, y_var, x_var='r', y_scale=None, x_scale=None,
+                            xlims=None, ylims=None, trans=False, figsize=(8, 6),
+                            title=True,  legend=False, linestyle='-',
+                            marker='', y_factor=1.0):
         """Plot interactive slider of profile for given variable
 
         parameters
