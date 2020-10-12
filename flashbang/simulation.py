@@ -405,13 +405,10 @@ class Simulation:
             self._plot_trans_line(x_var, y=y, ax=ax, chk=i, trans=trans)
 
         if not data_only:
-            self._set_ax_title(ax, chk=chk[0], title=title, title_str=title_str)
-            self._set_ax_scales(ax, y_var, x_var=x_var, y_scale=y_scale, x_scale=x_scale)
-            self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
-            self._set_ax_labels(ax, x_var=x_var, y_var=y_var)
-
-            if legend:
-                ax.legend()
+            self._set_ax_all(ax, x_var=x_var, y_var=y_var, xlims=xlims, ylims=ylims,
+                             x_scale=x_scale, y_scale=y_scale,
+                             chk=chk[0], title=title, title_str=title_str,
+                             legend=legend)
 
         return fig
 
