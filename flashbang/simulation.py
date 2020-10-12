@@ -578,7 +578,7 @@ class Simulation:
         slider.on_changed(update)
         return fig, slider
 
-    def plot_dat(self, y_var, x_scale=None, y_scale=None, display=True, ax=None,
+    def plot_dat(self, y_var, x_scale=None, y_scale=None, ax=None,
                  figsize=(8, 6),
                  linestyle='-', marker='', label=None, legend=False,
                  zero_time=True, title_str=None, xlims=None, ylims=None,
@@ -591,7 +591,6 @@ class Simulation:
         x_scale : 'log' or 'linear'
         y_scale : 'log' or 'linear'
         figsize : [width, height]
-        display : bool
         ax : Axes
         linestyle : str
         marker : str
@@ -620,12 +619,10 @@ class Simulation:
                              x_scale=x_scale, y_scale=y_scale,
                              title=True, title_str=title_str,
                              legend=legend)
-        if display:
-            plt.show(block=False)
 
         return fig, ax
 
-    def plot_tracers(self, y_var, y_scale=None, display=True, ax=None, figsize=(8, 6),
+    def plot_tracers(self, y_var, y_scale=None, ax=None, figsize=(8, 6),
                      linestyle='-', marker='', legend=False):
         """Plot quantity from dat file
 
@@ -634,7 +631,6 @@ class Simulation:
         y_var : str
         y_scale : {'log', 'linear'}
         figsize : [width, height]
-        display : bool
         ax : Axes
         linestyle : str
         marker : str
@@ -649,8 +645,6 @@ class Simulation:
                     linestyle=linestyle, marker=marker, label=f'{mass.values:.3f}')
 
         self._set_ax_legend(ax, legend=legend)
-        if display:
-            plt.show(block=False)
 
     # =======================================================
     #                      Plotting Tools
