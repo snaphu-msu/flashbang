@@ -659,8 +659,8 @@ def get_timesteps(run, model, model_set, params=('time', 'nstep'),
     if timesteps is None:
         chk_list = find_chk(run=run, model=model, model_set=model_set)
 
-        timesteps = extract_timesteps(chk_list, run=run, model=model,
-                                      model_set=model_set, params=params)
+        timesteps = extract_timesteps(chk_list, run=run, model=model, model_set=model_set,
+                                      params=params, verbose=verbose)
 
         if save:
             save_cache('timesteps', data=timesteps, run=run, model=model,
@@ -669,7 +669,8 @@ def get_timesteps(run, model, model_set, params=('time', 'nstep'),
     return timesteps
 
 
-def extract_timesteps(chk_list, run, model, model_set, params=('time', 'nstep')):
+def extract_timesteps(chk_list, run, model, model_set, params=('time', 'nstep'),
+                      verbose=True):
     """Extract timestep quantities from chk files
 
     Returns: pd.DataFrame()
@@ -681,6 +682,7 @@ def extract_timesteps(chk_list, run, model, model_set, params=('time', 'nstep'))
     model : str
     model_set : str
     params : [str]
+    verbose : bool
     """
     t0 = time.time()
     arrays = dict.fromkeys(params)
@@ -691,10 +693,13 @@ def extract_timesteps(chk_list, run, model, model_set, params=('time', 'nstep'))
         arrays[par] = np.zeros_like(chk_list, dtype=par_type)
 
     for i, chk in enumerate(chk_list[1:]):
+        printv(f'\rLoading timestep, chk: {chk}/{chk_list[-1]}', end='', verbose=verbose)
         chk_raw = load_chk(chk, run=run, model=model, model_set=model_set)
+
         for par in params:
             arrays[par][i+1] = chk_raw.parameters[par]
 
+    printv('', verbose=verbose)
     timesteps = pd.DataFrame()
     timesteps['chk'] = chk_list
 
