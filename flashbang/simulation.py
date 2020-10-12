@@ -515,7 +515,7 @@ class Simulation:
         slider.on_changed(update)
         return fig, slider
 
-    def plot_slider_composition(self, y_var_list=None, x_var='r', y_scale='linear',
+    def plot_composition_slider(self, y_var_list=None, x_var='r', y_scale='linear',
                                 x_scale=None, trans=True, figsize=(8, 6), title=True,
                                 xlims=(1e5, 1.5e9), ylims=(1e-7, 1), legend=True,
                                 show_ye=True, loc='lower left'):
