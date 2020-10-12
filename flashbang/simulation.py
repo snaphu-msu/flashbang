@@ -365,7 +365,7 @@ class Simulation:
                      ax=None, legend=False, trans=False, title=True,
                      ylims=None, xlims=None, figsize=(6, 4), label=None,
                      linestyle='-', marker='', title_str=None, color=None,
-                     data_only=False):
+                     data_only=False, y_factor=1.0):
         """Plot given profile variable
 
         parameters
@@ -392,6 +392,7 @@ class Simulation:
         color : str
         data_only : bool
             whether to skip all titles/labels/scales and only plot data
+        y_factor : float
         """
         chk = tools.ensure_sequence(chk)
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
@@ -400,7 +401,7 @@ class Simulation:
             profile = self.profiles.sel(chk=i)
             y = profile[y_var]
 
-            ax.plot(profile[x_var], y, ls=linestyle, marker=marker,
+            ax.plot(profile[x_var], y/y_factor, ls=linestyle, marker=marker,
                     label=label, color=color)
             self._plot_trans_line(x_var, y=y, ax=ax, chk=i, trans=trans)
 
@@ -833,7 +834,7 @@ class Simulation:
         if ax is None:
             fig, ax = plt.subplots(figsize=figsize)
 
-        return fig
+        return fig, ax
 
     def _setup_slider_fig(self, figsize):
         """Setup fig, ax for slider
