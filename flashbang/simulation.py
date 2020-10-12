@@ -334,8 +334,8 @@ class Simulation:
             variable(s) to plot on y-axis (from Simulation.profile)
         x_var : str
             variable to plot on x-axis
-        y_scale : {'log', 'linear'}
-        x_scale : {'log', 'linear'}
+        y_scale : 'log' or 'linear'
+        x_scale : 'log' or 'linear'
         legend : bool
         max_cols : bool
         sub_figsize : tuple
@@ -376,8 +376,8 @@ class Simulation:
             variable to plot on y-axis (from Simulation.profile)
         x_var : str
             variable to plot on x-axis
-        y_scale : {'log', 'linear'}
-        x_scale : {'log', 'linear'}
+        y_scale : 'log' or 'linear'
+        x_scale : 'log' or 'linear'
         ax : Axes
         legend : bool
         trans : bool
@@ -406,9 +406,8 @@ class Simulation:
 
         if not data_only:
             self._set_ax_all(ax, x_var=x_var, y_var=y_var, xlims=xlims, ylims=ylims,
-                             x_scale=x_scale, y_scale=y_scale,
-                             chk=chk[0], title=title, title_str=title_str,
-                             legend=legend)
+                             x_scale=x_scale, y_scale=y_scale, chk=chk[0], title=title,
+                             title_str=title_str, legend=legend)
 
         return fig
 
@@ -425,8 +424,8 @@ class Simulation:
             variable to plot on x-axis
         y_var_list : [str]
             list of isotopes to plot (see self.config['profiles']['params'])
-        y_scale : {'log', 'linear'}
-        x_scale : {'log', 'linear'}
+        y_scale : 'log' or 'linear'
+        x_scale : 'log' or 'linear'
         ax : Axes
         legend : bool
         trans : bool
@@ -452,11 +451,9 @@ class Simulation:
         self._plot_trans_line(x_var, y=ylims, ax=ax, chk=chk, trans=trans)
 
         if not data_only:
-            self._set_ax_all(ax, x_var=x_var, y_var='$X$',
-                             xlims=xlims, ylims=ylims,
+            self._set_ax_all(ax, x_var=x_var, y_var='$X$', xlims=xlims, ylims=ylims,
                              x_scale=x_scale, y_scale=y_scale,
-                             chk=chk, title=title,
-                             legend=legend, loc=loc)
+                             chk=chk, title=title, legend=legend, loc=loc)
 
         return fig
 
@@ -469,8 +466,8 @@ class Simulation:
         ----------
         y_var : str
         x_var : str
-        y_scale : {'log', 'linear'}
-        x_scale : {'log', 'linear'}
+        y_scale : 'log' or 'linear'
+        x_scale : 'log' or 'linear'
         trans : bool
             plot helmholtz transitions
         figsize : [width, height]
@@ -525,8 +522,8 @@ class Simulation:
         ----------
         y_var_list : [str]
         x_var : str
-        y_scale : {'log', 'linear'}
-        x_scale : {'log', 'linear'}
+        y_scale : 'log' or 'linear'
+        x_scale : 'log' or 'linear'
         trans : bool
             plot helmholtz transitions
         figsize : [width, height]
@@ -616,37 +613,40 @@ class Simulation:
                 color=color, label=label)
 
         if not data_only:
-            self._set_ax_all(ax, x_var='time', y_var=y_var,
-                             xlims=xlims, ylims=ylims,
+            self._set_ax_all(ax, x_var='time', y_var=y_var, xlims=xlims, ylims=ylims,
                              x_scale=x_scale, y_scale=y_scale,
-                             title=True, title_str=title_str,
-                             legend=legend)
+                             title=True, title_str=title_str, legend=legend)
 
         return fig, ax
 
-    def plot_tracers(self, y_var, y_scale=None, ax=None, figsize=(8, 6),
-                     linestyle='-', marker='', legend=False):
+    def plot_tracers(self, y_var, x_scale=None, y_scale=None, ax=None,
+                     xlims=None, ylims=None, figsize=(8, 6),
+                     linestyle='-', marker='', legend=False, data_only=False):
         """Plot quantity from dat file
 
         parameters
         ----------
         y_var : str
-        y_scale : {'log', 'linear'}
-        figsize : [width, height]
+        x_scale : 'log' or 'linear'
+        y_scale : 'log' or 'linear'
+        xlims : [min, max]
+        ylims : [min, max]
         ax : Axes
+        figsize : [width, height]
         linestyle : str
         marker : str
         legend : bool
+        data_only : bool
         """
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
-        self._set_ax_scales(ax, y_var, y_scale=y_scale, x_var=None, x_scale='linear')
-        self._set_ax_labels(ax, x_var='chk', y_var=y_var)
 
         for mass in self.tracers['mass']:
             ax.plot(self.tracers['chk'], self.tracers.sel(mass=mass)[y_var],
                     linestyle=linestyle, marker=marker, label=f'{mass.values:.3f}')
 
-        self._set_ax_legend(ax, legend=legend)
+        if not data_only:
+            self._set_ax_all(ax, x_var='chk', y_var=y_var, xlims=xlims, ylims=ylims,
+                             x_scale=x_scale, y_scale=y_scale, title=False, legend=legend)
 
     # =======================================================
     #                      Plotting Tools
@@ -724,8 +724,8 @@ class Simulation:
         ax : Axes
         x_var : str
         y_var : str
-        y_scale : {'log', 'linear'}
-        x_scale : {'log', 'linear'}
+        y_scale : 'log' or 'linear'
+        x_scale : 'log' or 'linear'
         chk : int
         title : bool
         title_str : str
@@ -749,8 +749,8 @@ class Simulation:
         ax : Axes
         y_var : str
         x_var : str
-        y_scale : {'log', 'linear'}
-        x_scale : {'log', 'linear'}
+        y_scale : 'log' or 'linear'
+        x_scale : 'log' or 'linear'
         """
         if x_scale is None:
             x_scale = self.config['plotting']['ax_scales'].get(x_var, 'log')
