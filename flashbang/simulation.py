@@ -723,6 +723,34 @@ class Simulation:
                 x, y = self._get_trans_xy(chk=chk, key=key, x_var=x_var, y=y)
                 ax.plot(x, y, ls='--', color='k', linewidth=linewidth)
 
+    def _set_ax_all(self, ax, x_var, y_var,
+                    x_scale, y_scale, xlims, ylims,
+                    title, legend, loc=None,
+                    chk=None, title_str=None):
+        """Set all axis properties
+
+        parameters
+        ----------
+        ax : Axes
+        x_var : str
+        y_var : str
+        y_scale : {'log', 'linear'}
+        x_scale : {'log', 'linear'}
+        chk : int
+        title : bool
+        title_str : str
+        xlims : [min, max]
+        ylims : [min, max]
+        legend : bool
+        loc : int or str
+        """
+        self._set_ax_title(ax, chk=chk, title=title, title_str=title_str)
+        self._set_ax_scales(ax, x_var=x_var, y_var=y_var,
+                            x_scale=x_scale, y_scale=y_scale)
+        self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
+        self._set_ax_labels(ax, x_var=x_var, y_var=y_var)
+        self._set_ax_legend(ax, legend=legend, loc=loc)
+
     def _set_ax_scales(self, ax, y_var, x_var, y_scale, x_scale):
         """Set axis scales (linear, log)
 
