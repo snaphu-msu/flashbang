@@ -415,7 +415,7 @@ class Simulation:
     def plot_composition(self, chk, x_var='r', y_var_list=None, y_scale='linear',
                          x_scale=None, ax=None, legend=True, trans=True, show_ye=True,
                          ylims=(1e-7, 1), xlims=(1e5, 1.5e9), figsize=(8, 6),
-                         title=True, legend_loc='lower left'):
+                         title=True, legend_loc='lower left', data_only=False):
         """Plot isotope composition profile
 
         parameters
@@ -436,6 +436,7 @@ class Simulation:
         figsize : [width, height]
         title : bool
         legend_loc : str or int
+        data_only : bool
         """
         if y_var_list is None:
             y_var_list = self.config['plotting']['isotopes']
@@ -450,11 +451,12 @@ class Simulation:
 
         self._plot_trans_line(x_var, y=ylims, ax=ax, chk=chk, trans=trans)
 
-        self._set_ax_all(ax, x_var=x_var, y_var='$X$',
-                         xlims=xlims, ylims=ylims,
-                         x_scale=x_scale, y_scale=y_scale,
-                         chk=chk, title=title,
-                         legend=legend, loc=legend_loc)
+        if not data_only:
+            self._set_ax_all(ax, x_var=x_var, y_var='$X$',
+                             xlims=xlims, ylims=ylims,
+                             x_scale=x_scale, y_scale=y_scale,
+                             chk=chk, title=title,
+                             legend=legend, loc=legend_loc)
 
         return fig
 
