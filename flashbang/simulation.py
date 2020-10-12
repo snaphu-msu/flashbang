@@ -363,7 +363,7 @@ class Simulation:
 
     def plot_profile(self, chk, y_var, x_var='r', y_scale=None, x_scale=None,
                      ax=None, legend=False, trans=False, title=True,
-                     ylims=None, xlims=None, figsize=(6, 4), label=None,
+                     ylims=None, xlims=None, label=None,
                      linestyle='-', marker='', title_str=None, color=None,
                      data_only=False, y_factor=1.0):
         """Plot given profile variable
@@ -384,7 +384,6 @@ class Simulation:
         title : bool
         ylims : [min, max]
         xlims : [min, max]
-        figsize : [width, height]
         label : str
         linestyle : str
         marker : str
@@ -395,7 +394,7 @@ class Simulation:
         y_factor : float
         """
         chk = tools.ensure_sequence(chk)
-        fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
+        fig, ax = self._setup_fig_ax(ax=ax)
 
         for i in chk:
             profile = self.profiles.sel(chk=i)
@@ -414,7 +413,7 @@ class Simulation:
 
     def plot_composition(self, chk, x_var='r', y_var_list=None, y_scale='linear',
                          x_scale=None, ax=None, legend=True, trans=True, show_ye=True,
-                         ylims=(1e-7, 1), xlims=(1e5, 1.5e9), figsize=(8, 6),
+                         ylims=(1e-7, 1), xlims=(1e5, 1.5e9),
                          title=True, loc=3, data_only=False):
         """Plot isotope composition profile
 
@@ -433,7 +432,6 @@ class Simulation:
         show_ye : bool
         ylims : [min, max]
         xlims : [min, max]
-        figsize : [width, height]
         title : bool
         loc : str or int
         data_only : bool
@@ -441,7 +439,7 @@ class Simulation:
         if y_var_list is None:
             y_var_list = self.config['plotting']['isotopes']
 
-        fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
+        fig, ax = self._setup_fig_ax(ax=ax)
         profile = self.profiles.sel(chk=chk)
 
         for key in y_var_list:
@@ -459,7 +457,7 @@ class Simulation:
         return fig
 
     def plot_profile_slider(self, y_var, x_var='r', y_scale=None, x_scale=None,
-                            xlims=None, ylims=None, trans=False, figsize=(8, 6),
+                            xlims=None, ylims=None, trans=False,
                             title=True,  legend=False, linestyle='-',
                             marker='', y_factor=1.0):
         """Plot interactive slider of profile for given variable
@@ -472,7 +470,6 @@ class Simulation:
         x_scale : 'log' or 'linear'
         trans : bool
             plot helmholtz transitions
-        figsize : [width, height]
         title : bool
         xlims : [min, max]
         ylims : [min, max]
@@ -481,7 +478,7 @@ class Simulation:
         marker : str
         y_factor : float
         """
-        fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
+        fig, profile_ax, slider_ax = self._setup_slider_fig()
         chk_max, chk_min, chk_init = self._get_slider_chk()
 
         slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_init, valstep=1)
@@ -516,7 +513,7 @@ class Simulation:
         return fig, slider
 
     def plot_composition_slider(self, y_var_list=None, x_var='r', y_scale='linear',
-                                x_scale=None, trans=True, figsize=(8, 6), title=True,
+                                x_scale=None, trans=True, title=True,
                                 xlims=(1e5, 1.5e9), ylims=(1e-7, 1), legend=True,
                                 show_ye=True, loc='lower left'):
         """Plot interactive slider of isotope composition
@@ -529,7 +526,6 @@ class Simulation:
         x_scale : 'log' or 'linear'
         trans : bool
             plot helmholtz transitions
-        figsize : [width, height]
         title : bool
         xlims : [min, max]
         ylims : [min, max]
@@ -539,7 +535,7 @@ class Simulation:
         """
         # TODO:
         #   - create isotope palette
-        fig, profile_ax, slider_ax = self._setup_slider_fig(figsize=figsize)
+        fig, profile_ax, slider_ax = self._setup_slider_fig()
         chk_max, chk_min, chk_init = self._get_slider_chk()
 
         if y_var_list is None:
@@ -581,7 +577,6 @@ class Simulation:
         return fig, slider
 
     def plot_dat(self, y_var, x_scale=None, y_scale=None, ax=None,
-                 figsize=(8, 6),
                  linestyle='-', marker='', label=None, legend=False,
                  zero_time=True, title_str=None, xlims=None, ylims=None,
                  color=None, data_only=False):
@@ -592,7 +587,6 @@ class Simulation:
         y_var : str
         x_scale : 'log' or 'linear'
         y_scale : 'log' or 'linear'
-        figsize : [width, height]
         ax : Axes
         linestyle : str
         marker : str
@@ -609,7 +603,7 @@ class Simulation:
         if zero_time:
             t_offset = self.bounce_time
 
-        fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
+        fig, ax = self._setup_fig_ax(ax=ax)
 
         ax.plot(self.dat['time'] - t_offset, self.dat[y_var],
                 linestyle=linestyle, marker=marker,
@@ -623,8 +617,8 @@ class Simulation:
         return fig
 
     def plot_tracers(self, y_var, x_scale=None, y_scale=None, ax=None,
-                     xlims=None, ylims=None, figsize=(8, 6),
-                     linestyle='-', marker='', legend=False, data_only=False):
+                     xlims=None, ylims=None, linestyle='-', marker='',
+                     legend=False, data_only=False):
         """Plot quantity from dat file
 
         parameters
@@ -635,13 +629,12 @@ class Simulation:
         xlims : [min, max]
         ylims : [min, max]
         ax : Axes
-        figsize : [width, height]
         linestyle : str
         marker : str
         legend : bool
         data_only : bool
         """
-        fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
+        fig, ax = self._setup_fig_ax(ax=ax)
 
         for mass in self.tracers['mass']:
             ax.plot(self.tracers['chk'], self.tracers.sel(mass=mass)[y_var],
@@ -822,31 +815,26 @@ class Simulation:
         if legend:
             ax.legend(loc=loc)
 
-    def _setup_fig_ax(self, ax, figsize):
+    def _setup_fig_ax(self, ax):
         """Setup fig, ax, checking if ax already provided
 
         parameters
         ----------
         ax : Axes
-        figsize : [width, height]
         """
         c = self.config['plotting']  # TODO: default settings from config
         fig = None
 
         if ax is None:
-            fig, ax = plt.subplots(figsize=figsize)
+            fig, ax = plt.subplots()
 
         return fig, ax
 
-    def _setup_slider_fig(self, figsize):
+    def _setup_slider_fig(self):
         """Setup fig, ax for slider
-
-        parameters
-        ----------
-        figsize : [width, height]
         """
         c = self.config['plotting']  # TODO: default settings from config
-        fig = plt.figure(figsize=figsize)
+        fig = plt.figure(figsize=(8, 6))
         profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
         slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
 
