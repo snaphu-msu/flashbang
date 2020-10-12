@@ -578,7 +578,8 @@ class Simulation:
         slider.on_changed(update)
         return fig, slider
 
-    def plot_dat(self, y_var, y_scale='log', display=True, ax=None, figsize=(8, 6),
+    def plot_dat(self, y_var, x_scale=None, y_scale=None, display=True, ax=None,
+                 figsize=(8, 6),
                  linestyle='-', marker='', label=None, legend=False,
                  zero_time=True, title_str=None, xlims=None, ylims=None,
                  color=None, data_only=False):
@@ -587,7 +588,8 @@ class Simulation:
         parameters
         ----------
         y_var : str
-        y_scale : {'log', 'linear'}
+        x_scale : 'log' or 'linear'
+        y_scale : 'log' or 'linear'
         figsize : [width, height]
         display : bool
         ax : Axes
@@ -613,14 +615,11 @@ class Simulation:
                 color=color, label=label)
 
         if not data_only:
-            ax.set_yscale(y_scale)
-            self._set_ax_title(ax, title=True, title_str=title_str)
-            self._set_ax_labels(ax, x_var='$t$ (s)', y_var=y_var)
-            self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
-
-            if legend:
-                ax.legend()
-
+            self._set_ax_all(ax, x_var='time', y_var=y_var,
+                             xlims=xlims, ylims=ylims,
+                             x_scale=x_scale, y_scale=y_scale,
+                             title=True, title_str=title_str,
+                             legend=legend)
         if display:
             plt.show(block=False)
 
