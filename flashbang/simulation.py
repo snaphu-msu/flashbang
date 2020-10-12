@@ -489,7 +489,7 @@ class Simulation:
                           ylims=ylims, xlims=xlims,
                           ax=profile_ax, legend=legend,
                           trans=trans, title=title,
-                          figsize=figsize, linestyle=linestyle,
+                          linestyle=linestyle,
                           marker=marker, y_factor=y_factor)
 
         def update(chk):
@@ -749,10 +749,16 @@ class Simulation:
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
         """
+        def get_scale(var):
+            for scale in ['log', 'linear']:
+                if var in self.config['plotting']['ax_scales'][scale]:
+                    return scale
+            return 'log'
+
         if x_scale is None:
-            x_scale = self.config['plotting']['ax_scales'].get(x_var, 'log')
+            x_scale = get_scale(x_var)
         if y_scale is None:
-            y_scale = self.config['plotting']['ax_scales'].get(y_var, 'log')
+            y_scale = get_scale(y_var)
 
         ax.set_xscale(x_scale)
         ax.set_yscale(y_scale)
