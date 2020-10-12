@@ -441,13 +441,8 @@ class Simulation:
             y_var_list = self.config['plotting']['isotopes']
 
         fig, ax = self._setup_fig_ax(ax=ax, figsize=figsize)
-        self._set_ax_scales(ax, y_var_list[0], x_var=x_var,
-                            y_scale=y_scale, x_scale=x_scale)
-        self._set_ax_title(ax, chk=chk, title=title)
-        self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
-        self._set_ax_labels(ax, x_var=x_var, y_var='$X$')
-
         profile = self.profiles.sel(chk=chk)
+
         for key in y_var_list:
             ax.plot(profile[x_var], profile[key], label=f'{key}')
         if show_ye:
@@ -455,8 +450,11 @@ class Simulation:
 
         self._plot_trans_line(x_var, y=ylims, ax=ax, chk=chk, trans=trans)
 
-        if legend:
-            ax.legend(loc=legend_loc)
+        self._set_ax_all(ax, x_var=x_var, y_var='$X$',
+                         xlims=xlims, ylims=ylims,
+                         x_scale=x_scale, y_scale=y_scale,
+                         chk=chk, title=title,
+                         legend=legend, loc=legend_loc)
 
         return fig
 
