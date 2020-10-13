@@ -15,7 +15,7 @@ $FLASH_MODELS
 |   │   │   <run>.log
 |   │   │   ...
 |   │   │
-|   │   └───<output_dir>
+|   │   └───output
 |   │       │   <run>_hdf5_chk_0000
 |   │       │   <run>_hdf5_chk_0001
 |   │       │   ...
@@ -69,7 +69,7 @@ from . import quantities
 # noinspection PyTypeChecker
 class Simulation:
     def __init__(self, run, model, model_set, config='default',
-                 output_dir='output', verbose=True, load_all=True,
+                 verbose=True, load_all=True,
                  reload=False, save=True, load_tracers=False):
         """Object representing a 1D flash simulation
 
@@ -83,8 +83,6 @@ class Simulation:
             Higher-level label of model collection
         config : str
             Base name of config file to use, e.g. 'default' for 'config/default.ini'
-        output_dir : str
-            Name of subdirectory containing model output files
         load_all : bool
             Immediately load all model data (chk profiles, dat)
         load_tracers : bool
@@ -101,9 +99,7 @@ class Simulation:
         self.run = run
         self.model = model
         self.model_set = model_set
-
         self.model_path = paths.model_path(model, model_set=model_set)
-        self.output_path = os.path.join(self.model_path, output_dir)
 
         self.config = None               # model-specific configuration; see load_config()
         self.dat = None                  # time-integrated data from .dat; see load_dat()
