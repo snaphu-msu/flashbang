@@ -28,8 +28,8 @@ import h5py
 
 # flashbang
 from . import paths
-from . import quantities
-from . import extract_tracers
+from .quantities import get_mass_enclosed
+from .extract_tracers import extract_multi_tracers
 from .tools import get_missing_elements, printv
 
 
@@ -503,9 +503,9 @@ def add_mass_profile(profile, chk_h5py):
     if ('r' not in profile) or ('dens' not in profile):
         raise ValueError(f'Need radius and density columns (r, dens) to calculate mass')
 
-    mass = quantities.get_mass_enclosed(radius=np.array(profile['r']),
-                                        density=np.array(profile['dens']),
-                                        chk_h5py=chk_h5py)
+    mass = get_mass_enclosed(radius=np.array(profile['r']),
+                             density=np.array(profile['dens']),
+                             chk_h5py=chk_h5py)
     profile['mass'] = ('zone', mass)
 
 
@@ -571,7 +571,7 @@ def load_chk(chk, run, model, model_set, use_h5py=False):
         raise FileNotFoundError(f'checkpoint {chk:04d} file does not exist: {filepath}')
 
     if use_h5py:
-        return h5py.File(filepath, 'r')
+        return h5py.File(filepath, 'r')  # be careful to close this when done
     else:
         return yt.load(filepath)
 
@@ -783,10 +783,10 @@ def get_tracers(run, model, model_set, profiles=None, params=None, mass_grid=Non
                                         model_set=model_set, chk_list=chk_list,
                                         params=params, verbose=verbose)
 
-        tracers = extract_tracers.extract_multi_tracers(mass_grid,
-                                                        profiles=profiles,
-                                                        params=params,
-                                                        verbose=verbose)
+        tracers = extract_multi_tracers(mass_grid,
+                                        profiles=profiles,
+                                        params=params,
+                                        verbose=verbose)
         if save:
             save_cache('tracers', tracers, run=run, model=model,
                        model_set=model_set, verbose=verbose)

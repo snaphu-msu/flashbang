@@ -9,7 +9,8 @@ import multiprocessing as mp
 import time
 
 # flashbang
-from flashbang import load_save, tools
+from flashbang import load_save
+from flashbang.tools import str_to_bool
 
 
 def main(run, model, model_set, multithread=True, reload=False, save=True,
@@ -28,9 +29,9 @@ def main(run, model, model_set, multithread=True, reload=False, save=True,
     """
     t0 = time.time()
 
-    multithread = tools.str_to_bool(multithread)
-    reload = tools.str_to_bool(reload)
-    save = tools.str_to_bool(save)
+    multithread = str_to_bool(multithread)
+    reload = str_to_bool(reload)
+    save = str_to_bool(save)
     threads = int(threads)
 
     chk_list = load_save.find_chk(run=run, model=model, model_set=model_set)

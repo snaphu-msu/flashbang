@@ -59,10 +59,10 @@ from matplotlib.widgets import Slider
 
 # flashbang
 from . import load_save
-from . import paths
-from . import plot_tools
-from . import tools
-from . import quantities
+from .quantities import get_density_zone
+from .plot_tools import setup_subplots
+from .paths import model_path
+from .tools import ensure_sequence
 
 
 class Simulation:
@@ -97,7 +97,7 @@ class Simulation:
         self.run = run
         self.model = model
         self.model_set = model_set
-        self.model_path = paths.model_path(model, model_set=model_set)
+        self.model_path = model_path(model, model_set=model_set)
 
         self.config = None               # model-specific configuration; see load_config()
         self.dat = None                  # time-integrated data from .dat; see load_dat()
@@ -280,7 +280,7 @@ class Simulation:
 
             for i, chk in enumerate(self.chk_table.index):
                 density = self.profiles.sel(chk=chk)['dens']
-                idx_list[i] = quantities.get_density_zone(density, trans_dens)
+                idx_list[i] = get_density_zone(density, trans_dens)
 
             self.chk_table[f'{key}_i'] = idx_list
 
@@ -334,11 +334,11 @@ class Simulation:
         trans : bool
         title : bool
         """
-        chk = tools.ensure_sequence(chk)
-        y_var_list = tools.ensure_sequence(y_var_list)
+        chk = ensure_sequence(chk)
+        y_var_list = ensure_sequence(y_var_list)
         n_var = len(y_var_list)
-        fig, ax = plot_tools.setup_subplots(n_var, max_cols=max_cols, sharex=True,
-                                            sub_figsize=sub_figsize, squeeze=False)
+        fig, ax = setup_subplots(n_var, max_cols=max_cols, sharex=True,
+                                 sub_figsize=sub_figsize, squeeze=False)
 
         for i, y_var in enumerate(y_var_list):
             row = int(np.floor(i / max_cols))
@@ -385,7 +385,7 @@ class Simulation:
             whether to skip all titles/labels/scales and only plot data
         y_factor : float
         """
-        chk = tools.ensure_sequence(chk)
+        chk = ensure_sequence(chk)
         fig, ax = self._setup_fig_ax(ax=ax)
 
         for i in chk:
@@ -775,7 +775,6 @@ class Simulation:
         xlims : [min, max]
         ylims : [min, max]
         """
-        c = self.config['plotting']
         if ylims is not None:
             ax.set_ylim(ylims)
         if xlims is not None:
@@ -801,7 +800,6 @@ class Simulation:
         ax : Axes
         legend : bool
         """
-        c = self.config['plotting']
         if legend:
             ax.legend(loc=loc)
 
@@ -812,7 +810,6 @@ class Simulation:
         ----------
         ax : Axes
         """
-        c = self.config['plotting']  # TODO: default settings from config
         fig = None
 
         if ax is None:
@@ -823,7 +820,6 @@ class Simulation:
     def _setup_slider_fig(self):
         """Setup fig, ax for slider
         """
-        c = self.config['plotting']  # TODO: default settings from config
         fig = plt.figure(figsize=(8, 6))
         profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
         slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])

@@ -2,7 +2,7 @@ import numpy as np
 from astropy import units
 
 # flashbang
-from . import tools
+from .tools import find_nearest_idx
 
 """
 Module for calculating physical quantities
@@ -73,7 +73,7 @@ def get_density_zone(dens_array, dens):
         density to search for
     """
     dens_reverse = np.flip(dens_array)  # need increasing density
-    trans_idx = tools.find_nearest_idx(dens_reverse, dens)
+    trans_idx = find_nearest_idx(dens_reverse, dens)
 
     max_idx = len(dens_reverse) - 1
     zone_idx = max_idx - trans_idx  # flip back
