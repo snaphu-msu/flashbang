@@ -67,7 +67,7 @@ def get_density_zone(dens_array, dens):
 
     parameters
     ----------
-    dens_array : 1D array
+    dens_array : array
         zone density values, ordered from inner to outer zone
     dens : flt
         density to search for

@@ -50,7 +50,6 @@ Nomenclature
     tracers: Time-dependent trajectories/tracers for given mass shells.
         Extracted from profiles for a chosen mass grid.
 """
-import os
 import time
 import numpy as np
 import xarray as xr
@@ -66,7 +65,6 @@ from . import tools
 from . import quantities
 
 
-# noinspection PyTypeChecker
 class Simulation:
     def __init__(self, run, model, model_set, config='default',
                  verbose=True, load_all=True,
@@ -281,8 +279,8 @@ class Simulation:
             idx_list = np.zeros_like(self.chk_table.index)
 
             for i, chk in enumerate(self.chk_table.index):
-                profile = self.profiles.sel(chk=chk)
-                idx_list[i] = quantities.get_density_zone(profile['dens'], trans_dens)
+                density = self.profiles.sel(chk=chk)['dens']
+                idx_list[i] = quantities.get_density_zone(density, trans_dens)
 
             self.chk_table[f'{key}_i'] = idx_list
 
@@ -294,8 +292,6 @@ class Simulation:
         reload : bool
         save : bool
         """
-        # TODO:
-        #   - include chk timesteps
         if len(self.config['tracers']['params']) == 0:
             return
 
@@ -529,8 +525,6 @@ class Simulation:
         show_ye : bool
         loc : str
         """
-        # TODO:
-        #   - create isotope palette
         fig, profile_ax, slider_ax = self._setup_slider_fig()
         chk_max, chk_min, chk_init = self._get_slider_chk()
 
@@ -549,7 +543,6 @@ class Simulation:
             profile = self.profiles.sel(chk=idx)
 
             if trans:
-                # TODO: nicer way to do this
                 for i, key in enumerate(self.trans_dens):
                     x, y = self._get_trans_xy(chk=idx, key=key, x_var=x_var, y=ylims)
                     line_idx = -i - 1
@@ -665,12 +658,8 @@ class Simulation:
         x_var : str
         y : 1D array
         """
-        # TODO: rename get_trans_x()
         y_max = np.max(y)
         y_min = np.min(y)
-
-        # y_min = -2e18  # TODO: automagic this
-        # y_max = 2e18
 
         x = self._get_trans_x(chk=chk, key=key, x_var=x_var)
         x = [x, x]
@@ -769,7 +758,6 @@ class Simulation:
         title : bool
         title_str : str
         """
-        # TODO: account for different zero points/starting times
         if title:
             if (title_str is None) and (chk is not None):
                 dt = self.config['plotting']['scales']['chk_dt']
@@ -787,7 +775,7 @@ class Simulation:
         xlims : [min, max]
         ylims : [min, max]
         """
-        c = self.config['plotting']  # TODO: something with auto-lims in future
+        c = self.config['plotting']
         if ylims is not None:
             ax.set_ylim(ylims)
         if xlims is not None:
