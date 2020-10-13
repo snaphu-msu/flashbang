@@ -33,11 +33,6 @@ from . import quantities
 from . import extract_tracers
 from . import tools
 
-# TODO:
-#   - merge "get" functions into common class/function structure?
-#   - multithread extract_timesteps
-#   - function to extract colnames
-
 
 # =======================================================================
 #                      Config files
@@ -84,7 +79,6 @@ def load_cache(name, run, model, model_set, chk=-1, verbose=True):
     chk : int
     verbose : bool
     """
-    data = None
     filepath = paths.cache_filepath(name, run=run, model=model,
                                     model_set=model_set, chk=chk)
 
@@ -444,7 +438,6 @@ def append_to_multiprofile(multiprofile, profiles, verbose=True):
         new profile Datasets to append, with chks as keys
     verbose : bool
     """
-    # TODO: check no overlap? use merge?
     printv('Appending new profiles onto multiprofile', verbose=verbose)
 
     new_profiles = join_profiles(profiles, verbose=False)
@@ -623,11 +616,6 @@ def get_chk_table(run, model, model_set, reload=False, save=True, verbose=True):
 
 # ===============================================================
 #                      Timesteps
-# ===============================================================
-# TODO:
-#   - faster method? e.g. reading from .dat somehow?
-#       - or reading chk without loading fully
-#       - incorporating into multiprofile
 # ===============================================================
 def get_timesteps(run, model, model_set, params=('time', 'nstep'),
                   reload=False, save=True, verbose=True):

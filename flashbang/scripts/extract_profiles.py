@@ -9,7 +9,7 @@ import multiprocessing as mp
 import time
 
 # flashbang
-from flashbang import simulation, load_save, tools
+from flashbang import load_save, tools
 
 
 def main(run, model, model_set, multithread=True, reload=False, save=True,

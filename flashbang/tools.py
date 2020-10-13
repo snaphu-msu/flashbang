@@ -9,7 +9,7 @@ def ensure_sequence(x):
 
     parameters
     ----------
-    x : 1D-array or scalar
+    x : array or scalar
     """
     if isinstance(x, (list, tuple, np.ndarray)):
         return x
@@ -25,7 +25,7 @@ def find_nearest_idx(array, value):
 
     parameters
     ----------
-    array : 1D array
+    array : array
         array to search
     value : float
         value to look for in array
@@ -65,9 +65,9 @@ def get_missing_elements(elements, array):
 
     parameters
     ----------
-    elements : 1D array
+    elements : array
         elements to look for
-    array : 1D array
+    array : array
         array to look in for elements
     """
     elements = np.array(elements)
