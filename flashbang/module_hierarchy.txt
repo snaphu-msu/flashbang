@@ -27,5 +27,4 @@ extract_tracers.py
 ----------------------------
 paths.py
 plot_tools.py
-strings.py
 tools.py

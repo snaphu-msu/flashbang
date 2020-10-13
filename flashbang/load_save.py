@@ -27,11 +27,10 @@ import time
 import h5py
 
 # flashbang
-from .strings import printv
 from . import paths
 from . import quantities
 from . import extract_tracers
-from . import tools
+from .tools import get_missing_elements, printv
 
 
 # =======================================================================
@@ -277,7 +276,7 @@ def get_multiprofile(run, model, model_set, chk_list=None, params=None,
     # 3. Check for missing profiles
     else:
         multi_chk = multiprofile.coords['chk'].values
-        missing_chk = tools.get_missing_elements(chk_list, multi_chk)
+        missing_chk = get_missing_elements(chk_list, multi_chk)
 
         if len(missing_chk) > 0:
             printv('Loading missing profiles', verbose=verbose)

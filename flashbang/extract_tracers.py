@@ -4,7 +4,7 @@ from scipy.interpolate import interp1d
 import astropy.units as units
 
 # flashbang
-from .strings import printv
+from .tools import printv
 
 g_to_msun = units.g.to(units.M_sun)
 

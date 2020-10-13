@@ -73,3 +73,17 @@ def get_missing_elements(elements, array):
     elements = np.array(elements)
     is_in = np.isin(elements, array)
     return elements[np.invert(is_in)]
+
+
+def printv(string, verbose, **kwargs):
+    """Print string if verbose is True
+
+    parameters
+    ----------
+    string : str
+    verbose : bool
+    kwargs
+        any kwargs for print()
+    """
+    if verbose:
+        print(string, **kwargs)
