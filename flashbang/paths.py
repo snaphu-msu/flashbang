@@ -10,15 +10,21 @@ Function naming convention:
   - "_path" full path to a directory
   - "_filepath" full path to a file (i.e., path + filename)
 
-Model directory structure expected:
-    <FLASH_MODELS>
-        /<model_set> (if provided)
-            /<model>
-                /output
-
-    where:
-        - '.dat' and '.log' files are located in directory '<model>'
-        - 'chk' and 'plt' files are located in directory 'output'
+Expected model directory structure
+----------------------------------
+$FLASH_MODELS
+│
+└───<model_set>
+|   |
+|   └───<model>
+|   │   │   <run>.dat
+|   │   │   <run>.log
+|   │   │   ...
+|   │   │
+|   │   └───output
+|   │       │   <run>_hdf5_chk_0000
+|   │       │   <run>_hdf5_chk_0001
+|   │       │   ...
 """
 
 import os
