@@ -363,7 +363,7 @@ def get_profile(chk, run, model, model_set, params=None,
     """Get reduced radial profile, as contained in checkpoint file
     Loads pre-extracted profile if available, otherwise from raw file
 
-    Returns : dictionary of 1D arrays
+    Returns : xr.Dataset
 
     parameters
     ----------
