@@ -356,7 +356,7 @@ class Simulation:
                      ax=None, legend=False, trans=False, title=True,
                      ylims=None, xlims=None, label=None,
                      linestyle='-', marker='', title_str=None, color=None,
-                     data_only=False, y_factor=1.0):
+                     data_only=False, y_factor=1):
         """Plot given profile variable
 
         parameters
@@ -450,7 +450,7 @@ class Simulation:
     def plot_profile_slider(self, y_var, x_var='r', y_scale=None, x_scale=None,
                             xlims=None, ylims=None, trans=False,
                             title=True,  legend=False, linestyle='-',
-                            marker='', y_factor=1.0):
+                            marker='', y_factor=1):
         """Plot interactive slider of profile for given variable
 
         parameters
@@ -567,7 +567,7 @@ class Simulation:
     def plot_dat(self, y_var, x_scale=None, y_scale=None, ax=None,
                  linestyle='-', marker='', label=None, legend=False,
                  zero_time=True, title_str=None, xlims=None, ylims=None,
-                 color=None, data_only=False):
+                 color=None, y_factor=1, data_only=False):
         """Plot quantity from dat file
 
         parameters
@@ -585,6 +585,7 @@ class Simulation:
         xlims : [min, max]
         ylims : [min, max]
         color : str
+        y_factor : float
         data_only : bool
         """
         t_offset = 0
@@ -593,7 +594,8 @@ class Simulation:
 
         fig, ax = self._setup_fig_ax(ax=ax)
 
-        ax.plot(self.dat['time'] - t_offset, self.dat[y_var],
+        ax.plot(self.dat['time'] - t_offset,
+                self.dat[y_var] / y_factor,
                 linestyle=linestyle, marker=marker,
                 color=color, label=label)
 
