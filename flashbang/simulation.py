@@ -310,9 +310,8 @@ class Simulation:
             self.printv('Profiles missing from tracers; re-extracting')
             self.get_tracers(reload=True, save=save)
 
-    # =======================================================
-    #                      Plotting
-    # =======================================================
+
+
     def plot_profiles(self, chk, y_var_list, x_var='r', y_scale=None, x_scale=None,
                       max_cols=2, sub_figsize=(6, 5), trans=False, legend=False,
                       title=True):
@@ -405,7 +404,7 @@ class Simulation:
 
     def plot_composition(self, chk, x_var='r', y_var_list=None, y_scale='linear',
                          x_scale=None, ax=None, legend=True, trans=True, show_ye=True,
-                         ylims=(1e-7, 1), xlims=(1e5, 1.5e9),
+                         ylims=(1e-7, 1), xlims=None,
                          title=True, loc=3, data_only=False):
         """Plot isotope composition profile
 
@@ -506,7 +505,7 @@ class Simulation:
 
     def plot_composition_slider(self, y_var_list=None, x_var='r', y_scale='linear',
                                 x_scale=None, trans=True, title=True,
-                                xlims=(1e5, 1.5e9), ylims=(1e-7, 1), legend=True,
+                                xlims=None, ylims=(1e-7, 1), legend=True,
                                 show_ye=True, loc='lower left'):
         """Plot interactive slider of isotope composition
 
@@ -760,6 +759,7 @@ class Simulation:
         """
         if title:
             if (title_str is None) and (chk is not None):
+                # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
                 dt = self.config['plotting']['scales']['chk_dt']
                 timestep = dt * chk - self.bounce_time
                 title_str = f't = {timestep:.3f} s'
