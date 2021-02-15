@@ -734,10 +734,10 @@ class Simulation:
         x_scale : 'log' or 'linear'
         """
         def get_scale(var):
-            for scale in ['log', 'linear']:
-                if var in self.config['plotting']['ax_scales'][scale]:
-                    return scale
-            return 'log'
+            if var in self.config['plotting']['ax_scales']['log']:
+                return 'log'
+            else:
+                return 'linear'
 
         if x_scale is None:
             x_scale = get_scale(x_var)
