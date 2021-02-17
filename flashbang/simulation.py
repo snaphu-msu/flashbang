@@ -567,7 +567,7 @@ class Simulation:
     def plot_dat(self, y_var, x_scale=None, y_scale=None, ax=None,
                  linestyle='-', marker='', label=None, legend=False,
                  zero_time=True, title_str=None, xlims=None, ylims=None,
-                 color=None, y_factor=1, data_only=False):
+                 color=None, x_factor=1, y_factor=1, data_only=False):
         """Plot quantity from dat file
 
         parameters
@@ -585,6 +585,7 @@ class Simulation:
         xlims : [min, max]
         ylims : [min, max]
         color : str
+        x_factor : float
         y_factor : float
         data_only : bool
         """
@@ -594,7 +595,7 @@ class Simulation:
 
         fig, ax = self._setup_fig_ax(ax=ax)
 
-        ax.plot(self.dat['time'] - t_offset,
+        ax.plot((self.dat['time'] - t_offset) / x_factor,
                 self.dat[y_var] / y_factor,
                 linestyle=linestyle, marker=marker,
                 color=color, label=label)
