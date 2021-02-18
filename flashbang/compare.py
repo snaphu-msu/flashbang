@@ -93,6 +93,73 @@ class Comparison:
                              title_str=title_str, legend=legend)
         return fig
 
+    def plot_profile_slider(self, y_var,
+                            x_var='r',
+                            y_scale=None, x_scale=None,
+                            xlims=None, ylims=None,
+                            y_factor=1,
+                            trans=False,
+                            title=True,
+                            legend=True,
+                            linestyle='-',
+                            marker=''):
+        """Plot interactive profile comparison
+
+        Returns : fig, slider
+
+        Parameters
+        ----------
+        y_var : str
+        x_var : str
+        y_scale : 'log' or 'linear'
+        x_scale : 'log' or 'linear'
+        trans : bool
+            plot helmholtz transitions
+        title : bool
+        xlims : [min, max]
+        ylims : [min, max]
+        legend : bool
+        linestyle : str
+        marker : str
+        y_factor : float
+        """
+        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
+        chk_min, chk_max = self._get_slider_chk()
+        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
+
+        self.plot_profile(chk=chk_max,
+                          y_var=y_var, x_var=x_var,
+                          y_scale=y_scale, x_scale=x_scale,
+                          ylims=ylims, xlims=xlims,
+                          ax=profile_ax, legend=legend,
+                          trans=trans, title=title,
+                          linestyle=linestyle,
+                          marker=marker, y_factor=y_factor)
+
+        self._set_ax_legend(ax=profile_ax, legend=legend)
+
+        def update(chk):
+            idx = int(chk)
+            for i, sim in enumerate(self.sims.values()):
+                profile = sim.profiles.sel(chk=idx)
+                y_profile = profile[y_var] / y_factor
+
+                profile_ax.lines[i].set_ydata(y_profile)
+                profile_ax.lines[i].set_xdata(profile[x_var])
+                # sim._set_ax_title(profile_ax, chk=idx, title=title)
+
+                # if trans:
+                #     for i, key in enumerate(sim.trans_dens):
+                #         x, y = sim._get_trans_xy(chk=idx, key=key,
+                #                                  x_var=x_var, y=y_profile)
+                #         profile_ax.lines[i+1].set_xdata(x)
+                #         profile_ax.lines[i+1].set_ydata(y)
+
+                fig.canvas.draw_idle()
+
+        slider.on_changed(update)
+        return fig, slider
+
     def plot_dat(self,
                  y_var,
                  **kwargs):
@@ -114,7 +181,7 @@ class Comparison:
                     chk=None, title_str=None):
         """Set all axis properties
 
-        parameters
+        Parameters
         ----------
         ax : Axes
         x_var : str
@@ -139,7 +206,7 @@ class Comparison:
     def _set_ax_scales(self, ax, y_var, x_var, y_scale, x_scale):
         """Set axis scales (linear, log)
 
-        parameters
+        Parameters
         ----------
         ax : Axes
         y_var : str
@@ -164,7 +231,7 @@ class Comparison:
     def _set_ax_title(self, ax, title, chk=None, title_str=None):
         """Set axis title
 
-        parameters
+        Parameters
         ----------
         ax : Axes
         chk : int
@@ -184,7 +251,7 @@ class Comparison:
     def _set_ax_lims(self, ax, xlims, ylims):
         """Set x and y axis limits
 
-        parameters
+        Parameters
         ----------
         ax : Axes
         xlims : [min, max]
@@ -198,7 +265,7 @@ class Comparison:
     def _set_ax_labels(self, ax, x_var, y_var):
         """Set axis labels
 
-        parameters
+        Parameters
         ----------
         ax : Axes
         x_var : str
@@ -213,7 +280,7 @@ class Comparison:
     def _set_ax_legend(self, ax, legend, loc=None):
         """Set axis labels
 
-        parameters
+        Parameters
         ----------
         ax : Axes
         legend : bool
