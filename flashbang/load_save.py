@@ -60,6 +60,12 @@ def load_config(name=None, verbose=True):
         for option in ini.options(section):
             config[section][option] = ast.literal_eval(ini.get(section, option))
 
+    # override any options from plotting.ini
+    if name is not 'plotting':
+        plot_config = load_config(name='plotting', verbose=verbose)
+        plot_config['plotting'].update(config['plotting'])
+        config.update(plot_config)
+
     return config
 
 
