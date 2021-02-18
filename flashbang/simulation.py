@@ -60,7 +60,7 @@ from matplotlib.widgets import Slider
 # flashbang
 from . import load_save
 from .quantities import get_density_zone
-from .plot_tools import setup_subplots
+from .plot_tools import setup_subplots, setup_slider_fig
 from .paths import model_path
 from .tools import ensure_sequence
 
@@ -310,8 +310,9 @@ class Simulation:
             self.printv('Profiles missing from tracers; re-extracting')
             self.get_tracers(reload=True, save=save)
 
-
-
+    # =======================================================
+    #                      Plotting
+    # =======================================================
     def plot_profiles(self, chk, y_var_list, x_var='r', y_scale=None, x_scale=None,
                       max_cols=2, sub_figsize=(6, 5), trans=False, legend=False,
                       title=True):
@@ -469,7 +470,7 @@ class Simulation:
         marker : str
         y_factor : float
         """
-        fig, profile_ax, slider_ax = self._setup_slider_fig()
+        fig, profile_ax, slider_ax = setup_slider_fig()
         chk_max, chk_min, chk_init = self._get_slider_chk()
 
         slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_init, valstep=1)
@@ -524,7 +525,7 @@ class Simulation:
         show_ye : bool
         loc : str
         """
-        fig, profile_ax, slider_ax = self._setup_slider_fig()
+        fig, profile_ax, slider_ax = setup_slider_fig()
         chk_max, chk_min, chk_init = self._get_slider_chk()
 
         if y_var_list is None:
@@ -819,15 +820,6 @@ class Simulation:
             fig, ax = plt.subplots()
 
         return fig, ax
-
-    def _setup_slider_fig(self):
-        """Setup fig, ax for slider
-        """
-        fig = plt.figure(figsize=(8, 6))
-        profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])
-        slider_ax = fig.add_axes([0.1, 0.05, 0.8, 0.05])
-
-        return fig, profile_ax, slider_ax
 
     def _get_slider_chk(self):
         """Return chk_max, chk_min, chk_init
