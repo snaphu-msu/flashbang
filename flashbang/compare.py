@@ -54,6 +54,30 @@ class Comparison:
                      title_str=None,
                      data_only=False):
         """Plot profile comparison
+
+        Returns : fig
+
+        Parameters
+        ----------
+        chk : int
+        y_var : str
+            variable to plot on y-axis (from Simulation.profile)
+        x_var : str
+        y_scale : 'log' or 'linear'
+        x_scale : 'log' or 'linear'
+        y_factor : float
+            Divide y-values by this factor
+        ax : Axes
+        legend : bool
+        trans : bool
+        title : bool
+        ylims : [min, max]
+        xlims : [min, max]
+        linestyle : str
+        marker : str
+        title_str : str
+        data_only : bool
+            only plot data, neglecting all titles/labels/scales
         """
         fig, ax = plot_tools.setup_fig(ax=ax)
 

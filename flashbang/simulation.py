@@ -352,6 +352,7 @@ class Simulation:
             variable to plot on x-axis
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
+        y_factor : float
         ax : Axes
         legend : bool
         trans : bool
@@ -364,8 +365,7 @@ class Simulation:
         title_str : str
         color : str
         data_only : bool
-            whether to skip all titles/labels/scales and only plot data
-        y_factor : float
+            only plot data, neglecting all titles/labels/scales
         """
         chk = ensure_sequence(chk)
         fig, ax = plot_tools.setup_fig(ax=ax)
