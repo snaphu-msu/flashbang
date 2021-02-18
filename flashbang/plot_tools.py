@@ -1,10 +1,25 @@
+"""General plotting functions
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-"""
-General functions for plotting
-"""
+def setup_fig(ax):
+    """Setup fig, ax, checking if ax already provided
+
+    returns : fig, ax
+
+    parameters
+    ----------
+    ax : Axis
+    """
+    fig = None
+
+    if ax is None:
+        fig, ax = plt.subplots()
+
+    return fig, ax
 
 
 def setup_subplots(n_sub, max_cols=2, sub_figsize=(6, 5), **kwargs):
@@ -31,6 +46,10 @@ def setup_subplots(n_sub, max_cols=2, sub_figsize=(6, 5), **kwargs):
 
 def setup_slider_fig(figsize=(8, 6)):
     """Setup fig, ax for slider
+
+    parameters
+    ----------
+    figsize : []
     """
     fig = plt.figure(figsize=figsize)
     profile_ax = fig.add_axes([0.1, 0.2, 0.8, 0.65])

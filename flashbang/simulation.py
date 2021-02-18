@@ -54,13 +54,12 @@ import time
 import numpy as np
 import xarray as xr
 import pandas as pd
-import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 
 # flashbang
 from . import load_save
+from . import plot_tools
 from .quantities import get_density_zone
-from .plot_tools import setup_subplots, setup_slider_fig
 from .paths import model_path
 from .tools import ensure_sequence
 
@@ -337,8 +336,8 @@ class Simulation:
         chk = ensure_sequence(chk)
         y_var_list = ensure_sequence(y_var_list)
         n_var = len(y_var_list)
-        fig, ax = setup_subplots(n_var, max_cols=max_cols, sharex=True,
-                                 sub_figsize=sub_figsize, squeeze=False)
+        fig, ax = plot_tools.setup_subplots(n_var, max_cols=max_cols, sharex=True,
+                                            sub_figsize=sub_figsize, squeeze=False)
 
         for i, y_var in enumerate(y_var_list):
             row = int(np.floor(i / max_cols))
@@ -386,7 +385,7 @@ class Simulation:
         y_factor : float
         """
         chk = ensure_sequence(chk)
-        fig, ax = self._setup_fig_ax(ax=ax)
+        fig, ax = plot_tools.setup_fig(ax=ax)
 
         for i in chk:
             profile = self.profiles.sel(chk=i)
@@ -431,7 +430,7 @@ class Simulation:
         if y_var_list is None:
             y_var_list = self.config['plotting']['isotopes']
 
-        fig, ax = self._setup_fig_ax(ax=ax)
+        fig, ax = plot_tools.setup_fig(ax=ax)
         profile = self.profiles.sel(chk=chk)
 
         for key in y_var_list:
@@ -470,7 +469,7 @@ class Simulation:
         marker : str
         y_factor : float
         """
-        fig, profile_ax, slider_ax = setup_slider_fig()
+        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
         chk_max, chk_min = self._get_slider_chk()
 
         slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
@@ -525,7 +524,7 @@ class Simulation:
         show_ye : bool
         loc : str
         """
-        fig, profile_ax, slider_ax = setup_slider_fig()
+        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
         chk_max, chk_min = self._get_slider_chk()
 
         if y_var_list is None:
@@ -594,7 +593,7 @@ class Simulation:
         if zero_time:
             t_offset = self.bounce_time
 
-        fig, ax = self._setup_fig_ax(ax=ax)
+        fig, ax = plot_tools.setup_fig(ax=ax)
 
         ax.plot((self.dat['time'] - t_offset) / x_factor,
                 self.dat[y_var] / y_factor,
@@ -626,7 +625,7 @@ class Simulation:
         legend : bool
         data_only : bool
         """
-        fig, ax = self._setup_fig_ax(ax=ax)
+        fig, ax = plot_tools.setup_fig(ax=ax)
 
         for mass in self.tracers['mass']:
             ax.plot(self.tracers['chk'], self.tracers.sel(mass=mass)[y_var],
@@ -806,20 +805,6 @@ class Simulation:
         """
         if legend:
             ax.legend(loc=loc)
-
-    def _setup_fig_ax(self, ax):
-        """Setup fig, ax, checking if ax already provided
-
-        parameters
-        ----------
-        ax : Axes
-        """
-        fig = None
-
-        if ax is None:
-            fig, ax = plt.subplots()
-
-        return fig, ax
 
     def _get_slider_chk(self):
         """Return chk_max, chk_min
