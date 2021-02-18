@@ -98,7 +98,6 @@ class Simulation:
         self.model_set = model_set
         self.model_path = model_path(model, model_set=model_set)
 
-        self.config = None               # model-specific configuration; see load_config()
         self.dat = None                  # time-integrated data from .dat; see load_dat()
         self.bounce_time = None          # core-bounce in simulation time (s)
         self.trans_dens = None           # transition densities (helmholtz models)
@@ -107,7 +106,9 @@ class Simulation:
         self.profiles = xr.Dataset()     # radial profile data for each timestep
         self.tracers = None              # mass tracers/trajectories
 
-        self.load_config(config=config)
+        self.config = load_save.load_config(config, verbose=self.verbose)
+        self.trans_dens = self.config['transitions']['dens']
+        self.setup_mass_grid()
         self.load_chk_table(reload=reload, save=save)
 
         if load_all:
@@ -121,17 +122,6 @@ class Simulation:
     # =======================================================
     #                      Setup/init
     # =======================================================
-    def load_config(self, config='default'):
-        """Load config parameters from file
-
-        parameters
-        ----------
-        config : str
-        """
-        self.config = load_save.load_config(name=config, verbose=self.verbose)
-        self.trans_dens = self.config['transitions']['dens']
-        self.setup_mass_grid()
-
     def setup_mass_grid(self):
         """Generate mass grid from config definition
         """
