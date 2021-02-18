@@ -640,16 +640,6 @@ class Simulation:
     # =======================================================
     #                      Plotting Tools
     # =======================================================
-    def get_label(self, key):
-        """Return formatted string for plot label
-
-        parameters
-        ----------
-        key : str
-            parameter key, e.g. 'r', 'temp', 'dens'
-        """
-        return self.config['plotting']['labels'].get(key, key)
-
     def _get_trans_xy(self, chk, key, x_var, y):
         """Return x, y points of transition line, for given x-axis variable
 
@@ -792,8 +782,11 @@ class Simulation:
         x_var : str
         y_var : str
         """
-        ax.set_xlabel(self.get_label(x_var))
-        ax.set_ylabel(self.get_label(y_var))
+        def get_label(key):
+            return self.config['plotting']['labels'].get(key, key)
+
+        ax.set_xlabel(get_label(x_var))
+        ax.set_ylabel(get_label(y_var))
 
     def _set_ax_legend(self, ax, legend, loc=None):
         """Set axis labels
