@@ -49,21 +49,24 @@ class Comparison:
                      marker=None,
                      trans=False,
                      title=True,
+                     legend=True,
                      linestyle='-',
-                     title_str=None):
-        """Plot comparison profile
+                     title_str=None,
+                     data_only=False):
+        """Plot profile comparison
         """
         fig, ax = plot_tools.setup_fig(ax=ax)
 
         for model, sim in self.sims.items():
             sim.plot_profile(chk=chk, y_var=y_var, x_var=x_var,
-                             y_scale=y_scale, x_scale=x_scale,
-                             marker=marker, trans=trans,
-                             title=title, linestyle=linestyle,
-                             title_str=title_str,
-                             ylims=ylims, xlims=xlims, y_factor=y_factor,
-                             legend=False, ax=ax, label=model)
-        ax.legend()
+                             y_factor=y_factor, marker=marker, trans=trans,
+                             linestyle=linestyle, ax=ax, label=model,
+                             data_only=True)
+
+        if not data_only:
+            self._set_ax_all(ax, x_var=x_var, y_var=y_var, xlims=xlims, ylims=ylims,
+                             x_scale=x_scale, y_scale=y_scale, chk=chk, title=title,
+                             title_str=title_str, legend=legend)
         return fig
 
     def plot_dat(self,
