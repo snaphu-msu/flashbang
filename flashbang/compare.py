@@ -6,15 +6,30 @@ from matplotlib.widgets import Slider
 # flashbang
 from . import simulation
 from . import plot_tools
+from . import load_save
 
 
 class Comparison:
+    """Object for holding multiple models to compare
+    """
     def __init__(self,
                  runs,
                  models,
                  model_sets,
-                 config):
+                 config,
+                 verbose=True):
+        """
+
+        Parameters
+        ----------
+        runs : [str]
+        models : [str]
+        model_sets : [str]
+        config : str
+        """
         self.sims = {}
+        self.verbose = verbose
+        self.config = load_save.load_config(config, verbose=self.verbose)
 
         for i, model in enumerate(models):
             self.sims[model] = simulation.Simulation(run=runs[i],
