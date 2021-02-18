@@ -32,3 +32,16 @@ class Comparison:
                              **kwargs)
         ax.legend()
         return fig
+
+    def plot_dat(self,
+                 y_var,
+                 **kwargs):
+        """Plot comparison dat
+        """
+        fig, ax = plt.subplots()
+
+        for model, sim in self.sims.items():
+            sim.plot_dat(y_var=y_var, ax=ax, label=model,
+                         **kwargs)
+        ax.legend()
+        return fig
