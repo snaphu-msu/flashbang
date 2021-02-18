@@ -471,11 +471,11 @@ class Simulation:
         y_factor : float
         """
         fig, profile_ax, slider_ax = setup_slider_fig()
-        chk_max, chk_min, chk_init = self._get_slider_chk()
+        chk_max, chk_min = self._get_slider_chk()
 
-        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_init, valstep=1)
+        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
 
-        self.plot_profile(chk=chk_init,
+        self.plot_profile(chk=chk_max,
                           y_var=y_var, x_var=x_var,
                           y_scale=y_scale, x_scale=x_scale,
                           ylims=ylims, xlims=xlims,
@@ -526,14 +526,14 @@ class Simulation:
         loc : str
         """
         fig, profile_ax, slider_ax = setup_slider_fig()
-        chk_max, chk_min, chk_init = self._get_slider_chk()
+        chk_max, chk_min = self._get_slider_chk()
 
         if y_var_list is None:
             y_var_list = self.config['plotting']['isotopes']
 
-        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_init, valstep=1)
+        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
 
-        self.plot_composition(chk_init, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
+        self.plot_composition(chk_max, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
                               y_var_list=y_var_list, ax=profile_ax, legend=legend,
                               ylims=ylims, xlims=xlims, trans=trans, title=title,
                               show_ye=show_ye, loc=loc)
@@ -822,12 +822,11 @@ class Simulation:
         return fig, ax
 
     def _get_slider_chk(self):
-        """Return chk_max, chk_min, chk_init
+        """Return chk_max, chk_min
         """
         chk_max = self.chk_table.index[-1]
         chk_min = self.chk_table.index[0]
-        chk_init = chk_max
-        return chk_max, chk_min, chk_init
+        return chk_max, chk_min
 
     # =======================================================
     #                   Convenience
