@@ -7,7 +7,7 @@ from matplotlib.widgets import Slider
 from . import simulation
 from . import plot_tools
 from . import load_save
-
+from . import tools
 
 class Comparison:
     """Object for holding multiple models to compare
@@ -31,10 +31,15 @@ class Comparison:
         self.verbose = verbose
         self.config = load_save.load_config(config, verbose=self.verbose)
 
+        n_models = len(models)
+        self.runs = tools.ensure_sequence(runs, n_models)
+        self.models = models
+        self.model_sets = tools.ensure_sequence(model_sets, n_models)
+
         for i, model in enumerate(models):
-            self.sims[model] = simulation.Simulation(run=runs[i],
+            self.sims[model] = simulation.Simulation(run=self.runs[i],
                                                      model=model,
-                                                     model_set=model_sets[i],
+                                                     model_set=self.model_sets[i],
                                                      config=config)
 
     # =======================================================
