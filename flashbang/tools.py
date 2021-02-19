@@ -3,18 +3,19 @@
 import numpy as np
 
 
-def ensure_sequence(x):
+def ensure_sequence(x, n=1):
     """Ensure given object is in the form of a sequence.
-    If object is scalar, return as length-1 list.
+    If object is scalar, return as length-n list.
 
     parameters
     ----------
     x : array or scalar
+    n : length of list to return
     """
     if isinstance(x, (list, tuple, np.ndarray)):
         return x
     else:
-        return [x, ]
+        return n * [x]
 
 
 def find_nearest_idx(array, value):
