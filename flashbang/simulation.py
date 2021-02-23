@@ -514,9 +514,8 @@ class Simulation:
             if trans:
                 for i, key in enumerate(self.trans_dens):
                     x, y = self._get_trans_xy(chk=idx, key=key, x_var=x_var, y=ylims)
-                    line_idx = -i - 1
-                    profile_ax.lines[line_idx].set_xdata(x)
-                    profile_ax.lines[line_idx].set_ydata(y)
+                    profile_ax.lines[-i-1].set_xdata(x)
+                    profile_ax.lines[-i-1].set_ydata(y)
 
             for i, key in enumerate(y_var_list):
                 y_profile = profile[key]
