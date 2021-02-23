@@ -452,21 +452,7 @@ class Simulation:
         marker : str
         y_factor : float
         """
-        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
-        chk_max, chk_min = self._get_slider_chk()
-
-        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
-
-        self.plot_profile(chk=chk_max,
-                          y_var=y_var, x_var=x_var,
-                          y_scale=y_scale, x_scale=x_scale,
-                          ylims=ylims, xlims=xlims,
-                          ax=profile_ax, legend=legend,
-                          trans=trans, title=title,
-                          linestyle=linestyle,
-                          marker=marker, y_factor=y_factor)
-
-        def update(chk):
+        def update_slider(chk):
             idx = int(chk)
             profile = self.profiles.sel(chk=idx)
             y_profile = profile[y_var] / y_factor
@@ -483,7 +469,21 @@ class Simulation:
 
             fig.canvas.draw_idle()
 
-        slider.on_changed(update)
+        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
+        chk_max, chk_min = self._get_slider_chk()
+
+        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
+
+        self.plot_profile(chk=chk_max,
+                          y_var=y_var, x_var=x_var,
+                          y_scale=y_scale, x_scale=x_scale,
+                          ylims=ylims, xlims=xlims,
+                          ax=profile_ax, legend=legend,
+                          trans=trans, title=title,
+                          linestyle=linestyle,
+                          marker=marker, y_factor=y_factor)
+
+        slider.on_changed(update_slider)
         return fig, slider
 
     def plot_composition_slider(self, y_var_list=None, x_var='r', y_scale='linear',
@@ -507,20 +507,7 @@ class Simulation:
         show_ye : bool
         loc : str
         """
-        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
-        chk_max, chk_min = self._get_slider_chk()
-
-        if y_var_list is None:
-            y_var_list = self.config['plotting']['isotopes']
-
-        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
-
-        self.plot_composition(chk_max, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
-                              y_var_list=y_var_list, ax=profile_ax, legend=legend,
-                              ylims=ylims, xlims=xlims, trans=trans, title=title,
-                              show_ye=show_ye, loc=loc)
-
-        def update(chk):
+        def update_slider(chk):
             idx = int(chk)
             profile = self.profiles.sel(chk=idx)
 
@@ -544,7 +531,20 @@ class Simulation:
             self._set_ax_title(profile_ax, chk=idx, title=title)
             fig.canvas.draw_idle()
 
-        slider.on_changed(update)
+        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
+        chk_max, chk_min = self._get_slider_chk()
+
+        if y_var_list is None:
+            y_var_list = self.config['plotting']['isotopes']
+
+        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
+
+        self.plot_composition(chk_max, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
+                              y_var_list=y_var_list, ax=profile_ax, legend=legend,
+                              ylims=ylims, xlims=xlims, trans=trans, title=title,
+                              show_ye=show_ye, loc=loc)
+
+        slider.on_changed(update_slider)
         return fig, slider
 
     def plot_dat(self, y_var, x_scale=None, y_scale=None, ax=None,
