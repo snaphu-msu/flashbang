@@ -385,7 +385,7 @@ class Simulation:
 
         return fig
 
-    def plot_composition(self, chk, x_var='r', y_var_list=None, y_scale='linear',
+    def plot_composition(self, chk, x_var='r', y_vars=None, y_scale='linear',
                          x_scale=None, ax=None, legend=True, trans=True,
                          ylims=(1e-7, 1), xlims=None,
                          title=True, loc=3, data_only=False):
@@ -396,7 +396,7 @@ class Simulation:
         chk : int
         x_var : str
             variable to plot on x-axis
-        y_var_list : [str]
+        y_vars : [str]
             list of isotopes to plot (see self.config['profiles']['params'])
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
@@ -409,15 +409,15 @@ class Simulation:
         loc : str or int
         data_only : bool
         """
-        if y_var_list is None:
-            y_var_list = self.config['plotting']['isotopes']
+        if y_vars is None:
+            y_vars = self.config['plotting']['isotopes']
 
         fig, ax = plot_tools.setup_fig(ax=ax)
         profile = self.profiles.sel(chk=chk)
 
-        for y_var in y_var_list:
-            ax.plot(profile[x_var], profile[y_var],
-                    label=y_var, color={'ye': 'k'}.get(y_var),
+        for y_var in y_vars:
+            ax.plot(profile[x_var], profile[y_var], label=y_var,
+                    color={'ye': 'k'}.get(y_var),
                     linestyle={'ye': '--'}.get(y_var))
 
         self._plot_trans_line(x_var, y=ylims, ax=ax, chk=chk, trans=trans)
@@ -562,7 +562,7 @@ class Simulation:
 
         return fig, slider
 
-    def plot_composition_slider(self, y_var_list=None, x_var='r', y_scale='linear',
+    def plot_composition_slider(self, y_vars=None, x_var='r', y_scale='linear',
                                 x_scale=None, trans=True, title=True,
                                 xlims=None, ylims=(1e-7, 1), legend=True,
                                 loc='lower left'):
@@ -570,7 +570,7 @@ class Simulation:
 
         parameters
         ----------
-        y_var_list : [str]
+        y_vars : [str]
         x_var : str
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
@@ -592,7 +592,7 @@ class Simulation:
                                               x_var=x_var, y=ylims)
                     self._update_ax_line(x=x, y=y, line=lines[trans_key])
 
-            for y_var in y_var_list:
+            for y_var in y_vars:
                 self._update_ax_line(x=profile[x_var], y=profile[y_var],
                                      line=lines[y_var])
 
@@ -602,17 +602,17 @@ class Simulation:
         fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
         chk_max, chk_min = self._get_slider_chk()
 
-        if y_var_list is None:
-            y_var_list = self.config['plotting']['isotopes']
+        if y_vars is None:
+            y_vars = self.config['plotting']['isotopes']
 
         slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
 
         self.plot_composition(chk_max, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
-                              y_var_list=y_var_list, ax=profile_ax, legend=legend,
+                              y_vars=y_vars, ax=profile_ax, legend=legend,
                               ylims=ylims, xlims=xlims, trans=trans, title=title,
                               loc=loc)
 
-        lines = self._get_ax_lines(ax=profile_ax, y_vars=y_var_list, trans=trans)
+        lines = self._get_ax_lines(ax=profile_ax, y_vars=y_vars, trans=trans)
         slider.on_changed(update_slider)
 
         return fig, slider
