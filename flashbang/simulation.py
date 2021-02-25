@@ -373,7 +373,6 @@ class Simulation:
         for i in chk:
             profile = self.profiles.sel(chk=i)
             y = profile[y_var]
-
             ax.plot(profile[x_var], y/y_factor, ls=linestyle, marker=marker,
                     label=label, color=color)
 
@@ -637,8 +636,8 @@ class Simulation:
         y_min = np.min(y)
 
         x = self._get_trans_x(chk=chk, key=key, x_var=x_var)
-        x = [x, x]
-        y = [y_min, y_max]
+        x = np.array([x, x])
+        y = np.array([y_min, y_max])
         return x, y
 
     def _get_trans_x(self, chk, key, x_var):

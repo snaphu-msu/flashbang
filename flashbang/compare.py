@@ -132,7 +132,6 @@ class Comparison:
         y_factor : float
         """
         def update(chk):
-            # TODO: tag/save each line object
             idx = int(chk)
 
             if trans:
@@ -142,16 +141,14 @@ class Comparison:
                 for trans_key in sim_0.trans_dens:
                     x, y = sim_0._get_trans_xy(chk=idx, key=trans_key,
                                                x_var=x_var, y=y_profile)
-                    lines[trans_key].set_xdata(x)
-                    lines[trans_key].set_ydata(y)
+                    self._update_ax_line(x=x, y=y, line=lines[trans_key])
 
             for model, sim in self.sims.items():
                 profile = sim.profiles.sel(chk=idx)
-                y_profile = profile[y_var] / y_factor
-
-                lines[model].set_xdata(profile[x_var])
-                lines[model].set_ydata(y_profile)
-                # sim._set_ax_title(profile_ax, chk=idx, title=title)
+                self._update_ax_line(x=profile[x_var],
+                                     y=profile[y_var]/y_factor,
+                                     line=lines[model])
+                self._set_ax_title(ax=profile_ax, chk=idx, title=title)
 
                 fig.canvas.draw_idle()
 
@@ -257,7 +254,6 @@ class Comparison:
         title : bool
         title_str : str
         """
-        # TODO: use chk_table from master model
         if title:
             if (title_str is None) and (chk is not None):
                 # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
@@ -344,3 +340,15 @@ class Comparison:
             lines[model] = ax.lines[1+trans_offset+i]
 
         return lines
+
+    def _update_ax_line(self, x, y, line):
+        """Update x,y line values
+
+        Parameters
+        ----------
+        x : ndarray
+        y : ndarray
+        line : Axis.line
+        """
+        line.set_xdata(x)
+        line.set_ydata(y)
