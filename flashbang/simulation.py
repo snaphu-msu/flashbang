@@ -372,8 +372,8 @@ class Simulation:
 
         for i in chk:
             profile = self.profiles.sel(chk=i)
-            y = profile[y_var]
-            ax.plot(profile[x_var], y/y_factor, ls=linestyle, marker=marker,
+            y = profile[y_var] / y_factor
+            ax.plot(profile[x_var], y, ls=linestyle, marker=marker,
                     label=label, color=color)
 
             self._plot_trans_line(x_var, y=y, ax=ax, chk=i, trans=trans)
@@ -781,8 +781,8 @@ class Simulation:
         """Return slider fig
         """
         fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
-        chk_max = self.chk_table.index[-1]
         chk_min = self.chk_table.index[0]
+        chk_max = self.chk_table.index[-1]
 
         slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
 

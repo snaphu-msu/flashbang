@@ -49,8 +49,8 @@ class Comparison:
     # =======================================================
     def plot_profile(self, chk, y_var,
                      x_var='r',
-                     y_scale=None, x_scale=None,
-                     ylims=None, xlims=None,
+                     x_scale=None, y_scale=None,
+                     xlims=None, ylims=None,
                      y_factor=1,
                      ax=None,
                      marker=None,
@@ -101,10 +101,29 @@ class Comparison:
                              title_str=title_str, legend=legend)
         return fig
 
+    def plot_dat(self,
+                 y_var,
+                 legend=True,
+                 **kwargs):
+        """Plot comparison dat
+        """
+        fig, ax = plt.subplots()
+
+        for model, sim in self.sims.items():
+            sim.plot_dat(y_var=y_var, ax=ax, label=model,
+                         legend=False,
+                         **kwargs)
+        self._set_ax_legend(ax=ax, legend=legend, loc=0)
+
+        return fig
+
+    # =======================================================
+    #                      Sliders
+    # =======================================================
     def plot_profile_slider(self, y_var,
                             x_var='r',
-                            y_scale=None, x_scale=None,
-                            xlims=None, ylims=None,
+                            x_scale=None, y_scale=None,
+                            ylims=None, xlims=None,
                             y_factor=1,
                             trans=False,
                             title=True,
@@ -152,9 +171,8 @@ class Comparison:
 
                 fig.canvas.draw_idle()
 
-        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
+        fig, profile_ax, slider = self._setup_slider()
         chk_min, chk_max = self._get_slider_chk()
-        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
         sim_0 = self.sims[self.baseline]
 
         self.plot_profile(chk=chk_max,
@@ -167,27 +185,10 @@ class Comparison:
                           marker=marker, y_factor=y_factor)
 
         self._set_ax_legend(ax=profile_ax, legend=legend)
-
         lines = self._get_ax_lines(ax=profile_ax, trans=trans)
-
         slider.on_changed(update)
+
         return fig, slider
-
-    def plot_dat(self,
-                 y_var,
-                 legend=True,
-                 **kwargs):
-        """Plot comparison dat
-        """
-        fig, ax = plt.subplots()
-
-        for model, sim in self.sims.items():
-            sim.plot_dat(y_var=y_var, ax=ax, label=model,
-                         legend=False,
-                         **kwargs)
-        self._set_ax_legend(ax=ax, legend=legend, loc=0)
-
-        return fig
 
     # =======================================================
     #                      Plotting Tools
@@ -317,6 +318,15 @@ class Comparison:
         chk_min = max(mins)
         chk_max = min(maxes)
         return chk_min, chk_max
+
+    def _setup_slider(self):
+        """Return slider fig
+        """
+        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
+        chk_min, chk_max = self._get_slider_chk()
+        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
+
+        return fig, profile_ax, slider
 
     def _get_ax_lines(self, ax, trans):
         """Return dict of plot lines for each model
