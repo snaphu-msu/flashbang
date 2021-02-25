@@ -532,17 +532,15 @@ class Simulation:
             idx = int(chk)
             profile = self.profiles.sel(chk=idx)
             y_profile = profile[y_var] / y_factor
-
-            lines['profile'].set_ydata(y_profile)
-            lines['profile'].set_xdata(profile[x_var])
+            
+            self._update_ax_line(x=profile[x_var], y=y_profile, line=lines['profile'])
             self._set_ax_title(profile_ax, chk=idx, title=title)
 
             if trans:
                 for trans_key in self.trans_dens:
                     x, y = self._get_trans_xy(chk=idx, key=trans_key,
                                               x_var=x_var, y=y_profile)
-                    lines[trans_key].set_xdata(x)
-                    lines[trans_key].set_ydata(y)
+                    self._update_ax_line(x=x, y=y, line=lines[trans_key])
 
             fig.canvas.draw_idle()
 
@@ -809,6 +807,18 @@ class Simulation:
                 lines[trans_key] = ax.lines[1+i]
 
         return lines
+
+    def _update_ax_line(self, x, y, line):
+        """Update x,y line values
+
+        Parameters
+        ----------
+        x : array
+        y : array
+        line : Axis.line
+        """
+        line.set_xdata(x)
+        line.set_ydata(y)
 
     # =======================================================
     #                   Convenience
