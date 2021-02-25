@@ -377,7 +377,8 @@ class Simulation:
 
             ax.plot(x, y, ls=linestyle, marker=marker, label=label, color=color)
 
-            self._plot_trans_lines(x=x, y=y, ax=ax, chk=i, trans=trans)
+            if trans:
+                self._plot_trans_lines(x=x, y=y, ax=ax, chk=i)
 
         if not data_only:
             self._set_ax_all(ax, x_var=x_var, y_var=y_var, xlims=xlims, ylims=ylims,
@@ -422,7 +423,8 @@ class Simulation:
                     color={'ye': 'k'}.get(y_var),
                     linestyle={'ye': '--'}.get(y_var))
 
-        self._plot_trans_lines(x=x, y=ylims, ax=ax, chk=chk, trans=trans)
+        if trans:
+            self._plot_trans_lines(x=x, y=ylims, ax=ax, chk=chk)
 
         if not data_only:
             self._set_ax_all(ax, x_var=x_var, y_var='$X$', xlims=xlims, ylims=ylims,
@@ -634,7 +636,7 @@ class Simulation:
 
         return trans_x, trans_y
 
-    def _plot_trans_lines(self, x, y, ax, chk, trans, linewidth=1):
+    def _plot_trans_lines(self, x, y, ax, chk, linewidth=1):
         """Add transition line to axis
 
         parameters
@@ -643,13 +645,10 @@ class Simulation:
         y : []
         ax : Axes
         chk : int
-        trans : bool
         """
-        if trans:
-            for trans_key in self.trans_dens:
-                trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
-                                                      x=x, y=y)
-                ax.plot(trans_x, trans_y, ls='--', color='k', linewidth=linewidth)
+        for trans_key in self.trans_dens:
+            trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key, x=x, y=y)
+            ax.plot(trans_x, trans_y, ls='--', color='k', linewidth=linewidth)
 
     def _set_ax_all(self, ax, x_var, y_var, x_scale, y_scale,
                     xlims, ylims, title, legend, loc=None,
