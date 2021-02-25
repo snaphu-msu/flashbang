@@ -386,7 +386,7 @@ class Simulation:
         return fig
 
     def plot_composition(self, chk, x_var='r', y_var_list=None, y_scale='linear',
-                         x_scale=None, ax=None, legend=True, trans=True, show_ye=True,
+                         x_scale=None, ax=None, legend=True, trans=True,
                          ylims=(1e-7, 1), xlims=None,
                          title=True, loc=3, data_only=False):
         """Plot isotope composition profile
@@ -403,7 +403,6 @@ class Simulation:
         ax : Axes
         legend : bool
         trans : bool
-        show_ye : bool
         ylims : [min, max]
         xlims : [min, max]
         title : bool
@@ -416,10 +415,10 @@ class Simulation:
         fig, ax = plot_tools.setup_fig(ax=ax)
         profile = self.profiles.sel(chk=chk)
 
-        for key in y_var_list:
-            ax.plot(profile[x_var], profile[key], label=f'{key}')
-        if show_ye:
-            ax.plot(profile[x_var], profile['ye'], '--', label=f'Ye', color='k')
+        for y_var in y_var_list:
+            ax.plot(profile[x_var], profile[y_var],
+                    label=y_var, color={'ye': 'k'}.get(y_var),
+                    linestyle={'ye': '--'}.get(y_var))
 
         self._plot_trans_line(x_var, y=ylims, ax=ax, chk=chk, trans=trans)
 
@@ -532,8 +531,8 @@ class Simulation:
             idx = int(chk)
             profile = self.profiles.sel(chk=idx)
             y_profile = profile[y_var] / y_factor
-            
-            self._update_ax_line(x=profile[x_var], y=y_profile, line=lines['profile'])
+
+            self._update_ax_line(x=profile[x_var], y=y_profile, line=lines[y_var])
             self._set_ax_title(profile_ax, chk=idx, title=title)
 
             if trans:
@@ -558,7 +557,7 @@ class Simulation:
                           linestyle=linestyle,
                           marker=marker, y_factor=y_factor)
 
-        lines = self._get_ax_lines(ax=profile_ax, trans=trans)
+        lines = self._get_ax_lines(ax=profile_ax, y_vars=[y_var], trans=trans)
         slider.on_changed(update_slider)
 
         return fig, slider
@@ -566,7 +565,7 @@ class Simulation:
     def plot_composition_slider(self, y_var_list=None, x_var='r', y_scale='linear',
                                 x_scale=None, trans=True, title=True,
                                 xlims=None, ylims=(1e-7, 1), legend=True,
-                                show_ye=True, loc='lower left'):
+                                loc='lower left'):
         """Plot interactive slider of isotope composition
 
         parameters
@@ -581,7 +580,6 @@ class Simulation:
         xlims : [min, max]
         ylims : [min, max]
         legend : bool
-        show_ye : bool
         loc : str
         """
         def update_slider(chk):
@@ -599,11 +597,6 @@ class Simulation:
                 profile_ax.lines[i].set_xdata(profile[x_var])
                 profile_ax.lines[i].set_ydata(y_profile)
 
-            if show_ye:
-                line_idx = len(y_var_list)
-                profile_ax.lines[line_idx].set_xdata(profile[x_var])
-                profile_ax.lines[line_idx].set_ydata(profile['ye'])
-
             self._set_ax_title(profile_ax, chk=idx, title=title)
             fig.canvas.draw_idle()
 
@@ -618,9 +611,10 @@ class Simulation:
         self.plot_composition(chk_max, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
                               y_var_list=y_var_list, ax=profile_ax, legend=legend,
                               ylims=ylims, xlims=xlims, trans=trans, title=title,
-                              show_ye=show_ye, loc=loc)
+                              loc=loc)
 
         slider.on_changed(update_slider)
+
         return fig, slider
 
     # =======================================================
@@ -792,19 +786,24 @@ class Simulation:
         chk_min = self.chk_table.index[0]
         return chk_max, chk_min
 
-    def _get_ax_lines(self, ax, trans):
+    def _get_ax_lines(self, ax, y_vars, trans):
         """Return dict of axis line indexes
 
         Parameters
         ----------
         ax : Axis
+        y_vars : [str]
         trans : bool
         """
-        lines = {'profile': ax.lines[0]}
+        lines = {}
+        n_vars = len(y_vars)
+
+        for i, y_var in enumerate(y_vars):
+            lines[y_var] = ax.lines[i]
 
         if trans:
             for i, trans_key in enumerate(self.trans_dens):
-                lines[trans_key] = ax.lines[1+i]
+                lines[trans_key] = ax.lines[n_vars+i]
 
         return lines
 
