@@ -587,15 +587,14 @@ class Simulation:
             profile = self.profiles.sel(chk=idx)
 
             if trans:
-                for i, key in enumerate(self.trans_dens):
-                    x, y = self._get_trans_xy(chk=idx, key=key, x_var=x_var, y=ylims)
-                    profile_ax.lines[-i-1].set_xdata(x)
-                    profile_ax.lines[-i-1].set_ydata(y)
+                for trans_key in self.trans_dens:
+                    x, y = self._get_trans_xy(chk=idx, key=trans_key,
+                                              x_var=x_var, y=ylims)
+                    self._update_ax_line(x=x, y=y, line=lines[trans_key])
 
-            for i, key in enumerate(y_var_list):
-                y_profile = profile[key]
-                profile_ax.lines[i].set_xdata(profile[x_var])
-                profile_ax.lines[i].set_ydata(y_profile)
+            for y_var in y_var_list:
+                self._update_ax_line(x=profile[x_var], y=profile[y_var],
+                                     line=lines[y_var])
 
             self._set_ax_title(profile_ax, chk=idx, title=title)
             fig.canvas.draw_idle()
@@ -613,6 +612,7 @@ class Simulation:
                               ylims=ylims, xlims=xlims, trans=trans, title=title,
                               loc=loc)
 
+        lines = self._get_ax_lines(ax=profile_ax, y_vars=y_var_list, trans=trans)
         slider.on_changed(update_slider)
 
         return fig, slider
