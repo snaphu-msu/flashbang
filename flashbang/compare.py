@@ -9,6 +9,7 @@ from . import plot_tools
 from . import load_save
 from . import tools
 
+
 class Comparison:
     """Object for holding multiple models to compare
     """
@@ -32,6 +33,7 @@ class Comparison:
         self.config = load_save.load_config(config, verbose=self.verbose)
 
         n_models = len(models)
+        self.baseline = models[0]
         self.runs = tools.ensure_sequence(runs, n_models)
         self.models = models
         self.model_sets = tools.ensure_sequence(model_sets, n_models)
@@ -88,7 +90,8 @@ class Comparison:
 
         for model, sim in self.sims.items():
             sim.plot_profile(chk=chk, y_var=y_var, x_var=x_var,
-                             y_factor=y_factor, marker=marker, trans=trans,
+                             y_factor=y_factor, marker=marker,
+                             trans=trans if model == self.baseline else False,
                              linestyle=linestyle, ax=ax, label=model,
                              data_only=True)
 
@@ -128,45 +131,54 @@ class Comparison:
         marker : str
         y_factor : float
         """
+        def update(chk):
+            # TODO: tag/save each line object
+            idx = int(chk)
+
+            if trans:
+                profile = sim_0.profiles.sel(chk=idx)
+                y_profile = profile[y_var] / y_factor
+
+                for trans_key in sim_0.trans_dens:
+                    x, y = sim_0._get_trans_xy(chk=idx, key=trans_key,
+                                               x_var=x_var, y=y_profile)
+                    lines[trans_key].set_xdata(x)
+                    lines[trans_key].set_ydata(y)
+
+            for model, sim in self.sims.items():
+                profile = sim.profiles.sel(chk=idx)
+                y_profile = profile[y_var] / y_factor
+
+                lines[model].set_xdata(profile[x_var])
+                lines[model].set_ydata(y_profile)
+                # sim._set_ax_title(profile_ax, chk=idx, title=title)
+
+                fig.canvas.draw_idle()
+
         fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
         chk_min, chk_max = self._get_slider_chk()
         slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
+        sim_0 = self.sims[self.baseline]
 
         self.plot_profile(chk=chk_max,
                           y_var=y_var, x_var=x_var,
                           y_scale=y_scale, x_scale=x_scale,
                           ylims=ylims, xlims=xlims,
-                          ax=profile_ax, legend=legend,
+                          ax=profile_ax, legend=False,
                           trans=trans, title=title,
                           linestyle=linestyle,
                           marker=marker, y_factor=y_factor)
 
         self._set_ax_legend(ax=profile_ax, legend=legend)
 
-        def update(chk):
-            idx = int(chk)
-            for i, sim in enumerate(self.sims.values()):
-                profile = sim.profiles.sel(chk=idx)
-                y_profile = profile[y_var] / y_factor
-
-                profile_ax.lines[i].set_ydata(y_profile)
-                profile_ax.lines[i].set_xdata(profile[x_var])
-                # sim._set_ax_title(profile_ax, chk=idx, title=title)
-
-                # if trans:
-                #     for i, key in enumerate(sim.trans_dens):
-                #         x, y = sim._get_trans_xy(chk=idx, key=key,
-                #                                  x_var=x_var, y=y_profile)
-                #         profile_ax.lines[i+1].set_xdata(x)
-                #         profile_ax.lines[i+1].set_ydata(y)
-
-                fig.canvas.draw_idle()
+        lines = self._get_ax_lines(ax=profile_ax, trans=trans)
 
         slider.on_changed(update)
         return fig, slider
 
     def plot_dat(self,
                  y_var,
+                 legend=True,
                  **kwargs):
         """Plot comparison dat
         """
@@ -174,8 +186,10 @@ class Comparison:
 
         for model, sim in self.sims.items():
             sim.plot_dat(y_var=y_var, ax=ax, label=model,
+                         legend=False,
                          **kwargs)
-        ax.legend()
+        self._set_ax_legend(ax=ax, legend=legend, loc=0)
+
         return fig
 
     # =======================================================
@@ -307,3 +321,26 @@ class Comparison:
         chk_min = max(mins)
         chk_max = min(maxes)
         return chk_min, chk_max
+
+    def _get_ax_lines(self, ax, trans):
+        """Return dict of plot lines for each model
+
+        Parameters
+        ----------
+        ax : Axis
+        trans : bool
+        """
+        lines = {}
+        trans_offset = 0
+        lines[self.baseline] = ax.lines[0]
+        sim_0 = self.sims[self.baseline]
+
+        if trans:
+            trans_offset = len(sim_0.trans_dens)
+            for i, trans_key in enumerate(sim_0.trans_dens):
+                lines[trans_key] = ax.lines[1+i]
+
+        for i, model in enumerate(self.models[1:]):
+            lines[model] = ax.lines[1+trans_offset+i]
+
+        return lines
