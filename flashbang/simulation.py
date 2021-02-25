@@ -530,16 +530,13 @@ class Simulation:
         def update_slider(chk):
             chk = int(chk)
             profile = self.profiles.sel(chk=chk)
-            y_profile = profile[y_var] / y_factor
+            y = profile[y_var] / y_factor
 
-            self._update_ax_line(x=profile[x_var], y=y_profile, line=lines[y_var])
+            self._update_ax_line(x=profile[x_var], y=y, line=lines[y_var])
             self._set_ax_title(profile_ax, chk=chk, title=title)
 
             if trans:
-                for trans_key in self.trans_dens:
-                    x, y = self._get_trans_xy(chk=chk, key=trans_key,
-                                              x_var=x_var, y=y_profile)
-                    self._update_ax_line(x=x, y=y, line=lines[trans_key])
+                self._update_trans_lines(chk=chk, x_var=x_var, y=y, lines=lines)
 
             fig.canvas.draw_idle()
 
@@ -585,10 +582,7 @@ class Simulation:
             profile = self.profiles.sel(chk=chk)
 
             if trans:
-                for trans_key in self.trans_dens:
-                    x, y = self._get_trans_xy(chk=chk, key=trans_key,
-                                              x_var=x_var, y=ylims)
-                    self._update_ax_line(x=x, y=y, line=lines[trans_key])
+                self._update_trans_lines(chk=chk, x_var=x_var, y=ylims, lines=lines)
 
             for y_var in y_vars:
                 self._update_ax_line(x=profile[x_var], y=profile[y_var],
@@ -809,6 +803,20 @@ class Simulation:
         """
         line.set_xdata(x)
         line.set_ydata(y)
+
+    def _update_trans_lines(self, chk, x_var, y, lines):
+        """Update trans line values on plot
+
+        Parameters
+        ----------
+        chk : int
+        x_var : str
+        y : []
+        lines : {var: Axis.line}
+        """
+        for trans_key in self.trans_dens:
+            x, y = self._get_trans_xy(chk=chk, key=trans_key, x_var=x_var, y=y)
+            self._update_ax_line(x=x, y=y, line=lines[trans_key])
 
     # =======================================================
     #                   Convenience
