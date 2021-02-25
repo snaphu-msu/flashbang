@@ -543,12 +543,10 @@ class Simulation:
 
             fig.canvas.draw_idle()
 
-        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
-        chk_max, chk_min = self._get_slider_chk()
+        # ----------------
+        fig, profile_ax, slider = self._setup_slider()
 
-        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
-
-        self.plot_profile(chk=chk_max,
+        self.plot_profile(chk=self.chk_table.index[-1],
                           y_var=y_var, x_var=x_var,
                           y_scale=y_scale, x_scale=x_scale,
                           ylims=ylims, xlims=xlims,
@@ -599,18 +597,18 @@ class Simulation:
             self._set_ax_title(profile_ax, chk=chk, title=title)
             fig.canvas.draw_idle()
 
-        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
-        chk_max, chk_min = self._get_slider_chk()
-
+        # ----------------
         if y_vars is None:
             y_vars = self.config['plotting']['isotopes']
 
-        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
+        fig, profile_ax, slider = self._setup_slider()
 
-        self.plot_composition(chk_max, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
-                              y_vars=y_vars, ax=profile_ax, legend=legend,
-                              ylims=ylims, xlims=xlims, trans=trans, title=title,
-                              loc=loc)
+        self.plot_composition(chk=self.chk_table.index[-1],
+                              x_var=x_var, y_vars=y_vars,
+                              x_scale=x_scale, y_scale=y_scale,
+                              ylims=ylims, xlims=xlims,
+                              ax=profile_ax, legend=legend,
+                              trans=trans, title=title, loc=loc)
 
         lines = self._get_ax_lines(ax=profile_ax, y_vars=y_vars, trans=trans)
         slider.on_changed(update_slider)
@@ -785,6 +783,16 @@ class Simulation:
         chk_max = self.chk_table.index[-1]
         chk_min = self.chk_table.index[0]
         return chk_max, chk_min
+
+    def _setup_slider(self):
+        """Return slider fig
+        """
+        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
+        chk_max, chk_min = self._get_slider_chk()
+
+        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
+
+        return fig, profile_ax, slider
 
     def _get_ax_lines(self, ax, y_vars, trans):
         """Return dict of axis line indexes
