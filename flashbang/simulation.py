@@ -777,18 +777,12 @@ class Simulation:
         if legend:
             ax.legend(loc=loc)
 
-    def _get_slider_chk(self):
-        """Return chk_max, chk_min
-        """
-        chk_max = self.chk_table.index[-1]
-        chk_min = self.chk_table.index[0]
-        return chk_max, chk_min
-
     def _setup_slider(self):
         """Return slider fig
         """
         fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
-        chk_max, chk_min = self._get_slider_chk()
+        chk_max = self.chk_table.index[-1]
+        chk_min = self.chk_table.index[0]
 
         slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
 
