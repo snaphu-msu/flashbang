@@ -1,5 +1,6 @@
 """Compare multiple simulations
 """
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 
@@ -154,7 +155,8 @@ class Comparison:
             chk = int(chk)
 
             if trans:
-                self._update_trans_lines(chk=chk, x_var=x_var, y_var=y_var,
+                self._update_trans_lines(chk=chk, sim=self.sims[self.baseline],
+                                         x_var=x_var, y_var=y_var,
                                          y_factor=y_factor, lines=lines)
 
             for model, sim in self.sims.items():
@@ -299,6 +301,27 @@ class Comparison:
         if legend:
             ax.legend(loc=loc)
 
+    def _get_trans_xy(self, chk, sim, trans_key, x, y):
+        """Return x, y points of transition line, for given x-axis variable
+
+        parameters
+        ----------
+        chk : int
+        sim : Simulation
+        trans_key : str
+        x : []
+        y : []
+        """
+        trans_idx = sim.chk_table.loc[chk, f'{trans_key}_i']
+
+        trans_x = np.array([x[trans_idx], x[trans_idx]])
+        trans_y = np.array([np.min(y), np.max(y)])
+
+        return trans_x, trans_y
+
+    # =======================================================
+    #                      Slider Tools
+    # =======================================================
     def _get_slider_chk(self):
         """Return largest chk range common to all models
         """
@@ -357,7 +380,7 @@ class Comparison:
         line.set_xdata(x)
         line.set_ydata(y)
 
-    def _update_trans_lines(self, chk, x_var, y_var, y_factor, lines):
+    def _update_trans_lines(self, chk, sim, x_var, y_var, y_factor, lines):
         """Update trans line values on plot
 
         Parameters
@@ -368,12 +391,11 @@ class Comparison:
         y_factor : flt
         lines : {var: Axis.line}
         """
-        sim_0 = self.sims[self.baseline]
-        profile = sim_0.profiles.sel(chk=chk)
-
+        profile = sim.profiles.sel(chk=chk)
         x = profile[x_var]
         y = profile[y_var] / y_factor
 
-        for trans_key in sim_0.trans_dens:
-            trans_x, trans_y = sim_0._get_trans_xy(chk=chk, trans_key=trans_key, x=x, y=y)
+        for trans_key in sim.trans_dens:
+            trans_x, trans_y = self._get_trans_xy(chk=chk, sim=sim, trans_key=trans_key,
+                                                  x=x, y=y)
             self._update_ax_line(x=trans_x, y=trans_y, line=lines[trans_key])

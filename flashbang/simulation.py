@@ -761,6 +761,9 @@ class Simulation:
         if legend:
             ax.legend(loc=loc)
 
+    # =======================================================
+    #                      Slider Tools
+    # =======================================================
     def _setup_slider(self):
         """Return slider fig
         """
