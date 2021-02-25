@@ -528,16 +528,16 @@ class Simulation:
         y_factor : float
         """
         def update_slider(chk):
-            idx = int(chk)
-            profile = self.profiles.sel(chk=idx)
+            chk = int(chk)
+            profile = self.profiles.sel(chk=chk)
             y_profile = profile[y_var] / y_factor
 
             self._update_ax_line(x=profile[x_var], y=y_profile, line=lines[y_var])
-            self._set_ax_title(profile_ax, chk=idx, title=title)
+            self._set_ax_title(profile_ax, chk=chk, title=title)
 
             if trans:
                 for trans_key in self.trans_dens:
-                    x, y = self._get_trans_xy(chk=idx, key=trans_key,
+                    x, y = self._get_trans_xy(chk=chk, key=trans_key,
                                               x_var=x_var, y=y_profile)
                     self._update_ax_line(x=x, y=y, line=lines[trans_key])
 
@@ -583,12 +583,12 @@ class Simulation:
         loc : str
         """
         def update_slider(chk):
-            idx = int(chk)
-            profile = self.profiles.sel(chk=idx)
+            chk = int(chk)
+            profile = self.profiles.sel(chk=chk)
 
             if trans:
                 for trans_key in self.trans_dens:
-                    x, y = self._get_trans_xy(chk=idx, key=trans_key,
+                    x, y = self._get_trans_xy(chk=chk, key=trans_key,
                                               x_var=x_var, y=ylims)
                     self._update_ax_line(x=x, y=y, line=lines[trans_key])
 
@@ -596,7 +596,7 @@ class Simulation:
                 self._update_ax_line(x=profile[x_var], y=profile[y_var],
                                      line=lines[y_var])
 
-            self._set_ax_title(profile_ax, chk=idx, title=title)
+            self._set_ax_title(profile_ax, chk=chk, title=title)
             fig.canvas.draw_idle()
 
         fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
