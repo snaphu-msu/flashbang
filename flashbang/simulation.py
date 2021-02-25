@@ -376,7 +376,7 @@ class Simulation:
             ax.plot(profile[x_var], y, ls=linestyle, marker=marker,
                     label=label, color=color)
 
-            self._plot_trans_line(x_var, y=y, ax=ax, chk=i, trans=trans)
+            self._plot_trans_lines(x_var, y=y, ax=ax, chk=i, trans=trans)
 
         if not data_only:
             self._set_ax_all(ax, x_var=x_var, y_var=y_var, xlims=xlims, ylims=ylims,
@@ -420,7 +420,7 @@ class Simulation:
                     color={'ye': 'k'}.get(y_var),
                     linestyle={'ye': '--'}.get(y_var))
 
-        self._plot_trans_line(x_var, y=ylims, ax=ax, chk=chk, trans=trans)
+        self._plot_trans_lines(x_var, y=ylims, ax=ax, chk=chk, trans=trans)
 
         if not data_only:
             self._set_ax_all(ax, x_var=x_var, y_var='$X$', xlims=xlims, ylims=ylims,
@@ -628,35 +628,24 @@ class Simulation:
         x_var : str
         y : 1D array
         """
-        y_max = np.max(y)
-        y_min = np.min(y)
-
-        x = self._get_trans_x(chk=chk, key=key, x_var=x_var)
-        x = np.array([x, x])
-        y = np.array([y_min, y_max])
-        return x, y
-
-    def _get_trans_x(self, chk, key, x_var):
-        """Return x value corresponding to given transition
-
-        parameters
-        ----------
-        chk : int
-        key : str
-        x_var : str
-        """
         profile = self.profiles.sel(chk=chk)
         trans_idx = self.chk_table.loc[chk, f'{key}_i']
-        return profile[x_var][trans_idx]
+        x = profile[x_var][trans_idx]
+        x = np.array([x, x])
 
-    def _plot_trans_line(self, x_var, y, ax, chk, trans, linewidth=1):
+        y_max = np.max(y)
+        y_min = np.min(y)
+        y = np.array([y_min, y_max])
+
+        return x, y
+
+    def _plot_trans_lines(self, x_var, y, ax, chk, trans, linewidth=1):
         """Add transition line to axis
 
         parameters
         ----------
         x_var : str
         y : []
-            1D array of y-values
         ax : Axes
         chk : int
         trans : bool
