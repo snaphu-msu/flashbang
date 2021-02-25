@@ -372,11 +372,12 @@ class Simulation:
 
         for i in chk:
             profile = self.profiles.sel(chk=i)
+            x = profile[x_var]
             y = profile[y_var] / y_factor
-            ax.plot(profile[x_var], y, ls=linestyle, marker=marker,
-                    label=label, color=color)
 
-            self._plot_trans_lines(x_var, y=y, ax=ax, chk=i, trans=trans)
+            ax.plot(x, y, ls=linestyle, marker=marker, label=label, color=color)
+
+            self._plot_trans_lines(x=x, y=y, ax=ax, chk=i, trans=trans)
 
         if not data_only:
             self._set_ax_all(ax, x_var=x_var, y_var=y_var, xlims=xlims, ylims=ylims,
@@ -414,13 +415,14 @@ class Simulation:
 
         fig, ax = plot_tools.setup_fig(ax=ax)
         profile = self.profiles.sel(chk=chk)
+        x = profile[x_var]
 
         for y_var in y_vars:
-            ax.plot(profile[x_var], profile[y_var], label=y_var,
+            ax.plot(x, profile[y_var], label=y_var,
                     color={'ye': 'k'}.get(y_var),
                     linestyle={'ye': '--'}.get(y_var))
 
-        self._plot_trans_lines(x_var, y=ylims, ax=ax, chk=chk, trans=trans)
+        self._plot_trans_lines(x=x, y=ylims, ax=ax, chk=chk, trans=trans)
 
         if not data_only:
             self._set_ax_all(ax, x_var=x_var, y_var='$X$', xlims=xlims, ylims=ylims,
@@ -529,14 +531,16 @@ class Simulation:
         """
         def update_slider(chk):
             chk = int(chk)
+
             profile = self.profiles.sel(chk=chk)
+            x = profile[x_var]
             y = profile[y_var] / y_factor
 
-            self._update_ax_line(x=profile[x_var], y=y, line=lines[y_var])
+            self._update_ax_line(x=x, y=y, line=lines[y_var])
             self._set_ax_title(profile_ax, chk=chk, title=title)
 
             if trans:
-                self._update_trans_lines(chk=chk, x_var=x_var, y=y, lines=lines)
+                self._update_trans_lines(chk=chk, x=x, y=y, lines=lines)
 
             fig.canvas.draw_idle()
 
@@ -579,14 +583,15 @@ class Simulation:
         """
         def update_slider(chk):
             chk = int(chk)
+
             profile = self.profiles.sel(chk=chk)
+            x = profile[x_var]
 
             if trans:
-                self._update_trans_lines(chk=chk, x_var=x_var, y=ylims, lines=lines)
+                self._update_trans_lines(chk=chk, x=x, y=ylims, lines=lines)
 
             for y_var in y_vars:
-                self._update_ax_line(x=profile[x_var], y=profile[y_var],
-                                     line=lines[y_var])
+                self._update_ax_line(x=x, y=profile[y_var], line=lines[y_var])
 
             self._set_ax_title(profile_ax, chk=chk, title=title)
             fig.canvas.draw_idle()
@@ -612,42 +617,39 @@ class Simulation:
     # =======================================================
     #                      Plotting Tools
     # =======================================================
-    def _get_trans_xy(self, chk, key, x_var, y):
+    def _get_trans_xy(self, chk, trans_key, x, y):
         """Return x, y points of transition line, for given x-axis variable
 
         parameters
         ----------
         chk : int
-        key : str
-        x_var : str
-        y : 1D array
+        trans_key : str
+        x : []
+        y : []
         """
-        profile = self.profiles.sel(chk=chk)
-        trans_idx = self.chk_table.loc[chk, f'{key}_i']
-        x = profile[x_var][trans_idx]
-        x = np.array([x, x])
+        trans_idx = self.chk_table.loc[chk, f'{trans_key}_i']
 
-        y_max = np.max(y)
-        y_min = np.min(y)
-        y = np.array([y_min, y_max])
+        trans_x = np.array([x[trans_idx], x[trans_idx]])
+        trans_y = np.array([np.min(y), np.max(y)])
 
-        return x, y
+        return trans_x, trans_y
 
-    def _plot_trans_lines(self, x_var, y, ax, chk, trans, linewidth=1):
+    def _plot_trans_lines(self, x, y, ax, chk, trans, linewidth=1):
         """Add transition line to axis
 
         parameters
         ----------
-        x_var : str
+        x : []
         y : []
         ax : Axes
         chk : int
         trans : bool
         """
         if trans:
-            for key in self.trans_dens:
-                x, y = self._get_trans_xy(chk=chk, key=key, x_var=x_var, y=y)
-                ax.plot(x, y, ls='--', color='k', linewidth=linewidth)
+            for trans_key in self.trans_dens:
+                trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
+                                                      x=x, y=y)
+                ax.plot(trans_x, trans_y, ls='--', color='k', linewidth=linewidth)
 
     def _set_ax_all(self, ax, x_var, y_var, x_scale, y_scale,
                     xlims, ylims, title, legend, loc=None,
@@ -804,19 +806,19 @@ class Simulation:
         line.set_xdata(x)
         line.set_ydata(y)
 
-    def _update_trans_lines(self, chk, x_var, y, lines):
+    def _update_trans_lines(self, chk, x, y, lines):
         """Update trans line values on plot
 
         Parameters
         ----------
         chk : int
-        x_var : str
+        x : []
         y : []
         lines : {var: Axis.line}
         """
         for trans_key in self.trans_dens:
-            x, y = self._get_trans_xy(chk=chk, key=trans_key, x_var=x_var, y=y)
-            self._update_ax_line(x=x, y=y, line=lines[trans_key])
+            trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key, x=x, y=y)
+            self._update_ax_line(x=trans_x, y=trans_y, line=lines[trans_key])
 
     # =======================================================
     #                   Convenience
