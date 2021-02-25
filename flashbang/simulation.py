@@ -376,6 +376,7 @@ class Simulation:
 
             ax.plot(profile[x_var], y/y_factor, ls=linestyle, marker=marker,
                     label=label, color=color)
+
             self._plot_trans_line(x_var, y=y, ax=ax, chk=i, trans=trans)
 
         if not data_only:
