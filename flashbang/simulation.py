@@ -430,122 +430,6 @@ class Simulation:
 
         return fig
 
-    def plot_profile_slider(self, y_var, x_var='r', y_scale=None, x_scale=None,
-                            xlims=None, ylims=None, trans=False,
-                            title=True,  legend=False, linestyle='-',
-                            marker='', y_factor=1):
-        """Plot interactive slider of profile for given variable
-
-        parameters
-        ----------
-        y_var : str
-        x_var : str
-        y_scale : 'log' or 'linear'
-        x_scale : 'log' or 'linear'
-        trans : bool
-            plot helmholtz transitions
-        title : bool
-        xlims : [min, max]
-        ylims : [min, max]
-        legend : bool
-        linestyle : str
-        marker : str
-        y_factor : float
-        """
-        def update_slider(chk):
-            idx = int(chk)
-            profile = self.profiles.sel(chk=idx)
-            y_profile = profile[y_var] / y_factor
-
-            profile_ax.lines[0].set_ydata(y_profile)
-            profile_ax.lines[0].set_xdata(profile[x_var])
-            self._set_ax_title(profile_ax, chk=idx, title=title)
-
-            if trans:
-                for i, key in enumerate(self.trans_dens):
-                    x, y = self._get_trans_xy(chk=idx, key=key, x_var=x_var, y=y_profile)
-                    profile_ax.lines[i+1].set_xdata(x)
-                    profile_ax.lines[i+1].set_ydata(y)
-
-            fig.canvas.draw_idle()
-
-        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
-        chk_max, chk_min = self._get_slider_chk()
-
-        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
-
-        self.plot_profile(chk=chk_max,
-                          y_var=y_var, x_var=x_var,
-                          y_scale=y_scale, x_scale=x_scale,
-                          ylims=ylims, xlims=xlims,
-                          ax=profile_ax, legend=legend,
-                          trans=trans, title=title,
-                          linestyle=linestyle,
-                          marker=marker, y_factor=y_factor)
-
-        slider.on_changed(update_slider)
-        return fig, slider
-
-    def plot_composition_slider(self, y_var_list=None, x_var='r', y_scale='linear',
-                                x_scale=None, trans=True, title=True,
-                                xlims=None, ylims=(1e-7, 1), legend=True,
-                                show_ye=True, loc='lower left'):
-        """Plot interactive slider of isotope composition
-
-        parameters
-        ----------
-        y_var_list : [str]
-        x_var : str
-        y_scale : 'log' or 'linear'
-        x_scale : 'log' or 'linear'
-        trans : bool
-            plot helmholtz transitions
-        title : bool
-        xlims : [min, max]
-        ylims : [min, max]
-        legend : bool
-        show_ye : bool
-        loc : str
-        """
-        def update_slider(chk):
-            idx = int(chk)
-            profile = self.profiles.sel(chk=idx)
-
-            if trans:
-                for i, key in enumerate(self.trans_dens):
-                    x, y = self._get_trans_xy(chk=idx, key=key, x_var=x_var, y=ylims)
-                    profile_ax.lines[-i-1].set_xdata(x)
-                    profile_ax.lines[-i-1].set_ydata(y)
-
-            for i, key in enumerate(y_var_list):
-                y_profile = profile[key]
-                profile_ax.lines[i].set_xdata(profile[x_var])
-                profile_ax.lines[i].set_ydata(y_profile)
-
-            if show_ye:
-                line_idx = len(y_var_list)
-                profile_ax.lines[line_idx].set_xdata(profile[x_var])
-                profile_ax.lines[line_idx].set_ydata(profile['ye'])
-
-            self._set_ax_title(profile_ax, chk=idx, title=title)
-            fig.canvas.draw_idle()
-
-        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
-        chk_max, chk_min = self._get_slider_chk()
-
-        if y_var_list is None:
-            y_var_list = self.config['plotting']['isotopes']
-
-        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
-
-        self.plot_composition(chk_max, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
-                              y_var_list=y_var_list, ax=profile_ax, legend=legend,
-                              ylims=ylims, xlims=xlims, trans=trans, title=title,
-                              show_ye=show_ye, loc=loc)
-
-        slider.on_changed(update_slider)
-        return fig, slider
-
     def plot_dat(self, y_var, x_scale=None, y_scale=None, ax=None,
                  linestyle='-', marker='', label=None, legend=False,
                  zero_time=True, title_str=None, xlims=None, ylims=None,
@@ -618,6 +502,128 @@ class Simulation:
                              x_scale=x_scale, y_scale=y_scale, title=False, legend=legend)
 
         return fig
+
+    # =======================================================
+    #                      Sliders
+    # =======================================================
+    def plot_profile_slider(self, y_var, x_var='r', y_scale=None, x_scale=None,
+                            xlims=None, ylims=None, trans=False,
+                            title=True,  legend=False, linestyle='-',
+                            marker='', y_factor=1):
+        """Plot interactive slider of profile for given variable
+
+        parameters
+        ----------
+        y_var : str
+        x_var : str
+        y_scale : 'log' or 'linear'
+        x_scale : 'log' or 'linear'
+        trans : bool
+            plot helmholtz transitions
+        title : bool
+        xlims : [min, max]
+        ylims : [min, max]
+        legend : bool
+        linestyle : str
+        marker : str
+        y_factor : float
+        """
+        def update_slider(chk):
+            idx = int(chk)
+            profile = self.profiles.sel(chk=idx)
+            y_profile = profile[y_var] / y_factor
+
+            lines['profile'].set_ydata(y_profile)
+            lines['profile'].set_xdata(profile[x_var])
+            self._set_ax_title(profile_ax, chk=idx, title=title)
+
+            if trans:
+                for trans_key in self.trans_dens:
+                    x, y = self._get_trans_xy(chk=idx, key=trans_key,
+                                              x_var=x_var, y=y_profile)
+                    lines[trans_key].set_xdata(x)
+                    lines[trans_key].set_ydata(y)
+
+            fig.canvas.draw_idle()
+
+        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
+        chk_max, chk_min = self._get_slider_chk()
+
+        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
+
+        self.plot_profile(chk=chk_max,
+                          y_var=y_var, x_var=x_var,
+                          y_scale=y_scale, x_scale=x_scale,
+                          ylims=ylims, xlims=xlims,
+                          ax=profile_ax, legend=legend,
+                          trans=trans, title=title,
+                          linestyle=linestyle,
+                          marker=marker, y_factor=y_factor)
+
+        lines = self._get_ax_lines(ax=profile_ax, trans=trans)
+        slider.on_changed(update_slider)
+
+        return fig, slider
+
+    def plot_composition_slider(self, y_var_list=None, x_var='r', y_scale='linear',
+                                x_scale=None, trans=True, title=True,
+                                xlims=None, ylims=(1e-7, 1), legend=True,
+                                show_ye=True, loc='lower left'):
+        """Plot interactive slider of isotope composition
+
+        parameters
+        ----------
+        y_var_list : [str]
+        x_var : str
+        y_scale : 'log' or 'linear'
+        x_scale : 'log' or 'linear'
+        trans : bool
+            plot helmholtz transitions
+        title : bool
+        xlims : [min, max]
+        ylims : [min, max]
+        legend : bool
+        show_ye : bool
+        loc : str
+        """
+        def update_slider(chk):
+            idx = int(chk)
+            profile = self.profiles.sel(chk=idx)
+
+            if trans:
+                for i, key in enumerate(self.trans_dens):
+                    x, y = self._get_trans_xy(chk=idx, key=key, x_var=x_var, y=ylims)
+                    profile_ax.lines[-i-1].set_xdata(x)
+                    profile_ax.lines[-i-1].set_ydata(y)
+
+            for i, key in enumerate(y_var_list):
+                y_profile = profile[key]
+                profile_ax.lines[i].set_xdata(profile[x_var])
+                profile_ax.lines[i].set_ydata(y_profile)
+
+            if show_ye:
+                line_idx = len(y_var_list)
+                profile_ax.lines[line_idx].set_xdata(profile[x_var])
+                profile_ax.lines[line_idx].set_ydata(profile['ye'])
+
+            self._set_ax_title(profile_ax, chk=idx, title=title)
+            fig.canvas.draw_idle()
+
+        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
+        chk_max, chk_min = self._get_slider_chk()
+
+        if y_var_list is None:
+            y_var_list = self.config['plotting']['isotopes']
+
+        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
+
+        self.plot_composition(chk_max, x_var=x_var, y_scale=y_scale, x_scale=x_scale,
+                              y_var_list=y_var_list, ax=profile_ax, legend=legend,
+                              ylims=ylims, xlims=xlims, trans=trans, title=title,
+                              show_ye=show_ye, loc=loc)
+
+        slider.on_changed(update_slider)
+        return fig, slider
 
     # =======================================================
     #                      Plotting Tools
@@ -787,6 +793,22 @@ class Simulation:
         chk_max = self.chk_table.index[-1]
         chk_min = self.chk_table.index[0]
         return chk_max, chk_min
+
+    def _get_ax_lines(self, ax, trans):
+        """Return dict of axis line indexes
+
+        Parameters
+        ----------
+        ax : Axis
+        trans : bool
+        """
+        lines = {'profile': ax.lines[0]}
+
+        if trans:
+            for i, trans_key in enumerate(self.trans_dens):
+                lines[trans_key] = ax.lines[1+i]
+
+        return lines
 
     # =======================================================
     #                   Convenience
