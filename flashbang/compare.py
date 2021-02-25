@@ -151,29 +151,23 @@ class Comparison:
         y_factor : float
         """
         def update(chk):
-            idx = int(chk)
+            chk = int(chk)
 
             if trans:
-                profile = sim_0.profiles.sel(chk=idx)
-                y_profile = profile[y_var] / y_factor
-
-                for trans_key in sim_0.trans_dens:
-                    x, y = sim_0._get_trans_xy(chk=idx, key=trans_key,
-                                               x_var=x_var, y=y_profile)
-                    self._update_ax_line(x=x, y=y, line=lines[trans_key])
+                self._update_trans_lines(chk=chk, x_var=x_var, y_var=y_var,
+                                         y_factor=y_factor, lines=lines)
 
             for model, sim in self.sims.items():
-                profile = sim.profiles.sel(chk=idx)
+                profile = sim.profiles.sel(chk=chk)
                 self._update_ax_line(x=profile[x_var],
                                      y=profile[y_var]/y_factor,
                                      line=lines[model])
-                self._set_ax_title(ax=profile_ax, chk=idx, title=title)
 
+                self._set_ax_title(ax=profile_ax, chk=chk, title=title)
                 fig.canvas.draw_idle()
 
         fig, profile_ax, slider = self._setup_slider()
         chk_min, chk_max = self._get_slider_chk()
-        sim_0 = self.sims[self.baseline]
 
         self.plot_profile(chk=chk_max,
                           y_var=y_var, x_var=x_var,
@@ -362,3 +356,24 @@ class Comparison:
         """
         line.set_xdata(x)
         line.set_ydata(y)
+
+    def _update_trans_lines(self, chk, x_var, y_var, y_factor, lines):
+        """Update trans line values on plot
+
+        Parameters
+        ----------
+        chk : int
+        x_var : str
+        y_var : str
+        y_factor : flt
+        lines : {var: Axis.line}
+        """
+        sim_0 = self.sims[self.baseline]
+        profile = sim_0.profiles.sel(chk=chk)
+
+        x = profile[x_var]
+        y = profile[y_var] / y_factor
+
+        for trans_key in sim_0.trans_dens:
+            trans_x, trans_y = sim_0._get_trans_xy(chk=chk, trans_key=trans_key, x=x, y=y)
+            self._update_ax_line(x=trans_x, y=trans_y, line=lines[trans_key])
