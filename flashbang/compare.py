@@ -159,15 +159,13 @@ class Comparison:
                                          x_var=x_var, y_var=y_var,
                                          y_factor=y_factor, lines=lines)
 
-            for model, sim in self.sims.items():
-                profile = sim.profiles.sel(chk=chk)
-                self._update_ax_line(x=profile[x_var],
-                                     y=profile[y_var]/y_factor,
-                                     line=lines[model])
+            self._update_profile_lines(chk=chk, x_var=x_var, y_var=y_var,
+                                       y_factor=y_factor, lines=lines)
 
-                self._set_ax_title(ax=profile_ax, chk=chk, title=title)
-                fig.canvas.draw_idle()
+            self._set_ax_title(ax=profile_ax, chk=chk, title=title)
+            fig.canvas.draw_idle()
 
+        # ----------------
         fig, profile_ax, slider = self._setup_slider()
         chk_min, chk_max = self._get_slider_chk()
 
@@ -369,7 +367,7 @@ class Comparison:
         return lines
 
     def _update_ax_line(self, x, y, line):
-        """Update x,y line values
+        """Update x,y lines on slider plot
 
         Parameters
         ----------
@@ -380,12 +378,31 @@ class Comparison:
         line.set_xdata(x)
         line.set_ydata(y)
 
-    def _update_trans_lines(self, chk, sim, x_var, y_var, y_factor, lines):
-        """Update trans line values on plot
+    def _update_profile_lines(self, chk, x_var, y_var, y_factor, lines):
+        """Update profile lines on slider plot
 
         Parameters
         ----------
         chk : int
+        x_var : str
+        y_var : str
+        y_factor : flt
+        lines : {var: Axis.line}
+        """
+        for model, sim in self.sims.items():
+            profile = sim.profiles.sel(chk=chk)
+            x = profile[x_var]
+            y = profile[y_var] / y_factor
+
+            self._update_ax_line(x=x, y=y, line=lines[model])
+
+    def _update_trans_lines(self, chk, sim, x_var, y_var, y_factor, lines):
+        """Update trans lines on slider plot
+
+        Parameters
+        ----------
+        chk : int
+        sim : Simulation
         x_var : str
         y_var : str
         y_factor : flt
