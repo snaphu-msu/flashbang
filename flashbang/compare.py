@@ -52,7 +52,7 @@ class Comparison:
                      x_var='r',
                      x_scale=None, y_scale=None,
                      xlims=None, ylims=None,
-                     y_factor=1,
+                     x_factor=1, y_factor=1,
                      ax=None,
                      marker=None,
                      trans=False,
@@ -71,16 +71,18 @@ class Comparison:
         y_var : str
             variable to plot on y-axis (from Simulation.profile)
         x_var : str
-        y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
+        y_scale : 'log' or 'linear'
+        xlims : [min, max]
+        ylims : [min, max]
+        x_factor : float
+            Divide x-values by this factor
         y_factor : float
             Divide y-values by this factor
         ax : Axes
         legend : bool
         trans : bool
         title : bool
-        ylims : [min, max]
-        xlims : [min, max]
         linestyle : str
         marker : str
         title_str : str
@@ -91,7 +93,8 @@ class Comparison:
 
         for model, sim in self.sims.items():
             sim.plot_profile(chk=chk, y_var=y_var, x_var=x_var,
-                             y_factor=y_factor, marker=marker,
+                             x_factor=x_factor, y_factor=y_factor,
+                             marker=marker,
                              trans=trans if model == self.baseline else False,
                              linestyle=linestyle, ax=ax, label=model,
                              data_only=True)
@@ -125,7 +128,7 @@ class Comparison:
                             x_var='r',
                             x_scale=None, y_scale=None,
                             xlims=None, ylims=None,
-                            y_factor=1,
+                            x_factor=1, y_factor=1,
                             trans=False,
                             title=True,
                             legend=True,
@@ -146,10 +149,11 @@ class Comparison:
         title : bool
         xlims : [min, max]
         ylims : [min, max]
+        x_factor : float
+        y_factor : float
         legend : bool
         linestyle : str
         marker : str
-        y_factor : float
         """
         def update(chk):
             chk = int(chk)
@@ -157,10 +161,12 @@ class Comparison:
             if trans:
                 self._update_trans_lines(chk=chk, sim=self.sims[self.baseline],
                                          x_var=x_var, y_var=y_var,
-                                         y_factor=y_factor, lines=lines)
+                                         x_factor=x_factor, y_factor=y_factor,
+                                         lines=lines)
 
             self._update_profile_lines(chk=chk, x_var=x_var, y_var=y_var,
-                                       y_factor=y_factor, lines=lines)
+                                       x_factor=x_factor, y_factor=y_factor,
+                                       lines=lines)
 
             self._set_ax_title(ax=profile_ax, chk=chk, title=title)
             fig.canvas.draw_idle()
@@ -173,10 +179,11 @@ class Comparison:
                           y_var=y_var, x_var=x_var,
                           y_scale=y_scale, x_scale=x_scale,
                           ylims=ylims, xlims=xlims,
+                          x_factor=x_factor, y_factor=y_factor,
                           ax=profile_ax, legend=False,
                           trans=trans, title=title,
                           linestyle=linestyle,
-                          marker=marker, y_factor=y_factor)
+                          marker=marker)
 
         self._set_ax_legend(ax=profile_ax, legend=legend)
         lines = self._get_ax_lines(ax=profile_ax, trans=trans)
@@ -384,7 +391,8 @@ class Comparison:
         line.set_xdata(x)
         line.set_ydata(y)
 
-    def _update_profile_lines(self, chk, x_var, y_var, y_factor, lines):
+    def _update_profile_lines(self, chk, x_var, y_var,
+                              x_factor, y_factor, lines):
         """Update profile lines on slider plot
 
         Parameters
@@ -392,17 +400,19 @@ class Comparison:
         chk : int
         x_var : str
         y_var : str
-        y_factor : flt
+        x_factor : float
+        y_factor : float
         lines : {var: Axis.line}
         """
         for model, sim in self.sims.items():
             profile = sim.profiles.sel(chk=chk)
-            x = profile[x_var]
+            x = profile[x_var] / x_factor
             y = profile[y_var] / y_factor
 
             self._update_ax_line(x=x, y=y, line=lines[model])
 
-    def _update_trans_lines(self, chk, sim, x_var, y_var, y_factor, lines):
+    def _update_trans_lines(self, chk, sim, x_var, y_var,
+                            x_factor, y_factor, lines):
         """Update trans lines on slider plot
 
         Parameters
@@ -411,11 +421,12 @@ class Comparison:
         sim : Simulation
         x_var : str
         y_var : str
-        y_factor : flt
+        x_factor : float
+        y_factor : float
         lines : {var: Axis.line}
         """
         profile = sim.profiles.sel(chk=chk)
-        x = profile[x_var]
+        x = profile[x_var] / x_factor
         y = profile[y_var] / y_factor
 
         for trans_key in sim.trans_dens:
