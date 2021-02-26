@@ -98,7 +98,7 @@ def output_path(model, model_set):
 # ===============================================================
 #                      FLASH files
 # ===============================================================
-def flash_filename(name, run, chk=-1):
+def flash_filename(name, run, chk=None):
     """Return filename for raw FLASH data file
 
     Parameters
@@ -107,7 +107,7 @@ def flash_filename(name, run, chk=-1):
     chk : int
     run : str
     """
-    if (name == 'chk') and (chk is -1):
+    if (name == 'chk') and (chk is None):
         raise ValueError(f"must provide chk")
 
     filenames = {
@@ -122,7 +122,7 @@ def flash_filename(name, run, chk=-1):
     return filenames[name]
 
 
-def flash_filepath(name, run, model, model_set, chk=-1):
+def flash_filepath(name, run, model, model_set, chk=None):
     """Return filepath to raw FLASH data file
 
     Parameters
@@ -164,7 +164,7 @@ def model_cache_path(model, model_set):
     return os.path.join(path, model_set, model)
 
 
-def cache_filename(name, run, model, chk=-1):
+def cache_filename(name, run, model, chk=None):
     """Return filename for cache file
 
     Parameters
@@ -175,7 +175,7 @@ def cache_filename(name, run, model, chk=-1):
     chk : int
     """
     requires_chk = ['profile']
-    if (name in requires_chk) and (chk is -1):
+    if (name in requires_chk) and (chk is None):
         raise ValueError(f"must provide chk for cache name '{name}'")
 
     filenames = {
@@ -193,7 +193,7 @@ def cache_filename(name, run, model, chk=-1):
     return filenames[name]
 
 
-def cache_filepath(name, run, model, model_set, chk=-1):
+def cache_filepath(name, run, model, model_set, chk=None):
     """Return filepath to cache file
 
     Parameters

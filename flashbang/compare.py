@@ -124,7 +124,7 @@ class Comparison:
     def plot_profile_slider(self, y_var,
                             x_var='r',
                             x_scale=None, y_scale=None,
-                            ylims=None, xlims=None,
+                            xlims=None, ylims=None,
                             y_factor=1,
                             trans=False,
                             title=True,
@@ -187,9 +187,15 @@ class Comparison:
     # =======================================================
     #                      Plotting Tools
     # =======================================================
-    def _set_ax_all(self, ax, x_var, y_var, x_scale, y_scale,
-                    xlims, ylims, title, legend, loc=None,
-                    chk=None, title_str=None):
+    def _set_ax_all(self, ax,
+                    x_var, y_var,
+                    x_scale, y_scale,
+                    xlims, ylims,
+                    title,
+                    legend,
+                    loc=None,
+                    chk=None,
+                    title_str=None):
         """Set all axis properties
 
         Parameters
@@ -214,7 +220,7 @@ class Comparison:
         self._set_ax_scales(ax, x_var=x_var, y_var=y_var,
                             x_scale=x_scale, y_scale=y_scale)
 
-    def _set_ax_scales(self, ax, y_var, x_var, y_scale, x_scale):
+    def _set_ax_scales(self, ax, x_var, y_var, x_scale, y_scale):
         """Set axis scales (linear, log)
 
         Parameters

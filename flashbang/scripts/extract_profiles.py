@@ -13,8 +13,12 @@ from flashbang import load_save
 from flashbang.tools import str_to_bool
 
 
-def main(run, model, model_set, multithread=True, reload=False, save=True,
-         config='default', threads=4):
+def main(run, model, model_set,
+         multithread=True,
+         reload=False,
+         save=True,
+         config='default',
+         threads=4):
     """
     Parameters
     ----------
@@ -63,7 +67,14 @@ def main(run, model, model_set, multithread=True, reload=False, save=True,
     print(f'Time taken: {t1-t0:.2f} s')
 
 
-def extract_profiles(chk, run, model, model_set, reload, save, params, derived_params):
+def extract_profiles(chk,
+                     run,
+                     model,
+                     model_set,
+                     reload,
+                     save,
+                     params,
+                     derived_params):
     """Function for multithread pool
     """
     load_save.get_profile(chk=chk,

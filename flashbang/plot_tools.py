@@ -22,7 +22,10 @@ def setup_fig(ax):
     return fig, ax
 
 
-def setup_subplots(n_sub, max_cols=2, sub_figsize=(6, 5), **kwargs):
+def setup_subplots(n_sub,
+                   max_cols=2,
+                   sub_figsize=(6, 5),
+                   **kwargs):
     """Constructs fig for given number of subplots
 
     returns : fig, ax

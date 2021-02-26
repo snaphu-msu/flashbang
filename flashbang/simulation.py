@@ -65,9 +65,16 @@ from .tools import ensure_sequence
 
 
 class Simulation:
-    def __init__(self, run, model, model_set, config='default',
-                 verbose=True, load_all=True,
-                 reload=False, save=True, load_tracers=False):
+    def __init__(self,
+                 run,
+                 model,
+                 model_set,
+                 config='default',
+                 verbose=True,
+                 load_all=True,
+                 reload=False,
+                 save=True,
+                 load_tracers=False):
         """Object representing a 1D flash simulation
 
         parameters
@@ -295,8 +302,13 @@ class Simulation:
     # =======================================================
     #                      Plotting
     # =======================================================
-    def plot_profiles(self, chk, y_var_list, x_var='r', y_scale=None, x_scale=None,
-                      max_cols=2, sub_figsize=(6, 5), trans=False, legend=False,
+    def plot_profiles(self, chk, y_vars,
+                      x_var='r',
+                      x_scale=None, y_scale=None,
+                      max_cols=2,
+                      sub_figsize=(6, 5),
+                      trans=False,
+                      legend=False,
                       title=True):
         """Plot one or more profile variables
 
@@ -304,7 +316,7 @@ class Simulation:
         ----------
         chk : int
             checkpoint to plot
-        y_var_list : str or [str]
+        y_vars : str or [str]
             variable(s) to plot on y-axis (from Simulation.profile)
         x_var : str
             variable to plot on x-axis
@@ -317,12 +329,12 @@ class Simulation:
         title : bool
         """
         chk = ensure_sequence(chk)
-        y_var_list = ensure_sequence(y_var_list)
-        n_var = len(y_var_list)
+        y_vars = ensure_sequence(y_vars)
+        n_var = len(y_vars)
         fig, ax = plot_tools.setup_subplots(n_var, max_cols=max_cols, sharex=True,
                                             sub_figsize=sub_figsize, squeeze=False)
 
-        for i, y_var in enumerate(y_var_list):
+        for i, y_var in enumerate(y_vars):
             row = int(np.floor(i / max_cols))
             col = i % max_cols
             show_legend = legend if i == 0 else False
@@ -335,11 +347,21 @@ class Simulation:
                               legend=show_legend, title=show_title)
         return fig
 
-    def plot_profile(self, chk, y_var, x_var='r', y_scale=None, x_scale=None,
-                     ax=None, legend=False, trans=False, title=True,
-                     ylims=None, xlims=None, label=None,
-                     linestyle='-', marker='', title_str=None, color=None,
-                     data_only=False, y_factor=1):
+    def plot_profile(self, chk, y_var,
+                     x_var='r',
+                     x_scale=None, y_scale=None,
+                     xlims=None, ylims=None,
+                     y_factor=1,
+                     ax=None,
+                     legend=False,
+                     trans=False,
+                     title=True,
+                     label=None,
+                     linestyle='-',
+                     marker='',
+                     title_str=None,
+                     color=None,
+                     data_only=False):
         """Plot given profile variable
 
         parameters
@@ -387,10 +409,16 @@ class Simulation:
 
         return fig
 
-    def plot_composition(self, chk, x_var='r', y_vars=None, y_scale='linear',
-                         x_scale=None, ax=None, legend=True, trans=True,
-                         ylims=(1e-7, 1), xlims=None,
-                         title=True, loc=3, data_only=False):
+    def plot_composition(self, chk,
+                         x_var='r', y_vars=None,
+                         x_scale=None, y_scale='linear',
+                         xlims=None, ylims=(1e-7, 1),
+                         ax=None,
+                         legend=True,
+                         trans=True,
+                         title=True,
+                         loc=3,
+                         data_only=False):
         """Plot isotope composition profile
 
         parameters
@@ -433,10 +461,20 @@ class Simulation:
 
         return fig
 
-    def plot_dat(self, y_var, x_scale=None, y_scale=None, ax=None,
-                 linestyle='-', marker='', label=None, legend=False,
-                 zero_time=True, title_str=None, xlims=None, ylims=None,
-                 color=None, x_factor=1, y_factor=1, data_only=False):
+    def plot_dat(self, y_var,
+                 x_scale=None, y_scale=None,
+                 xlims=None, ylims=None,
+                 y_factor=1,
+                 ax=None,
+                 linestyle='-',
+                 marker='',
+                 label=None,
+                 legend=False,
+                 zero_time=True,
+                 title_str=None,
+                 color=None,
+                 x_factor=1,
+                 data_only=False):
         """Plot quantity from dat file
 
         parameters
@@ -444,6 +482,9 @@ class Simulation:
         y_var : str
         x_scale : 'log' or 'linear'
         y_scale : 'log' or 'linear'
+        xlims : [min, max]
+        ylims : [min, max]
+        y_factor : float
         ax : Axes
         linestyle : str
         marker : str
@@ -451,11 +492,8 @@ class Simulation:
         legend : bool
         zero_time : bool
         title_str : str
-        xlims : [min, max]
-        ylims : [min, max]
         color : str
         x_factor : float
-        y_factor : float
         data_only : bool
         """
         t_offset = 0
@@ -476,9 +514,14 @@ class Simulation:
 
         return fig
 
-    def plot_tracers(self, y_var, x_scale=None, y_scale=None, ax=None,
-                     xlims=None, ylims=None, linestyle='-', marker='',
-                     legend=False, data_only=False):
+    def plot_tracers(self, y_var,
+                     x_scale=None, y_scale=None,
+                     xlims=None, ylims=None,
+                     ax=None,
+                     linestyle='-',
+                     marker='',
+                     legend=False,
+                     data_only=False):
         """Plot quantity from dat file
 
         parameters
@@ -509,10 +552,16 @@ class Simulation:
     # =======================================================
     #                      Sliders
     # =======================================================
-    def plot_profile_slider(self, y_var, x_var='r', y_scale=None, x_scale=None,
-                            xlims=None, ylims=None, trans=False,
-                            title=True,  legend=False, linestyle='-',
-                            marker='', y_factor=1):
+    def plot_profile_slider(self, y_var,
+                            x_var='r',
+                            x_scale=None, y_scale=None,
+                            xlims=None, ylims=None,
+                            y_factor=1,
+                            trans=False,
+                            title=True,
+                            legend=False,
+                            linestyle='-',
+                            marker=''):
         """Plot interactive slider of profile for given variable
 
         parameters
@@ -521,6 +570,7 @@ class Simulation:
         x_var : str
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
+        y_factor : float
         trans : bool
             plot helmholtz transitions
         title : bool
@@ -529,7 +579,6 @@ class Simulation:
         legend : bool
         linestyle : str
         marker : str
-        y_factor : float
         """
         def update_slider(chk):
             chk = int(chk)
@@ -563,9 +612,13 @@ class Simulation:
 
         return fig, slider
 
-    def plot_composition_slider(self, y_vars=None, x_var='r', y_scale='linear',
-                                x_scale=None, trans=True, title=True,
-                                xlims=None, ylims=(1e-7, 1), legend=True,
+    def plot_composition_slider(self,
+                                x_var='r', y_vars=None,
+                                x_scale=None, y_scale='linear',
+                                xlims=None, ylims=(1e-7, 1),
+                                trans=True,
+                                title=True,
+                                legend=True,
                                 loc='lower left'):
         """Plot interactive slider of isotope composition
 
@@ -575,11 +628,11 @@ class Simulation:
         x_var : str
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
+        xlims : [min, max]
+        ylims : [min, max]
         trans : bool
             plot helmholtz transitions
         title : bool
-        xlims : [min, max]
-        ylims : [min, max]
         legend : bool
         loc : str
         """
@@ -651,8 +704,10 @@ class Simulation:
             ax.plot(trans_x, trans_y, ls='--', color='k', linewidth=linewidth)
 
     def _set_ax_all(self, ax, x_var, y_var, x_scale, y_scale,
-                    xlims, ylims, title, legend, loc=None,
-                    chk=None, title_str=None):
+                    xlims, ylims, title, legend,
+                    loc=None,
+                    chk=None,
+                    title_str=None):
         """Set all axis properties
 
         parameters

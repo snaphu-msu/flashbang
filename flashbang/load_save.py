@@ -72,7 +72,9 @@ def load_config(name=None, verbose=True):
 # ===============================================================
 #                      Cache files
 # ===============================================================
-def load_cache(name, run, model, model_set, chk=-1, verbose=True):
+def load_cache(name, run, model, model_set,
+               chk=None,
+               verbose=True):
     """Load pre-cached data
 
     parameters
@@ -104,7 +106,9 @@ def load_cache(name, run, model, model_set, chk=-1, verbose=True):
     return data
 
 
-def save_cache(name, data, run, model, model_set, chk=-1, verbose=True):
+def save_cache(name, data, run, model, model_set,
+               chk=None,
+               verbose=True):
     """Save data for faster loading
 
     parameters
@@ -140,7 +144,9 @@ def save_cache(name, data, run, model, model_set, chk=-1, verbose=True):
 #                      Dat files
 # =======================================================================
 def get_dat(run, model, model_set, cols_dict,
-            reload=False, save=True, verbose=True):
+            reload=False,
+            save=True,
+            verbose=True):
     """Get reduced set of integrated quantities, as contained in [run].dat file
 
     Returns : pandas.DataFrame
@@ -177,7 +183,8 @@ def get_dat(run, model, model_set, cols_dict,
     return dat_table
 
 
-def extract_dat(run, model, model_set, cols_dict, verbose=True):
+def extract_dat(run, model, model_set, cols_dict,
+                verbose=True):
     """Extract and reduce data from .dat file
 
     Returns : dict of 1D quantities
@@ -235,9 +242,14 @@ def print_dat_colnames(run, model, model_set):
 # ===============================================================
 #                      Profiles
 # ===============================================================
-def get_multiprofile(run, model, model_set, chk_list=None, params=None,
-                     derived_params=None, config=None, reload=False,
-                     save=True, verbose=True):
+def get_multiprofile(run, model, model_set,
+                     chk_list=None,
+                     params=None,
+                     derived_params=None,
+                     config=None,
+                     reload=False,
+                     save=True,
+                     verbose=True):
     """Get all available profiles as multiprofile Dataset
         see: get_all_profiles()
 
@@ -300,9 +312,14 @@ def get_multiprofile(run, model, model_set, chk_list=None, params=None,
     return multiprofile
 
 
-def get_all_profiles(run, model, model_set, chk_list=None,
-                     params=None, derived_params=None, config=None,
-                     reload=False, save=True, verbose=True):
+def get_all_profiles(run, model, model_set,
+                     chk_list=None,
+                     params=None,
+                     derived_params=None,
+                     config=None,
+                     reload=False,
+                     save=True,
+                     verbose=True):
     """Get all available chk profiles
         see: get_profile()
 
@@ -363,9 +380,13 @@ def try_load_multiprofile(run, model, model_set, verbose=True):
     return multiprofile
 
 
-def get_profile(chk, run, model, model_set, params=None,
-                derived_params=None, config=None,
-                reload=False, save=True, verbose=True):
+def get_profile(chk, run, model, model_set,
+                params=None,
+                derived_params=None,
+                config=None,
+                reload=False,
+                save=True,
+                verbose=True):
     """Get reduced radial profile, as contained in checkpoint file
     Loads pre-extracted profile if available, otherwise from raw file
 
@@ -451,8 +472,11 @@ def append_to_multiprofile(multiprofile, profiles, verbose=True):
     return joined
 
 
-def extract_profile(chk, run, model, model_set, params=None, derived_params=None,
-                    config=None, verbose=True):
+def extract_profile(chk, run, model, model_set,
+                    params=None,
+                    derived_params=None,
+                    config=None,
+                    verbose=True):
     """Extract and reduce profile data from chk file
 
     Returns : xr.Dataset
@@ -533,7 +557,9 @@ def add_yl_profile(profile):
 # ===============================================================
 #                      Chk files
 # ===============================================================
-def find_chk(run, model, model_set, n_digits=4, verbose=True):
+def find_chk(run, model, model_set,
+             n_digits=4,
+             verbose=True):
     """Return list of checkpoint (chk) files available in given directory
         returns as nparray of checkpoint numbers
 
@@ -585,7 +611,10 @@ def load_chk(chk, run, model, model_set, use_h5py=False):
 # ===============================================================
 #                      chk_table
 # ===============================================================
-def get_chk_table(run, model, model_set, reload=False, save=True, verbose=True):
+def get_chk_table(run, model, model_set,
+                  reload=False,
+                  save=True,
+                  verbose=True):
     """Get table of scalar chk properties
 
     Returns: pd.DataFrame
@@ -622,8 +651,11 @@ def get_chk_table(run, model, model_set, reload=False, save=True, verbose=True):
 # ===============================================================
 #                      Timesteps
 # ===============================================================
-def get_timesteps(run, model, model_set, params=('time', 'nstep'),
-                  reload=False, save=True, verbose=True):
+def get_timesteps(run, model, model_set,
+                  params=('time', 'nstep'),
+                  reload=False,
+                  save=True,
+                  verbose=True):
     """Get table of timestep quantities (time, n_steps, etc.) from chk files
 
     Returns : pandas.DataFrame
@@ -662,7 +694,8 @@ def get_timesteps(run, model, model_set, params=('time', 'nstep'),
     return timesteps
 
 
-def extract_timesteps(chk_list, run, model, model_set, params=('time', 'nstep'),
+def extract_timesteps(chk_list, run, model, model_set,
+                      params=('time', 'nstep'),
                       verbose=True):
     """Extract timestep quantities from chk files
 
@@ -709,7 +742,9 @@ def extract_timesteps(chk_list, run, model, model_set, params=('time', 'nstep'),
 # ===============================================================
 #                      Log files
 # ===============================================================
-def get_bounce_time(run, model, model_set, match_str='Bounce', verbose=True):
+def get_bounce_time(run, model, model_set,
+                    match_str='Bounce',
+                    verbose=True):
     """Get bounce time (s) from .log file
 
     parameters
@@ -742,8 +777,14 @@ def get_bounce_time(run, model, model_set, match_str='Bounce', verbose=True):
 # ===============================================================
 #                      Mass Tracers
 # ===============================================================
-def get_tracers(run, model, model_set, profiles=None, params=None, mass_grid=None,
-                reload=False, save=True, config=None, verbose=True):
+def get_tracers(run, model, model_set,
+                profiles=None,
+                params=None,
+                mass_grid=None,
+                reload=False,
+                save=True,
+                config=None,
+                verbose=True):
     """Get mass tracers from interpolated chk profiles
 
     Returns : xr.Dataset
