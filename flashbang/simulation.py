@@ -418,6 +418,7 @@ class Simulation:
                          x_var='r', y_vars=None,
                          x_scale=None, y_scale='linear',
                          xlims=None, ylims=(1e-7, 1),
+                         x_factor=1, y_factor=1,
                          ax=None,
                          legend=True,
                          trans=True,
@@ -435,6 +436,8 @@ class Simulation:
             list of isotopes to plot (see self.config['profiles']['params'])
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
+        x_factor : float
+        y_factor : float
         ax : Axes
         legend : bool
         trans : bool
@@ -449,10 +452,11 @@ class Simulation:
 
         fig, ax = plot_tools.setup_fig(ax=ax)
         profile = self.profiles.sel(chk=chk)
-        x = profile[x_var]
+        x = profile[x_var] / x_factor
 
         for y_var in y_vars:
-            ax.plot(x, profile[y_var], label=y_var,
+            y = profile[y_var] / y_factor
+            ax.plot(x, y, label=y_var,
                     color={'ye': 'k'}.get(y_var),
                     linestyle={'ye': '--'}.get(y_var))
 
@@ -622,6 +626,7 @@ class Simulation:
                                 x_var='r', y_vars=None,
                                 x_scale=None, y_scale='linear',
                                 xlims=None, ylims=(1e-7, 1),
+                                x_factor=1, y_factor=1,
                                 trans=True,
                                 title=True,
                                 legend=True,
@@ -636,6 +641,8 @@ class Simulation:
         x_scale : 'log' or 'linear'
         xlims : [min, max]
         ylims : [min, max]
+        x_factor : float
+        y_factor : float
         trans : bool
             plot helmholtz transitions
         title : bool
@@ -646,13 +653,14 @@ class Simulation:
             chk = int(chk)
 
             profile = self.profiles.sel(chk=chk)
-            x = profile[x_var]
+            x = profile[x_var] / x_factor
 
             if trans:
                 self._update_trans_lines(chk=chk, x=x, y=ylims, lines=lines)
 
             for y_var in y_vars:
-                self._update_ax_line(x=x, y=profile[y_var], line=lines[y_var])
+                y = profile[y_var] / y_factor
+                self._update_ax_line(x=x, y=y, line=lines[y_var])
 
             self._set_ax_title(profile_ax, chk=chk, title=title)
             fig.canvas.draw_idle()
@@ -666,6 +674,7 @@ class Simulation:
         self.plot_composition(chk=self.chk_table.index[-1],
                               x_var=x_var, y_vars=y_vars,
                               x_scale=x_scale, y_scale=y_scale,
+                              x_factor=x_factor, y_factor=y_factor,
                               ylims=ylims, xlims=xlims,
                               ax=profile_ax, legend=legend,
                               trans=trans, title=title, loc=loc)
