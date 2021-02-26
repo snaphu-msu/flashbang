@@ -107,8 +107,7 @@ def flash_filename(name, run, chk=None):
     chk : int
     run : str
     """
-    if (name == 'chk') and (chk is None):
-        raise ValueError(f"must provide chk")
+    chk = check_chk(chk=chk, name=name, requires_chk=['chk'])
 
     filenames = {
         'dat': f'{run}.dat',
@@ -174,9 +173,7 @@ def cache_filename(name, run, model, chk=None):
     model : str
     chk : int
     """
-    requires_chk = ['profile']
-    if (name in requires_chk) and (chk is None):
-        raise ValueError(f"must provide chk for cache name '{name}'")
+    chk = check_chk(chk=chk, name=name, requires_chk=['profile'])
 
     filenames = {
         'dat': f'{model}_{run}_dat.pickle',
@@ -207,3 +204,21 @@ def cache_filepath(name, run, model, model_set, chk=None):
     path = model_cache_path(model=model, model_set=model_set)
     filename = cache_filename(name=name, run=run, model=model, chk=chk)
     return os.path.join(path, filename)
+
+
+def check_chk(chk, name, requires_chk):
+    """Check that chk is provided when required
+
+    Parameters
+    ----------
+    chk : int
+    name : str
+    requires_chk : [str]
+    """
+    if chk is None:
+        if name in requires_chk:
+            raise ValueError(f"must provide chk for '{name}'")
+        else:
+            chk = -1  # dummy value required for string substitution
+
+    return chk
