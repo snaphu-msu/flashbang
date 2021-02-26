@@ -464,7 +464,7 @@ class Simulation:
     def plot_dat(self, y_var,
                  x_scale=None, y_scale=None,
                  xlims=None, ylims=None,
-                 y_factor=1,
+                 x_factor=1, y_factor=1,
                  ax=None,
                  linestyle='-',
                  marker='',
@@ -473,7 +473,6 @@ class Simulation:
                  zero_time=True,
                  title_str=None,
                  color=None,
-                 x_factor=1,
                  data_only=False):
         """Plot quantity from dat file
 
@@ -484,6 +483,7 @@ class Simulation:
         y_scale : 'log' or 'linear'
         xlims : [min, max]
         ylims : [min, max]
+        x_factor : float
         y_factor : float
         ax : Axes
         linestyle : str
@@ -493,19 +493,18 @@ class Simulation:
         zero_time : bool
         title_str : str
         color : str
-        x_factor : float
         data_only : bool
         """
+        fig, ax = plot_tools.setup_fig(ax=ax)
+
         t_offset = 0
         if zero_time:
             t_offset = self.bounce_time
 
-        fig, ax = plot_tools.setup_fig(ax=ax)
+        x = (self.dat['time'] - t_offset) / x_factor
+        y = self.dat[y_var] / y_factor
 
-        ax.plot((self.dat['time'] - t_offset) / x_factor,
-                self.dat[y_var] / y_factor,
-                linestyle=linestyle, marker=marker,
-                color=color, label=label)
+        ax.plot(x, y, linestyle=linestyle, marker=marker, color=color, label=label)
 
         if not data_only:
             self._set_ax_all(ax, x_var='time', y_var=y_var, xlims=xlims, ylims=ylims,
