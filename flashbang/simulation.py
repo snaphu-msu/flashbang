@@ -305,6 +305,7 @@ class Simulation:
     def plot_profiles(self, chk, y_vars,
                       x_var='r',
                       x_scale=None, y_scale=None,
+                      x_factor=1, y_factor=1,
                       max_cols=2,
                       sub_figsize=(6, 5),
                       trans=False,
@@ -322,6 +323,8 @@ class Simulation:
             variable to plot on x-axis
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
+        x_factor : float
+        y_factor : float
         legend : bool
         max_cols : bool
         sub_figsize : tuple
@@ -343,6 +346,7 @@ class Simulation:
             self.plot_profile(chk=chk,
                               y_var=y_var, x_var=x_var,
                               y_scale=y_scale, x_scale=x_scale,
+                              x_factor=x_factor, y_factor=y_factor,
                               ax=ax[row, col], trans=trans,
                               legend=show_legend, title=show_title)
         return fig
@@ -351,7 +355,7 @@ class Simulation:
                      x_var='r',
                      x_scale=None, y_scale=None,
                      xlims=None, ylims=None,
-                     y_factor=1,
+                     x_factor=1, y_factor=1,
                      ax=None,
                      legend=False,
                      trans=False,
@@ -374,6 +378,7 @@ class Simulation:
             variable to plot on x-axis
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
+        x_factor : float
         y_factor : float
         ax : Axes
         legend : bool
@@ -394,7 +399,7 @@ class Simulation:
 
         for i in chk:
             profile = self.profiles.sel(chk=i)
-            x = profile[x_var]
+            x = profile[x_var] / x_factor
             y = profile[y_var] / y_factor
 
             ax.plot(x, y, ls=linestyle, marker=marker, label=label, color=color)
@@ -555,7 +560,7 @@ class Simulation:
                             x_var='r',
                             x_scale=None, y_scale=None,
                             xlims=None, ylims=None,
-                            y_factor=1,
+                            x_factor=1, y_factor=1,
                             trans=False,
                             title=True,
                             legend=False,
@@ -569,6 +574,7 @@ class Simulation:
         x_var : str
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
+        x_factor : float
         y_factor : float
         trans : bool
             plot helmholtz transitions
@@ -583,7 +589,7 @@ class Simulation:
             chk = int(chk)
 
             profile = self.profiles.sel(chk=chk)
-            x = profile[x_var]
+            x = profile[x_var] / x_factor
             y = profile[y_var] / y_factor
 
             self._update_ax_line(x=x, y=y, line=lines[y_var])
@@ -600,11 +606,12 @@ class Simulation:
         self.plot_profile(chk=self.chk_table.index[-1],
                           y_var=y_var, x_var=x_var,
                           y_scale=y_scale, x_scale=x_scale,
+                          x_factor=x_factor, y_factor=y_factor,
                           ylims=ylims, xlims=xlims,
                           ax=profile_ax, legend=legend,
                           trans=trans, title=title,
                           linestyle=linestyle,
-                          marker=marker, y_factor=y_factor)
+                          marker=marker)
 
         lines = self._get_ax_lines(ax=profile_ax, y_vars=[y_var], trans=trans)
         slider.on_changed(update_slider)
