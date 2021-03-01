@@ -308,7 +308,7 @@ class Simulation:
                       x_factor=1, y_factor=1,
                       max_cols=2,
                       sub_figsize=(6, 5),
-                      trans=False,
+                      trans=None,
                       legend=False,
                       title=True):
         """Plot one or more profile variables
@@ -358,7 +358,7 @@ class Simulation:
                      x_factor=1, y_factor=1,
                      ax=None,
                      legend=False,
-                     trans=False,
+                     trans=None,
                      title=True,
                      label=None,
                      linestyle='-',
@@ -403,9 +403,7 @@ class Simulation:
             y = profile[y_var] / y_factor
 
             ax.plot(x, y, ls=linestyle, marker=marker, label=label, color=color)
-
-            if trans:
-                self._plot_trans_lines(x=x, y=y, ax=ax, chk=i)
+            self._plot_trans_lines(x=x, y=y, ax=ax, chk=i, trans=trans)
 
         if not data_only:
             self._set_ax_all(ax, x_var=x_var, y_var=y_var, xlims=xlims, ylims=ylims,
@@ -460,8 +458,7 @@ class Simulation:
                     color={'ye': 'k'}.get(y_var),
                     linestyle={'ye': '--'}.get(y_var))
 
-        if trans:
-            self._plot_trans_lines(x=x, y=ylims, ax=ax, chk=chk)
+        self._plot_trans_lines(x=x, y=ylims, ax=ax, chk=chk, trans=trans)
 
         if not data_only:
             self._set_ax_all(ax, x_var=x_var, y_var='$X$', xlims=xlims, ylims=ylims,
@@ -565,7 +562,7 @@ class Simulation:
                             x_scale=None, y_scale=None,
                             xlims=None, ylims=None,
                             x_factor=1, y_factor=1,
-                            trans=False,
+                            trans=None,
                             title=True,
                             legend=False,
                             linestyle='-',
@@ -598,13 +595,12 @@ class Simulation:
 
             self._update_ax_line(x=x, y=y, line=lines[y_var])
             self._set_ax_title(profile_ax, chk=chk, title=title)
-
-            if trans:
-                self._update_trans_lines(chk=chk, x=x, y=y, lines=lines)
+            self._update_trans_lines(chk=chk, x=x, y=y, lines=lines, trans=trans)
 
             fig.canvas.draw_idle()
 
         # ----------------
+        trans = self._check_trans(trans=trans)
         fig, profile_ax, slider = self._setup_slider()
 
         self.plot_profile(chk=self.chk_table.index[-1],
@@ -655,8 +651,7 @@ class Simulation:
             profile = self.profiles.sel(chk=chk)
             x = profile[x_var] / x_factor
 
-            if trans:
-                self._update_trans_lines(chk=chk, x=x, y=ylims, lines=lines)
+            self._update_trans_lines(chk=chk, x=x, y=ylims, lines=lines, trans=trans)
 
             for y_var in y_vars:
                 y = profile[y_var] / y_factor
@@ -704,7 +699,7 @@ class Simulation:
 
         return trans_x, trans_y
 
-    def _plot_trans_lines(self, x, y, ax, chk, linewidth=1):
+    def _plot_trans_lines(self, x, y, ax, chk, trans, linewidth=1):
         """Add transition line to axis
 
         parameters
@@ -713,10 +708,17 @@ class Simulation:
         y : []
         ax : Axes
         chk : int
+        trans : bool
+        linewidth : float
         """
-        for trans_key in self.trans_dens:
-            trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key, x=x, y=y)
-            ax.plot(trans_x, trans_y, ls='--', color='k', linewidth=linewidth)
+        if trans is None:
+            trans = self.config['plotting']['options'].get('trans', False)
+
+        if trans:
+            for trans_key in self.trans_dens:
+                trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
+                                                      x=x, y=y)
+                ax.plot(trans_x, trans_y, ls='--', color='k', linewidth=linewidth)
 
     def _set_ax_all(self, ax, x_var, y_var, x_scale, y_scale,
                     xlims, ylims, title, legend,
@@ -846,7 +848,7 @@ class Simulation:
         return fig, profile_ax, slider
 
     def _get_ax_lines(self, ax, y_vars, trans):
-        """Return dict of axis line indexes
+        """Return dict of axis lines
 
         Parameters
         ----------
@@ -878,7 +880,7 @@ class Simulation:
         line.set_xdata(x)
         line.set_ydata(y)
 
-    def _update_trans_lines(self, chk, x, y, lines):
+    def _update_trans_lines(self, chk, x, y, lines, trans):
         """Update trans line values on plot
 
         Parameters
@@ -887,10 +889,13 @@ class Simulation:
         x : []
         y : []
         lines : {var: Axis.line}
+        trans : bool
         """
-        for trans_key in self.trans_dens:
-            trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key, x=x, y=y)
-            self._update_ax_line(x=trans_x, y=trans_y, line=lines[trans_key])
+        if trans:
+            for trans_key in self.trans_dens:
+                trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
+                                                      x=x, y=y)
+                self._update_ax_line(x=trans_x, y=trans_y, line=lines[trans_key])
 
     # =======================================================
     #                   Convenience
@@ -911,3 +916,11 @@ class Simulation:
             verbose = self.verbose
         if verbose:
             print(string, **kwargs)
+
+    def _check_trans(self, trans):
+        """Check trans option from config
+        """
+        if trans is None:
+            trans = self.config['plotting']['options'].get('trans', False)
+
+        return trans
