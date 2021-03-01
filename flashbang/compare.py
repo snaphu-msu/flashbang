@@ -105,19 +105,50 @@ class Comparison:
                              title_str=title_str, legend=legend)
         return fig
 
-    def plot_dat(self,
-                 y_var,
+    def plot_dat(self, y_var,
+                 x_scale=None, y_scale=None,
+                 xlims=None, ylims=None,
+                 x_factor=1, y_factor=1,
+                 ax=None,
+                 linestyle='-',
+                 marker='',
                  legend=True,
-                 **kwargs):
-        """Plot comparison dat
+                 zero_time=True,
+                 title_str=None,
+                 data_only=False):
+        """Plot time-dependent datfile comparison
+
+        parameters
+        ----------
+        y_var : str
+        x_scale : 'log' or 'linear'
+        y_scale : 'log' or 'linear'
+        xlims : [min, max]
+        ylims : [min, max]
+        x_factor : float
+        y_factor : float
+        ax : Axes
+        linestyle : str
+        marker : str
+        legend : bool
+        zero_time : bool
+        title_str : str
+        data_only : bool
         """
-        fig, ax = plt.subplots()
+        fig, ax = plot_tools.setup_fig(ax=ax)
 
         for model, sim in self.sims.items():
             sim.plot_dat(y_var=y_var, ax=ax, label=model,
-                         legend=False,
-                         **kwargs)
-        self._set_ax_legend(ax=ax, legend=legend, loc=0)
+                         x_scale=x_scale, y_scale=y_scale,
+                         x_factor=x_factor, y_factor=y_factor,
+                         marker=marker, zero_time=zero_time,
+                         linestyle=linestyle,
+                         data_only=True, legend=False)
+
+        if not data_only:
+            self._set_ax_all(ax, x_var='time', y_var=y_var, xlims=xlims,
+                             ylims=ylims, x_scale=x_scale, y_scale=y_scale,
+                             title_str=title_str, legend=legend, title=False)
 
         return fig
 
