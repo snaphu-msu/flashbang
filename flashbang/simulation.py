@@ -355,7 +355,7 @@ class Simulation:
     def plot_profile(self, chk, y_var,
                      x_var='r',
                      x_scale=None, y_scale=None,
-                     xlims=None, ylims=None,
+                     x_lims=None, y_lims=None,
                      x_factor=1, y_factor=1,
                      ax=None,
                      legend=False,
@@ -385,8 +385,8 @@ class Simulation:
         legend : bool
         trans : bool
         title : bool
-        ylims : [min, max]
-        xlims : [min, max]
+        y_lims : [min, max]
+        x_lims : [min, max]
         label : str
         linestyle : str
         marker : str
@@ -407,7 +407,7 @@ class Simulation:
             self._plot_trans_lines(x=x, y=y, ax=ax, chk=i, trans=trans)
 
         if not data_only:
-            self._set_ax_all(ax, x_var=x_var, y_var=y_var, xlims=xlims, ylims=ylims,
+            self._set_ax_all(ax, x_var=x_var, y_var=y_var, x_lims=x_lims, y_lims=y_lims,
                              x_scale=x_scale, y_scale=y_scale, chk=chk[0], title=title,
                              title_str=title_str, legend=legend)
 
@@ -416,7 +416,7 @@ class Simulation:
     def plot_composition(self, chk,
                          x_var='r', y_vars=None,
                          x_scale=None, y_scale=None,
-                         xlims=None, ylims=None,
+                         x_lims=None, y_lims=None,
                          x_factor=1, y_factor=1,
                          ax=None,
                          legend=True,
@@ -440,16 +440,16 @@ class Simulation:
         ax : Axes
         legend : bool
         trans : bool
-        ylims : [min, max]
-        xlims : [min, max]
+        y_lims : [min, max]
+        x_lims : [min, max]
         title : bool
         loc : str or int
         data_only : bool
         """
         if y_vars is None:
             y_vars = self.config['plotting']['isotopes']
-        if ylims is None:
-            ylims = self.config['plotting']['ax_lims'].get('X')
+        if y_lims is None:
+            y_lims = self.config['plotting']['ax_lims'].get('X')
 
         fig, ax = plot_tools.setup_fig(ax=ax)
         profile = self.profiles.sel(chk=chk)
@@ -461,10 +461,10 @@ class Simulation:
                     color={'ye': 'k'}.get(y_var),
                     linestyle={'ye': '--'}.get(y_var))
 
-        self._plot_trans_lines(x=x, y=ylims, ax=ax, chk=chk, trans=trans)
+        self._plot_trans_lines(x=x, y=y_lims, ax=ax, chk=chk, trans=trans)
 
         if not data_only:
-            self._set_ax_all(ax, x_var=x_var, y_var='X', xlims=xlims, ylims=ylims,
+            self._set_ax_all(ax, x_var=x_var, y_var='X', x_lims=x_lims, y_lims=y_lims,
                              x_scale=x_scale, y_scale=y_scale, chk=chk,
                              title=title, legend=legend, loc=loc)
 
@@ -472,7 +472,7 @@ class Simulation:
 
     def plot_dat(self, y_var,
                  x_scale=None, y_scale=None,
-                 xlims=None, ylims=None,
+                 x_lims=None, y_lims=None,
                  x_factor=1, y_factor=1,
                  ax=None,
                  linestyle='-',
@@ -490,8 +490,8 @@ class Simulation:
         y_var : str
         x_scale : 'log' or 'linear'
         y_scale : 'log' or 'linear'
-        xlims : [min, max]
-        ylims : [min, max]
+        x_lims : [min, max]
+        y_lims : [min, max]
         x_factor : float
         y_factor : float
         ax : Axes
@@ -516,7 +516,7 @@ class Simulation:
         ax.plot(x, y, linestyle=linestyle, marker=marker, color=color, label=label)
 
         if not data_only:
-            self._set_ax_all(ax, x_var='time', y_var=y_var, xlims=xlims, ylims=ylims,
+            self._set_ax_all(ax, x_var='time', y_var=y_var, x_lims=x_lims, y_lims=y_lims,
                              x_scale=x_scale, y_scale=y_scale,
                              title=True, title_str=title_str, legend=legend)
 
@@ -524,7 +524,7 @@ class Simulation:
 
     def plot_tracers(self, y_var,
                      x_scale=None, y_scale=None,
-                     xlims=None, ylims=None,
+                     x_lims=None, y_lims=None,
                      ax=None,
                      linestyle='-',
                      marker='',
@@ -537,8 +537,8 @@ class Simulation:
         y_var : str
         x_scale : 'log' or 'linear'
         y_scale : 'log' or 'linear'
-        xlims : [min, max]
-        ylims : [min, max]
+        x_lims : [min, max]
+        y_lims : [min, max]
         ax : Axes
         linestyle : str
         marker : str
@@ -552,7 +552,7 @@ class Simulation:
                     linestyle=linestyle, marker=marker, label=f'{mass.values:.3f}')
 
         if not data_only:
-            self._set_ax_all(ax, x_var='chk', y_var=y_var, xlims=xlims, ylims=ylims,
+            self._set_ax_all(ax, x_var='chk', y_var=y_var, x_lims=x_lims, y_lims=y_lims,
                              x_scale=x_scale, y_scale=y_scale, title=False, legend=legend)
 
         return fig
@@ -563,7 +563,7 @@ class Simulation:
     def plot_profile_slider(self, y_var,
                             x_var='r',
                             x_scale=None, y_scale=None,
-                            xlims=None, ylims=None,
+                            x_lims=None, y_lims=None,
                             x_factor=1, y_factor=1,
                             trans=None,
                             title=True,
@@ -583,8 +583,8 @@ class Simulation:
         trans : bool
             plot helmholtz transitions
         title : bool
-        xlims : [min, max]
-        ylims : [min, max]
+        x_lims : [min, max]
+        y_lims : [min, max]
         legend : bool
         linestyle : str
         marker : str
@@ -610,7 +610,7 @@ class Simulation:
                           y_var=y_var, x_var=x_var,
                           y_scale=y_scale, x_scale=x_scale,
                           x_factor=x_factor, y_factor=y_factor,
-                          ylims=ylims, xlims=xlims,
+                          y_lims=y_lims, x_lims=x_lims,
                           ax=profile_ax, legend=legend,
                           trans=trans, title=title,
                           linestyle=linestyle,
@@ -624,7 +624,7 @@ class Simulation:
     def plot_composition_slider(self,
                                 x_var='r', y_vars=None,
                                 x_scale=None, y_scale='linear',
-                                xlims=None, ylims=None,
+                                x_lims=None, y_lims=None,
                                 x_factor=1, y_factor=1,
                                 trans=True,
                                 title=True,
@@ -638,8 +638,8 @@ class Simulation:
         x_var : str
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
-        xlims : [min, max]
-        ylims : [min, max]
+        x_lims : [min, max]
+        y_lims : [min, max]
         x_factor : float
         y_factor : float
         trans : bool
@@ -654,7 +654,7 @@ class Simulation:
             profile = self.profiles.sel(chk=chk)
             x = profile[x_var] / x_factor
 
-            self._update_trans_lines(chk=chk, x=x, y=ylims, lines=lines, trans=trans)
+            self._update_trans_lines(chk=chk, x=x, y=y_lims, lines=lines, trans=trans)
 
             for y_var in y_vars:
                 y = profile[y_var] / y_factor
@@ -673,7 +673,7 @@ class Simulation:
                               x_var=x_var, y_vars=y_vars,
                               x_scale=x_scale, y_scale=y_scale,
                               x_factor=x_factor, y_factor=y_factor,
-                              ylims=ylims, xlims=xlims,
+                              y_lims=y_lims, x_lims=x_lims,
                               ax=profile_ax, legend=legend,
                               trans=trans, title=title, loc=loc)
 
@@ -724,7 +724,7 @@ class Simulation:
                 ax.plot(trans_x, trans_y, ls='--', color='k', linewidth=linewidth)
 
     def _set_ax_all(self, ax, x_var, y_var, x_scale, y_scale,
-                    xlims, ylims, title, legend,
+                    x_lims, y_lims, title, legend,
                     loc=None,
                     chk=None,
                     title_str=None):
@@ -740,13 +740,13 @@ class Simulation:
         chk : int
         title : bool
         title_str : str
-        xlims : [min, max]
-        ylims : [min, max]
+        x_lims : [min, max]
+        y_lims : [min, max]
         legend : bool
         loc : int or str
         """
         self._set_ax_title(ax, chk=chk, title=title, title_str=title_str)
-        self._set_ax_lims(ax, xlims=xlims, ylims=ylims, x_var=x_var, y_var=y_var)
+        self._set_ax_lims(ax, x_lims=x_lims, y_lims=y_lims, x_var=x_var, y_var=y_var)
         self._set_ax_labels(ax, x_var=x_var, y_var=y_var)
         self._set_ax_legend(ax, legend=legend, loc=loc)
         self._set_ax_scales(ax, x_var=x_var, y_var=y_var,
@@ -796,29 +796,29 @@ class Simulation:
 
             ax.set_title(title_str)
 
-    def _set_ax_lims(self, ax, xlims, ylims, x_var, y_var):
+    def _set_ax_lims(self, ax, x_lims, y_lims, x_var, y_var):
         """Set x and y axis limits
 
         parameters
         ----------
         ax : Axes
-        xlims : [min, max]
-        ylims : [min, max]
+        x_lims : [min, max]
+        y_lims : [min, max]
         x_var : str
         y_var : str
         """
         def get_lims(var):
             return self.config['plotting']['ax_lims'].get(var)
 
-        if xlims is None:
-            xlims = get_lims(x_var)
-        if ylims is None:
-            ylims = get_lims(y_var)
+        if x_lims is None:
+            x_lims = get_lims(x_var)
+        if y_lims is None:
+            y_lims = get_lims(y_var)
 
-        if xlims is not None:
-            ax.set_xlim(xlims)
-        if ylims is not None:
-            ax.set_ylim(ylims)
+        if x_lims is not None:
+            ax.set_xlim(x_lims)
+        if y_lims is not None:
+            ax.set_ylim(y_lims)
 
     def _set_ax_labels(self, ax, x_var, y_var):
         """Set axis labels

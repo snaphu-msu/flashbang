@@ -66,7 +66,7 @@ class Comparison:
     def plot_profile(self, chk, y_var,
                      x_var='r',
                      x_scale=None, y_scale=None,
-                     xlims=None, ylims=None,
+                     x_lims=None, y_lims=None,
                      x_factor=1, y_factor=1,
                      ax=None,
                      marker=None,
@@ -88,8 +88,8 @@ class Comparison:
         x_var : str
         x_scale : 'log' or 'linear'
         y_scale : 'log' or 'linear'
-        xlims : [min, max]
-        ylims : [min, max]
+        x_lims : [min, max]
+        y_lims : [min, max]
         x_factor : float
             Divide x-values by this factor
         y_factor : float
@@ -115,14 +115,14 @@ class Comparison:
                              data_only=True)
 
         if not data_only:
-            self._set_ax_all(ax, x_var=x_var, y_var=y_var, xlims=xlims, ylims=ylims,
+            self._set_ax_all(ax, x_var=x_var, y_var=y_var, x_lims=x_lims, y_lims=y_lims,
                              x_scale=x_scale, y_scale=y_scale, chk=chk, title=title,
                              title_str=title_str, legend=legend)
         return fig
 
     def plot_dat(self, y_var,
                  x_scale=None, y_scale=None,
-                 xlims=None, ylims=None,
+                 x_lims=None, y_lims=None,
                  x_factor=1, y_factor=1,
                  ax=None,
                  linestyle='-',
@@ -138,8 +138,8 @@ class Comparison:
         y_var : str
         x_scale : 'log' or 'linear'
         y_scale : 'log' or 'linear'
-        xlims : [min, max]
-        ylims : [min, max]
+        x_lims : [min, max]
+        y_lims : [min, max]
         x_factor : float
         y_factor : float
         ax : Axes
@@ -161,8 +161,8 @@ class Comparison:
                          data_only=True, legend=False)
 
         if not data_only:
-            self._set_ax_all(ax, x_var='time', y_var=y_var, xlims=xlims,
-                             ylims=ylims, x_scale=x_scale, y_scale=y_scale,
+            self._set_ax_all(ax, x_var='time', y_var=y_var, x_lims=x_lims,
+                             y_lims=y_lims, x_scale=x_scale, y_scale=y_scale,
                              title_str=title_str, legend=legend, title=False)
 
         return fig
@@ -173,7 +173,7 @@ class Comparison:
     def plot_profile_slider(self, y_var,
                             x_var='r',
                             x_scale=None, y_scale=None,
-                            xlims=None, ylims=None,
+                            x_lims=None, y_lims=None,
                             x_factor=1, y_factor=1,
                             trans=False,
                             title=True,
@@ -193,8 +193,8 @@ class Comparison:
         trans : bool
             plot helmholtz transitions
         title : bool
-        xlims : [min, max]
-        ylims : [min, max]
+        x_lims : [min, max]
+        y_lims : [min, max]
         x_factor : float
         y_factor : float
         legend : bool
@@ -224,7 +224,7 @@ class Comparison:
         self.plot_profile(chk=chk_max,
                           y_var=y_var, x_var=x_var,
                           y_scale=y_scale, x_scale=x_scale,
-                          ylims=ylims, xlims=xlims,
+                          y_lims=y_lims, x_lims=x_lims,
                           x_factor=x_factor, y_factor=y_factor,
                           ax=profile_ax, legend=False,
                           trans=trans, title=title,
@@ -243,7 +243,7 @@ class Comparison:
     def _set_ax_all(self, ax,
                     x_var, y_var,
                     x_scale, y_scale,
-                    xlims, ylims,
+                    x_lims, y_lims,
                     title,
                     legend,
                     loc=None,
@@ -261,13 +261,13 @@ class Comparison:
         chk : int
         title : bool
         title_str : str
-        xlims : [min, max]
-        ylims : [min, max]
+        x_lims : [min, max]
+        y_lims : [min, max]
         legend : bool
         loc : int or str
         """
         self._set_ax_title(ax, chk=chk, title=title, title_str=title_str)
-        self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
+        self._set_ax_lims(ax, x_lims=x_lims, y_lims=y_lims)
         self._set_ax_labels(ax, x_var=x_var, y_var=y_var)
         self._set_ax_legend(ax, legend=legend, loc=loc)
         self._set_ax_scales(ax, x_var=x_var, y_var=y_var,
@@ -317,19 +317,19 @@ class Comparison:
 
             ax.set_title(title_str)
 
-    def _set_ax_lims(self, ax, xlims, ylims):
+    def _set_ax_lims(self, ax, x_lims, y_lims):
         """Set x and y axis limits
 
         Parameters
         ----------
         ax : Axes
-        xlims : [min, max]
-        ylims : [min, max]
+        x_lims : [min, max]
+        y_lims : [min, max]
         """
-        if ylims is not None:
-            ax.set_ylim(ylims)
-        if xlims is not None:
-            ax.set_xlim(xlims)
+        if y_lims is not None:
+            ax.set_ylim(y_lims)
+        if x_lims is not None:
+            ax.set_xlim(x_lims)
 
     def _set_ax_labels(self, ax, x_var, y_var):
         """Set axis labels
