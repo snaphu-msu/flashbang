@@ -37,12 +37,24 @@ class Comparison:
         self.runs = tools.ensure_sequence(runs, n_models)
         self.models = models
         self.model_sets = tools.ensure_sequence(model_sets, n_models)
+        self.load_models(config=config)
 
-        for i, model in enumerate(models):
+    # =======================================================
+    #                      Loading
+    # =======================================================
+    def load_models(self, config):
+        """Load all models
+
+        Parameters
+        ----------
+        config : str
+        """
+        for i, model in enumerate(self.models):
             self.sims[model] = simulation.Simulation(run=self.runs[i],
                                                      model=model,
                                                      model_set=self.model_sets[i],
-                                                     config=config)
+                                                     config=config,
+                                                     verbose=self.verbose)
 
     # =======================================================
     #                      Plot
