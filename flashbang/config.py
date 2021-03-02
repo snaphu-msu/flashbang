@@ -90,7 +90,7 @@ class Config:
         return self.plotting.labels.get(var, var)
 
     def check_trans(self, trans):
-        """Gets trans option from config, if not specified
+        """Gets trans option from config if not specified, default to False
         """
         if trans is None:
             trans = self.plotting.options.get('trans', False)

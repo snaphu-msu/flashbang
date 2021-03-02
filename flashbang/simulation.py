@@ -435,7 +435,7 @@ class Simulation:
         x_var : str
             variable to plot on x-axis
         y_vars : [str]
-            list of isotopes to plot (see self.config['profiles']['params'])
+            list of isotopes to plot (see Config.profiles.params)
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
         x_factor : float
@@ -452,7 +452,7 @@ class Simulation:
         if y_vars is None:
             y_vars = self.config.plotting.isotopes
         if y_lims is None:
-            y_lims = self.config.plotting.ax_lims.get('X')
+            y_lims = self.config.get_ax_lims('X')
 
         fig, ax = plot_tools.setup_fig(ax=ax)
         profile = self.profiles.sel(chk=chk)
@@ -460,9 +460,10 @@ class Simulation:
 
         for y_var in y_vars:
             y = profile[y_var] / y_factor
-            ax.plot(x, y, label=y_var,
-                    color={'ye': 'k'}.get(y_var),
-                    linestyle={'ye': '--'}.get(y_var))
+            color = {'ye': 'k'}.get(y_var)
+            linestyle = {'ye': '--'}.get(y_var)
+
+            ax.plot(x, y, label=y_var, color=color, linestyle=linestyle)
 
         self._plot_trans_lines(x=x, y=y_lims, ax=ax, chk=chk, trans=trans)
 
@@ -670,7 +671,7 @@ class Simulation:
         if y_vars is None:
             y_vars = self.config.plotting.isotopes
         if y_lims is None:
-            y_lims = self.config.plotting.ax_lims.get('X')
+            y_lims = self.config.get_ax_lims('X')
 
         fig, profile_ax, slider = self._setup_slider()
 
@@ -720,7 +721,7 @@ class Simulation:
         linewidth : float
         """
         if trans is None:
-            trans = self.config.plotting.options.get('trans', False)
+            trans = self.config.check_trans('trans')
 
         if trans:
             for trans_key in self.trans_dens:
