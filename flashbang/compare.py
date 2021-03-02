@@ -9,7 +9,7 @@ from matplotlib.widgets import Slider
 
 # flashbang
 from . import simulation
-from . import plot_tools
+from .plotter import plot_tools
 from . import tools
 from .config import Config
 

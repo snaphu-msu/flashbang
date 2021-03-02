@@ -58,7 +58,7 @@ from matplotlib.widgets import Slider
 
 # flashbang
 from . import load_save
-from . import plot_tools
+from .plotter import plot_tools
 from .quantities import get_density_zone
 from .paths import model_path
 from .tools import ensure_sequence
