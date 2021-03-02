@@ -272,7 +272,7 @@ def get_multiprofile(run, model, model_set,
                        model_set=model_set, verbose=verbose)
 
     if chk_list is None:
-        chk_list = find_chk(run=run, model=model, model_set=model_set)
+        chk_list = find_chk(run=run, model=model, model_set=model_set, verbose=verbose)
 
     # 1. Try loading multiprofile
     multiprofile = None
@@ -341,7 +341,7 @@ def get_all_profiles(run, model, model_set,
     printv(f'Loading chk profiles', verbose=verbose)
 
     if chk_list is None:
-        chk_list = find_chk(run=run, model=model, model_set=model_set)
+        chk_list = find_chk(run=run, model=model, model_set=model_set, verbose=verbose)
 
     profiles = {}
     chk_max = chk_list[-1]
@@ -638,7 +638,8 @@ def get_chk_table(run, model, model_set,
             printv('chk_table cache not found, reloading', verbose)
 
     if chk_table.empty:
-        chk_table['chk'] = find_chk(run=run, model=model, model_set=model_set)
+        chk_table['chk'] = find_chk(run=run, model=model, model_set=model_set,
+                                    verbose=verbose)
         chk_table.set_index('chk', inplace=True)
 
         if save:
@@ -682,7 +683,7 @@ def get_timesteps(run, model, model_set,
 
     # fall back on loading from raw chk files
     if timesteps is None:
-        chk_list = find_chk(run=run, model=model, model_set=model_set)
+        chk_list = find_chk(run=run, model=model, model_set=model_set, verbose=verbose)
 
         timesteps = extract_timesteps(chk_list, run=run, model=model, model_set=model_set,
                                       params=params, verbose=verbose)
@@ -824,7 +825,8 @@ def get_tracers(run, model, model_set,
             params = c['tracers']['params']
 
         if profiles is None:
-            chk_list = find_chk(run=run, model=model, model_set=model_set)
+            chk_list = find_chk(run=run, model=model, model_set=model_set,
+                                verbose=verbose)
 
             profiles = get_multiprofile(run=run, model=model,
                                         model_set=model_set, chk_list=chk_list,

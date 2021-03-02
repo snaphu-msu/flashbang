@@ -217,7 +217,8 @@ class Simulation:
         """
         chk_list = load_save.find_chk(run=self.run,
                                       model=self.model,
-                                      model_set=self.model_set)
+                                      model_set=self.model_set,
+                                      verbose=self.verbose)
 
         if len(chk_list) != len(self.chk_table):
             self.printv('chk files missing from table, reloading')
