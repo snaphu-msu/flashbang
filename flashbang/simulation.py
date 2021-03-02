@@ -416,7 +416,7 @@ class Simulation:
     def plot_composition(self, chk,
                          x_var='r', y_vars=None,
                          x_scale=None, y_scale=None,
-                         xlims=None, ylims=(1e-7, 1),
+                         xlims=None, ylims=None,
                          x_factor=1, y_factor=1,
                          ax=None,
                          legend=True,
@@ -448,6 +448,8 @@ class Simulation:
         """
         if y_vars is None:
             y_vars = self.config['plotting']['isotopes']
+        if ylims is None:
+            ylims = self.config['plotting']['ax_lims'].get('X')
 
         fig, ax = plot_tools.setup_fig(ax=ax)
         profile = self.profiles.sel(chk=chk)
@@ -463,8 +465,8 @@ class Simulation:
 
         if not data_only:
             self._set_ax_all(ax, x_var=x_var, y_var='X', xlims=xlims, ylims=ylims,
-                             x_scale=x_scale, y_scale=y_scale,
-                             chk=chk, title=title, legend=legend, loc=loc)
+                             x_scale=x_scale, y_scale=y_scale, chk=chk,
+                             title=title, legend=legend, loc=loc)
 
         return fig
 
@@ -622,7 +624,7 @@ class Simulation:
     def plot_composition_slider(self,
                                 x_var='r', y_vars=None,
                                 x_scale=None, y_scale='linear',
-                                xlims=None, ylims=(1e-7, 1),
+                                xlims=None, ylims=None,
                                 x_factor=1, y_factor=1,
                                 trans=True,
                                 title=True,
@@ -744,7 +746,7 @@ class Simulation:
         loc : int or str
         """
         self._set_ax_title(ax, chk=chk, title=title, title_str=title_str)
-        self._set_ax_lims(ax, xlims=xlims, ylims=ylims)
+        self._set_ax_lims(ax, xlims=xlims, ylims=ylims, x_var=x_var, y_var=y_var)
         self._set_ax_labels(ax, x_var=x_var, y_var=y_var)
         self._set_ax_legend(ax, legend=legend, loc=loc)
         self._set_ax_scales(ax, x_var=x_var, y_var=y_var,
@@ -794,7 +796,7 @@ class Simulation:
 
             ax.set_title(title_str)
 
-    def _set_ax_lims(self, ax, xlims, ylims):
+    def _set_ax_lims(self, ax, xlims, ylims, x_var, y_var):
         """Set x and y axis limits
 
         parameters
@@ -802,11 +804,21 @@ class Simulation:
         ax : Axes
         xlims : [min, max]
         ylims : [min, max]
+        x_var : str
+        y_var : str
         """
-        if ylims is not None:
-            ax.set_ylim(ylims)
+        def get_lims(var):
+            return self.config['plotting']['ax_lims'].get(var)
+
+        if xlims is None:
+            xlims = get_lims(x_var)
+        if ylims is None:
+            ylims = get_lims(y_var)
+
         if xlims is not None:
             ax.set_xlim(xlims)
+        if ylims is not None:
+            ax.set_ylim(ylims)
 
     def _set_ax_labels(self, ax, x_var, y_var):
         """Set axis labels
