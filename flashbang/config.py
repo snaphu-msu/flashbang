@@ -89,6 +89,14 @@ class Config:
         """
         return self.plotting.labels.get(var, var)
 
+    def check_trans(self, trans):
+        """Gets trans option from config, if not specified
+        """
+        if trans is None:
+            trans = self.plotting.options.get('trans', False)
+
+        return trans
+
 
 class Property:
     """Dummy class to hold attributes"""
