@@ -1,4 +1,8 @@
 """Compare multiple simulations
+
+The Comparison object represents a collection of 1D FLASH models.
+It loads multiple models for plotting.
+For details on model attributes and nomencclature, see simulation.py
 """
 import numpy as np
 from matplotlib.widgets import Slider

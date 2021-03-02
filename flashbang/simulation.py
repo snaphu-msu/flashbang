@@ -415,7 +415,7 @@ class Simulation:
 
     def plot_composition(self, chk,
                          x_var='r', y_vars=None,
-                         x_scale=None, y_scale='linear',
+                         x_scale=None, y_scale=None,
                          xlims=None, ylims=(1e-7, 1),
                          x_factor=1, y_factor=1,
                          ax=None,
@@ -462,7 +462,7 @@ class Simulation:
         self._plot_trans_lines(x=x, y=ylims, ax=ax, chk=chk, trans=trans)
 
         if not data_only:
-            self._set_ax_all(ax, x_var=x_var, y_var='$X$', xlims=xlims, ylims=ylims,
+            self._set_ax_all(ax, x_var=x_var, y_var='X', xlims=xlims, ylims=ylims,
                              x_scale=x_scale, y_scale=y_scale,
                              chk=chk, title=title, legend=legend, loc=loc)
 
