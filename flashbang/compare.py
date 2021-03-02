@@ -1,7 +1,6 @@
 """Compare multiple simulations
 """
 import numpy as np
-import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
 
 # flashbang
@@ -21,13 +20,13 @@ class Comparison:
                  config,
                  verbose=True):
         """
-
         Parameters
         ----------
         runs : [str]
         models : [str]
         model_sets : [str]
         config : str
+        verbose : bool
         """
         self.sims = {}
         self.verbose = verbose
@@ -186,7 +185,7 @@ class Comparison:
         linestyle : str
         marker : str
         """
-        def update(chk):
+        def update_slider(chk):
             chk = int(chk)
 
             if trans:
@@ -218,7 +217,7 @@ class Comparison:
 
         self._set_ax_legend(ax=profile_ax, legend=legend)
         lines = self._get_ax_lines(ax=profile_ax, trans=trans)
-        slider.on_changed(update)
+        slider.on_changed(update_slider)
 
         return fig, slider
 
