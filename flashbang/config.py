@@ -9,6 +9,10 @@ from .paths import config_filepath
 from .tools import printv
 
 
+class ConfigError(Exception):
+    pass
+
+
 class Config:
     def __init__(self,
                  name,
@@ -21,26 +25,9 @@ class Config:
             name of config to load, e.g. 'stir'
         verbose : bool
         """
-        self.config = None
         self.name = name
         self.verbose = verbose
 
-        self.profiles = Property()
-        self.tracers = Property()
-        self.trans = Property()
-        self.dat = Property()
-        self.plotting = Property()
-        self.paths = Property()
-
-        self.load()
-        self.extract()
-
-    # ===============================================================
-    #                      Loading
-    # ===============================================================
-    def load(self):
-        """Load config files
-        """
         self.config = load_config_file(name=self.name, verbose=self.verbose)
 
         # override any options from plotting.ini
@@ -48,69 +35,92 @@ class Config:
         plot_config['plotting'].update(self.config['plotting'])
         self.config.update(plot_config)
 
-    def extract(self):
-        """Extract config attributes from dict
+    # ===============================================================
+    #                  Accessing Properties
+    # ===============================================================
+    def profiles(self, var):
+        """Get profiles property
         """
-        self.profiles.params = self.config['profiles']['params']
-        self.profiles.isotopes = self.config['profiles']['isotopes']
-        self.profiles.derived = self.config['profiles']['derived_params']
-        self.profiles.all_params = self.profiles.params + self.profiles.isotopes
+        conf = self.config['profiles']
 
-        self.dat.columns = self.config['dat_columns']
+        if var == 'all':
+            return conf['params'] + conf['isotopes']
+        elif var not in conf:
+            raise ConfigError(f"'{var}' not a valid profiles property")
+        else:
+            return conf[var]
 
-        self.trans.dens = self.config['transitions']['dens']
-        self.tracers.mass_grid = self.config['tracers']['mass_grid']
-        self.tracers.params = self.config['tracers']['params']
+    def dat(self, var):
+        """Get dat property
+        """
+        if var not in ['columns']:
+            raise ConfigError(f"'{var}' not a valid dat property")
+        else:
+            return self.config['dat_columns']
 
-        self.plotting.isotopes = self.config['plotting']['isotopes']
-        self.plotting.labels = self.config['plotting']['labels']
-        self.plotting.scales = self.config['plotting']['scales']
-        self.plotting.ax_scales = self.config['plotting']['ax_scales']
-        self.plotting.ax_lims = self.config['plotting']['ax_lims']
-        self.plotting.options = self.config['plotting']['options']
+    def trans(self, var):
+        """Get transitions property
+        """
+        conf = self.config['transitions']
 
-        self.paths.output_dir = self.config['paths']['output_dir']
-        self.paths.run_default = self.config['paths']['run_default']
+        if var not in conf:
+            raise ConfigError(f"'{var}' not a valid trans property")
+        else:
+            return conf[var]
 
-    # ===============================================================
-    #                      Accessing
-    # ===============================================================
-    def get_ax_scale(self, var):
+    def tracers(self, var):
+        """Get tracers property
+        """
+        conf = self.config['tracers']
+
+        if var not in conf:
+            raise ConfigError(f"'{var}' not a valid tracers property")
+        else:
+            return conf[var]
+
+    def plotting(self, var):
+        """Get plotting property
+        """
+        conf = self.config['plotting']
+
+        if var not in conf:
+            raise ConfigError(f"'{var}' not a valid plotting property")
+        else:
+            return conf[var]
+
+    def ax_scale(self, var):
         """Get axis scale for given var, default to 'linear'
 
         Returns : 'log' or 'linear'
         """
-        if var in self.plotting.ax_scales['log']:
+        if var in self.plotting('ax_scales')['log']:
             return 'log'
         else:
             return 'linear'
 
-    def get_ax_lims(self, var):
+    def ax_lims(self, var):
         """Get axis limits for given var
 
         Returns : [min, max]
         """
-        return self.plotting.ax_lims.get(var)
+        return self.plotting('ax_lims').get(var)
 
-    def get_ax_label(self, var):
+    def ax_label(self, var):
         """Get axis label for given var
 
         Returns : str
         """
-        return self.plotting.labels.get(var, var)
+        return self.plotting('labels').get(var, var)
 
     def check_trans(self, trans):
         """Gets trans option from config if not specified, default to False
+
+        Returns : bool
         """
         if trans is None:
-            trans = self.plotting.options.get('trans', False)
+            trans = self.plotting('options').get('trans', False)
 
         return trans
-
-
-class Property:
-    """Dummy class to hold attributes"""
-    pass
 
 
 def load_config_file(name, verbose=True):

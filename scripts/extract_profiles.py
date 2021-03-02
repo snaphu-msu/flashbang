@@ -42,8 +42,8 @@ def main(run, model, model_set,
     chk_list = load_save.find_chk(run=run, model=model, model_set=model_set)
     conf = Config(name=config)
 
-    params = conf.profiles.all_params
-    derived_params = conf.profiles.derived
+    params = conf.profiles('all')
+    derived_params = conf.profiles('derived_params')
 
     if multithread:
         args = []

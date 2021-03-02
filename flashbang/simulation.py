@@ -115,7 +115,7 @@ class Simulation:
         self.tracers = None              # mass tracers/trajectories
 
         self.config = Config(name=config, verbose=self.verbose)
-        self.trans_dens = self.config.trans.dens
+        self.trans_dens = self.config.trans('dens')
         self.setup_mass_grid()
         self.load_chk_table(reload=reload, save=save)
 
@@ -133,7 +133,7 @@ class Simulation:
     def setup_mass_grid(self):
         """Generate mass grid from config definition
         """
-        mass_grid = self.config.tracers.mass_grid
+        mass_grid = self.config.tracers('mass_grid')
         self.mass_grid = np.linspace(mass_grid[0], mass_grid[1], mass_grid[2])
 
     def load_all(self, reload=False, save=True):
@@ -187,7 +187,7 @@ class Simulation:
         self.dat = load_save.get_dat(run=self.run,
                                      model=self.model,
                                      model_set=self.model_set,
-                                     cols_dict=self.config.dat.columns,
+                                     cols_dict=self.config.dat('columns'),
                                      reload=reload,
                                      save=save,
                                      verbose=self.verbose)
@@ -200,8 +200,8 @@ class Simulation:
         reload : bool
         save : bool
         """
-        params = self.config.profiles.all_params
-        derived_params = self.config.profiles.derived
+        params = self.config.profiles('all')
+        derived_params = self.config.profiles('derived_params')
 
         self.profiles = load_save.get_multiprofile(
                                 run=self.run,
@@ -284,7 +284,7 @@ class Simulation:
         reload : bool
         save : bool
         """
-        params = self.config.tracers.params
+        params = self.config.tracers('params')
         if len(params) == 0:
             return
 
@@ -450,9 +450,9 @@ class Simulation:
         data_only : bool
         """
         if y_vars is None:
-            y_vars = self.config.plotting.isotopes
+            y_vars = self.config.plotting('isotopes')
         if y_lims is None:
-            y_lims = self.config.get_ax_lims('X')
+            y_lims = self.config.ax_lims('X')
 
         fig, ax = plot_tools.setup_fig(ax=ax)
         profile = self.profiles.sel(chk=chk)
@@ -669,9 +669,9 @@ class Simulation:
 
         # ----------------
         if y_vars is None:
-            y_vars = self.config.plotting.isotopes
+            y_vars = self.config.plotting('isotopes')
         if y_lims is None:
-            y_lims = self.config.get_ax_lims('X')
+            y_lims = self.config.ax_lims('X')
 
         fig, profile_ax, slider = self._setup_slider()
 
@@ -770,9 +770,9 @@ class Simulation:
         x_scale : 'log' or 'linear'
         """
         if x_scale is None:
-            x_scale = self.config.get_ax_scale(x_var)
+            x_scale = self.config.ax_scale(x_var)
         if y_scale is None:
-            y_scale = self.config.get_ax_scale(y_var)
+            y_scale = self.config.ax_scale(y_var)
 
         ax.set_xscale(x_scale)
         ax.set_yscale(y_scale)
@@ -790,7 +790,7 @@ class Simulation:
         if title:
             if (title_str is None) and (chk is not None):
                 # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
-                dt = self.config.plotting.scales['chk_dt']
+                dt = self.config.plotting('scales')['chk_dt']
                 timestep = dt * chk - self.bounce_time
                 title_str = f't = {timestep:.3f} s'
 
@@ -808,9 +808,9 @@ class Simulation:
         y_var : str
         """
         if x_lims is None:
-            x_lims = self.config.get_ax_lims(x_var)
+            x_lims = self.config.ax_lims(x_var)
         if y_lims is None:
-            y_lims = self.config.get_ax_lims(y_var)
+            y_lims = self.config.ax_lims(y_var)
 
         if x_lims is not None:
             ax.set_xlim(x_lims)
@@ -826,8 +826,8 @@ class Simulation:
         x_var : str
         y_var : str
         """
-        xlabel = self.config.get_ax_label(x_var)
-        ylabel = self.config.get_ax_label(y_var)
+        xlabel = self.config.ax_label(x_var)
+        ylabel = self.config.ax_label(y_var)
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
 

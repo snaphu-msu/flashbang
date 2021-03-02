@@ -285,9 +285,9 @@ class Comparison:
         x_scale : 'log' or 'linear'
         """
         if x_scale is None:
-            x_scale = self.config.get_ax_scale(x_var)
+            x_scale = self.config.ax_scale(x_var)
         if y_scale is None:
-            y_scale = self.config.get_ax_scale(y_var)
+            y_scale = self.config.ax_scale(y_var)
 
         ax.set_xscale(x_scale)
         ax.set_yscale(y_scale)
@@ -305,7 +305,7 @@ class Comparison:
         if title:
             if (title_str is None) and (chk is not None):
                 # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
-                dt = self.config.plotting.scales['chk_dt']
+                dt = self.config.plotting('scales')['chk_dt']
                 timestep = dt * chk
                 title_str = f't = {timestep:.3f} s'
 
@@ -334,8 +334,8 @@ class Comparison:
         x_var : str
         y_var : str
         """
-        ax.set_xlabel(self.config.get_ax_label(x_var))
-        ax.set_ylabel(self.config.get_ax_label(y_var))
+        ax.set_xlabel(self.config.ax_label(x_var))
+        ax.set_ylabel(self.config.ax_label(y_var))
 
     def _set_ax_legend(self, ax, legend, loc=None):
         """Set axis labels

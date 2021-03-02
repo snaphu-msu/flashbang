@@ -459,8 +459,8 @@ def extract_profile(chk, run, model, model_set,
     """
     if params is None:
         conf = Config(name=config, verbose=verbose)
-        params = conf.profiles.all_params
-        derived_params = conf.profiles.derived
+        params = conf.profiles('all')
+        derived_params = conf.profiles('derived_params')
 
     profile = xr.Dataset()
     chk_raw = load_chk(chk=chk, run=run, model=model, model_set=model_set)
@@ -781,11 +781,11 @@ def get_tracers(run, model, model_set,
         conf = Config(name=config, verbose=verbose)
 
         if mass_grid is None:
-            mass_def = conf.tracers.mass_grid
+            mass_def = conf.tracers('mass_grid')
             mass_grid = np.linspace(mass_def[0], mass_def[1], mass_def[2])
 
         if params is None:
-            params = conf.tracers.params
+            params = conf.tracers('params')
 
         if profiles is None:
             chk_list = find_chk(run=run, model=model, model_set=model_set,
