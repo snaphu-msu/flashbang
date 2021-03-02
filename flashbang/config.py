@@ -9,9 +9,6 @@ from .paths import config_filepath
 from .tools import printv
 
 
-# ===============================================================
-#                      Config
-# ===============================================================
 class Config:
     def __init__(self,
                  name,
@@ -27,11 +24,19 @@ class Config:
         self.config = None
         self.name = name
         self.verbose = verbose
-        
+
+        self.profiles = Property()
+        self.tracers = Property()
+        self.trans = Property()
+        self.dat = Property()
+        self.plotting = Property()
+        self.paths = Property()
+
         self.load()
+        self.extract()
 
     def load(self):
-        """
+        """Load config files
         """
         self.config = load_config_file(name=self.name, verbose=self.verbose)
 
@@ -39,6 +44,35 @@ class Config:
         plot_config = load_config_file(name='plotting', verbose=self.verbose)
         plot_config['plotting'].update(self.config['plotting'])
         self.config.update(plot_config)
+
+    def extract(self):
+        """Extract config attributes from dict
+        """
+        self.profiles.params = self.config['profiles']['params']
+        self.profiles.isotopes = self.config['profiles']['isotopes']
+        self.profiles.derived = self.config['profiles']['derived_params']
+        self.profiles.all_params = self.profiles.params + self.profiles.isotopes
+
+        self.dat.columns = self.config['dat_columns']
+
+        self.trans.dens = self.config['transitions']['dens']
+        self.tracers.mass_grid = self.config['tracers']['mass_grid']
+        self.tracers.params = self.config['tracers']['params']
+
+        self.plotting.isotopes = self.config['plotting']['isotopes']
+        self.plotting.labels = self.config['plotting']['labels']
+        self.plotting.scales = self.config['plotting']['scales']
+        self.plotting.ax_scales = self.config['plotting']['ax_scales']
+        self.plotting.ax_lims = self.config['plotting']['ax_lims']
+        self.plotting.options = self.config['plotting']['options']
+
+        self.paths.output_dir = self.config['paths']['output_dir']
+        self.paths.run_default = self.config['paths']['run_default']
+
+
+class Property:
+    """Dummy class to hold attributes"""
+    pass
 
 
 # ===============================================================
