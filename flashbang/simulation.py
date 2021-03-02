@@ -606,7 +606,7 @@ class Simulation:
             fig.canvas.draw_idle()
 
         # ----------------
-        trans = self._check_trans(trans=trans)
+        trans = self.config.check_trans(trans=trans)
         fig, profile_ax, slider = self._setup_slider()
 
         self.plot_profile(chk=self.chk_table.index[-1],
@@ -812,13 +812,10 @@ class Simulation:
         x_var : str
         y_var : str
         """
-        def get_lims(var):
-            return self.config.plotting.ax_lims.get(var)
-
         if x_lims is None:
-            x_lims = get_lims(x_var)
+            x_lims = self.config.get_ax_lims(x_var)
         if y_lims is None:
-            y_lims = get_lims(y_var)
+            y_lims = self.config.get_ax_lims(y_var)
 
         if x_lims is not None:
             ax.set_xlim(x_lims)
@@ -834,11 +831,10 @@ class Simulation:
         x_var : str
         y_var : str
         """
-        def get_label(key):
-            return self.config.plotting.labels.get(key, key)
-
-        ax.set_xlabel(get_label(x_var))
-        ax.set_ylabel(get_label(y_var))
+        xlabel = self.config.get_ax_label(x_var)
+        ylabel = self.config.get_ax_label(y_var)
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
 
     def _set_ax_legend(self, ax, legend, loc=None):
         """Set axis labels
@@ -934,11 +930,3 @@ class Simulation:
             verbose = self.verbose
         if verbose:
             print(string, **kwargs)
-
-    def _check_trans(self, trans):
-        """Check trans option from config
-        """
-        if trans is None:
-            trans = self.config.plotting.options.get('trans', False)
-
-        return trans
