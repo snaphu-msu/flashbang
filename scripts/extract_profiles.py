@@ -11,6 +11,7 @@ import time
 # flashbang
 from flashbang import load_save
 from flashbang.tools import str_to_bool
+from flashbang.config import Config
 
 
 def main(run, model, model_set,
@@ -39,10 +40,10 @@ def main(run, model, model_set,
     threads = int(threads)
 
     chk_list = load_save.find_chk(run=run, model=model, model_set=model_set)
-    conf = load_save.load_config(name=config)
+    conf = Config(name=config)
 
-    params = conf['profiles']['params'] + conf['profiles']['isotopes']
-    derived_params = conf['profiles']['derived_params']
+    params = conf.profiles.all_params
+    derived_params = conf.profiles.derived
 
     if multithread:
         args = []

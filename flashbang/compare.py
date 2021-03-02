@@ -10,8 +10,8 @@ from matplotlib.widgets import Slider
 # flashbang
 from . import simulation
 from . import plot_tools
-from . import load_save
 from . import tools
+from .config import Config
 
 
 class Comparison:
@@ -34,7 +34,7 @@ class Comparison:
         """
         self.sims = {}
         self.verbose = verbose
-        self.config = load_save.load_config(config, verbose=self.verbose)
+        self.config = Config(name=config, verbose=self.verbose)
 
         n_models = len(models)
         self.baseline = models[0]
@@ -285,7 +285,7 @@ class Comparison:
         x_scale : 'log' or 'linear'
         """
         def get_scale(var):
-            if var in self.config['plotting']['ax_scales']['log']:
+            if var in self.config.plotting.ax_scales['log']:
                 return 'log'
             else:
                 return 'linear'
@@ -311,7 +311,7 @@ class Comparison:
         if title:
             if (title_str is None) and (chk is not None):
                 # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
-                dt = self.config['plotting']['scales']['chk_dt']
+                dt = self.config.plotting.scales['chk_dt']
                 timestep = dt * chk
                 title_str = f't = {timestep:.3f} s'
 
@@ -341,7 +341,7 @@ class Comparison:
         y_var : str
         """
         def get_label(key):
-            return self.config['plotting']['labels'].get(key, key)
+            return self.config.plotting.labels.get(key, key)
 
         ax.set_xlabel(get_label(x_var))
         ax.set_ylabel(get_label(y_var))

@@ -62,6 +62,7 @@ from . import plot_tools
 from .quantities import get_density_zone
 from .paths import model_path
 from .tools import ensure_sequence
+from .config import Config
 
 
 class Simulation:
@@ -113,8 +114,8 @@ class Simulation:
         self.profiles = xr.Dataset()     # radial profile data for each timestep
         self.tracers = None              # mass tracers/trajectories
 
-        self.config = load_save.load_config(config, verbose=self.verbose)
-        self.trans_dens = self.config['transitions']['dens']
+        self.config = Config(name=config, verbose=self.verbose)
+        self.trans_dens = self.config.trans.dens
         self.setup_mass_grid()
         self.load_chk_table(reload=reload, save=save)
 
@@ -132,8 +133,8 @@ class Simulation:
     def setup_mass_grid(self):
         """Generate mass grid from config definition
         """
-        mass_def = self.config['tracers']['mass_grid']
-        self.mass_grid = np.linspace(mass_def[0], mass_def[1], mass_def[2])
+        mass_grid = self.config.tracers.mass_grid
+        self.mass_grid = np.linspace(mass_grid[0], mass_grid[1], mass_grid[2])
 
     def load_all(self, reload=False, save=True):
         """Load all model data
@@ -186,7 +187,7 @@ class Simulation:
         self.dat = load_save.get_dat(run=self.run,
                                      model=self.model,
                                      model_set=self.model_set,
-                                     cols_dict=self.config['dat_columns'],
+                                     cols_dict=self.config.dat.columns,
                                      reload=reload,
                                      save=save,
                                      verbose=self.verbose)
@@ -199,15 +200,16 @@ class Simulation:
         reload : bool
         save : bool
         """
-        config = self.config['profiles']
+        params = self.config.profiles.all_params
+        derived_params = self.config.profiles.derived
 
         self.profiles = load_save.get_multiprofile(
                                 run=self.run,
                                 model=self.model,
                                 model_set=self.model_set,
                                 chk_list=self.chk_table.index,
-                                params=config['params'] + config['isotopes'],
-                                derived_params=config['derived_params'],
+                                params=params,
+                                derived_params=derived_params,
                                 reload=reload,
                                 save=save,
                                 verbose=self.verbose)
@@ -282,14 +284,15 @@ class Simulation:
         reload : bool
         save : bool
         """
-        if len(self.config['tracers']['params']) == 0:
+        params = self.config.tracers.params
+        if len(params) == 0:
             return
 
         self.tracers = load_save.get_tracers(run=self.run,
                                              model=self.model,
                                              model_set=self.model_set,
                                              mass_grid=self.mass_grid,
-                                             params=self.config['tracers']['params'],
+                                             params=params,
                                              profiles=self.profiles,
                                              reload=reload,
                                              save=save,
@@ -447,9 +450,9 @@ class Simulation:
         data_only : bool
         """
         if y_vars is None:
-            y_vars = self.config['plotting']['isotopes']
+            y_vars = self.config.plotting.isotopes
         if y_lims is None:
-            y_lims = self.config['plotting']['ax_lims'].get('X')
+            y_lims = self.config.plotting.ax_lims.get('X')
 
         fig, ax = plot_tools.setup_fig(ax=ax)
         profile = self.profiles.sel(chk=chk)
@@ -665,7 +668,9 @@ class Simulation:
 
         # ----------------
         if y_vars is None:
-            y_vars = self.config['plotting']['isotopes']
+            y_vars = self.config.plotting.isotopes
+        if y_lims is None:
+            y_lims = self.config.plotting.ax_lims.get('X')
 
         fig, profile_ax, slider = self._setup_slider()
 
@@ -715,7 +720,7 @@ class Simulation:
         linewidth : float
         """
         if trans is None:
-            trans = self.config['plotting']['options'].get('trans', False)
+            trans = self.config.plotting.options.get('trans', False)
 
         if trans:
             for trans_key in self.trans_dens:
@@ -764,7 +769,7 @@ class Simulation:
         x_scale : 'log' or 'linear'
         """
         def get_scale(var):
-            if var in self.config['plotting']['ax_scales']['log']:
+            if var in self.config.plotting.ax_scales['log']:
                 return 'log'
             else:
                 return 'linear'
@@ -790,7 +795,7 @@ class Simulation:
         if title:
             if (title_str is None) and (chk is not None):
                 # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
-                dt = self.config['plotting']['scales']['chk_dt']
+                dt = self.config.plotting.scales['chk_dt']
                 timestep = dt * chk - self.bounce_time
                 title_str = f't = {timestep:.3f} s'
 
@@ -808,7 +813,7 @@ class Simulation:
         y_var : str
         """
         def get_lims(var):
-            return self.config['plotting']['ax_lims'].get(var)
+            return self.config.plotting.ax_lims.get(var)
 
         if x_lims is None:
             x_lims = get_lims(x_var)
@@ -830,7 +835,7 @@ class Simulation:
         y_var : str
         """
         def get_label(key):
-            return self.config['plotting']['labels'].get(key, key)
+            return self.config.plotting.labels.get(key, key)
 
         ax.set_xlabel(get_label(x_var))
         ax.set_ylabel(get_label(y_var))
@@ -934,6 +939,6 @@ class Simulation:
         """Check trans option from config
         """
         if trans is None:
-            trans = self.config['plotting']['options'].get('trans', False)
+            trans = self.config.plotting.options.get('trans', False)
 
         return trans

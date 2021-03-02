@@ -18,8 +18,6 @@ import os
 import numpy as np
 import pandas as pd
 import xarray as xr
-import configparser
-import ast
 import subprocess
 import sys
 import yt
@@ -31,42 +29,7 @@ from . import paths
 from .quantities import get_mass_enclosed
 from .extract_tracers import extract_multi_tracers
 from .tools import get_missing_elements, printv
-
-
-# =======================================================================
-#                      Config files
-# =======================================================================
-def load_config(name=None, verbose=True):
-    """Load .ini config file and return as dict
-
-    parameters
-    ----------
-    name: str
-        label of config file to load
-    verbose : bool
-    """
-    filepath = paths.config_filepath(name=name)
-    printv(f'Loading config: {filepath}', verbose)
-
-    if not os.path.exists(filepath):
-        raise FileNotFoundError(f'Config file not found: {filepath}')
-
-    ini = configparser.ConfigParser()
-    ini.read(filepath)
-
-    config = {}
-    for section in ini.sections():
-        config[section] = {}
-        for option in ini.options(section):
-            config[section][option] = ast.literal_eval(ini.get(section, option))
-
-    # override any options from plotting.ini
-    if name is not 'plotting':
-        plot_config = load_config(name='plotting', verbose=verbose)
-        plot_config['plotting'].update(config['plotting'])
-        config.update(plot_config)
-
-    return config
+from .config import Config
 
 
 # ===============================================================
@@ -495,9 +458,9 @@ def extract_profile(chk, run, model, model_set,
     verbose : bool
     """
     if params is None:
-        c = load_config(config, verbose=verbose)
-        params = c['profiles']['params'] + c['profiles']['isotopes']
-        derived_params = c['profiles']['derived_params']
+        conf = Config(name=config, verbose=verbose)
+        params = conf.profiles.all_params
+        derived_params = conf.profiles.derived
 
     profile = xr.Dataset()
     chk_raw = load_chk(chk=chk, run=run, model=model, model_set=model_set)
@@ -815,14 +778,14 @@ def get_tracers(run, model, model_set,
 
     # fall back on re-extracting
     if tracers is None:
-        c = load_config(config, verbose=verbose)
+        conf = Config(name=config, verbose=verbose)
 
         if mass_grid is None:
-            mass_def = c['tracers']['mass_grid']
+            mass_def = conf.tracers.mass_grid
             mass_grid = np.linspace(mass_def[0], mass_def[1], mass_def[2])
 
         if params is None:
-            params = c['tracers']['params']
+            params = conf.tracers.params
 
         if profiles is None:
             chk_list = find_chk(run=run, model=model, model_set=model_set,
