@@ -35,6 +35,9 @@ class Config:
         self.load()
         self.extract()
 
+    # ===============================================================
+    #                      Loading
+    # ===============================================================
     def load(self):
         """Load config files
         """
@@ -69,15 +72,29 @@ class Config:
         self.paths.output_dir = self.config['paths']['output_dir']
         self.paths.run_default = self.config['paths']['run_default']
 
+    # ===============================================================
+    #                      Accessing
+    # ===============================================================
+    def get_ax_lims(self, var):
+        """Get axis limits for given var
+
+        Returns : [min, max]
+        """
+        return self.plotting.ax_lims.get(var)
+
+    def get_ax_label(self, var):
+        """Get axis label for given var
+
+        Returns : str
+        """
+        return self.plotting.labels.get(var, var)
+
 
 class Property:
     """Dummy class to hold attributes"""
     pass
 
 
-# ===============================================================
-#                      Functions
-# ===============================================================
 def load_config_file(name, verbose=True):
     """Load .ini config file and return as dict
 
