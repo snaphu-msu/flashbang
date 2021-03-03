@@ -15,6 +15,8 @@ class Plotter:
                  x_factor=None, y_factor=None,
                  legend=False, legend_loc=None,
                  title=False, title_str=None,
+                 linestyle=None, marker=None,
+                 linewidth=None,
                  figsize=None,
                  set_all=False,
                  verbose=True,
@@ -57,6 +59,9 @@ class Plotter:
         self.legend_loc = legend_loc
         self.title = title
         self.title_str = title_str
+        self.linestyle = linestyle
+        self.marker = marker
+        self.linewidth = linewidth
         self.figsize = figsize
         self.verbose = verbose
 
@@ -122,6 +127,42 @@ class Plotter:
         # legend
         if self.legend_loc is None:
             self.legend_loc = 2
+
+    # =======================================================
+    #                      Plot
+    # =======================================================
+    def plot(self, x, y,
+             marker=None, linestyle=None,
+             color=None,
+             label=None,
+             linewidth=None,
+             **kwargs
+             ):
+        """Plot data on axis
+
+        Parameters
+        ----------
+        x : []
+        y : []
+        marker : str
+        linestyle : str
+        color : str
+        label : str
+        linewidth : float
+        **kwargs
+            valid kwargs for ax.plot()
+        """
+        if marker is None:
+            marker = self.marker
+        if linestyle is None:
+            linestyle = self.linestyle
+        if linewidth is None:
+            linewidth = self.linewidth
+            
+        self.ax.plot(x/self.x_factor, y/self.y_factor,
+                     marker=marker, linestyle=linestyle,
+                     label=label, color=color, linewidth=linewidth,
+                     **kwargs)
 
     # =======================================================
     #                      Axis
