@@ -114,6 +114,7 @@ class Simulation:
         self.chk_table = pd.DataFrame()  # scalar chk quantities (trans_dens, time, etc.)
         self.profiles = xr.Dataset()     # radial profile data for each timestep
         self.tracers = None              # mass tracers/trajectories
+        self.timesteps = None            # table of chk timesteps
 
         self.config = Config(name=config, verbose=self.verbose)
         self.trans_dens = self.config.trans('dens')
@@ -149,6 +150,7 @@ class Simulation:
         self.load_dat(reload=reload, save=save)
         self.load_all_profiles(reload=reload, save=save)
         self.get_transition_zones(reload=reload, save=save)
+        self.load_timesteps(reload=reload, save=save)
 
     def get_bounce_time(self):
         """Get bounce time (s) from log file
@@ -236,6 +238,15 @@ class Simulation:
                              model=self.model,
                              model_set=self.model_set,
                              verbose=self.verbose)
+
+    def load_timesteps(self, reload=False, save=True):
+        """Load table of chk timesteps
+        """
+        self.timesteps = load_save.get_timesteps(run=self.run,
+                                                 model=self.model,
+                                                 model_set=self.model_set,
+                                                 reload=reload, save=save,
+                                                 verbose=self.verbose)
 
     # =======================================================
     #                 Analysis & Postprocessing
