@@ -116,6 +116,10 @@ class Plotter:
         if self.y_lims is None:
             self.y_lims = self.config.ax_lims(self.y_var)
 
+        # legend
+        if self.legend_loc is None:
+            self.legend_loc = 2
+
         # title
         if (self.title_str is None) and (self.chk is not None):
             # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time

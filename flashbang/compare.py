@@ -71,11 +71,11 @@ class Comparison:
                      x_lims=None, y_lims=None,
                      x_factor=1, y_factor=1,
                      x_label=None, y_label=None,
+                     legend=True, legend_loc=None,
                      ax=None,
                      marker=None,
                      trans=False,
                      title=True,
-                     legend=True,
                      linestyle='-',
                      title_str=None,
                      data_only=False):
@@ -99,6 +99,7 @@ class Comparison:
         y_label : str
         ax : Axes
         legend : bool
+        legend_loc : str or int
         trans : bool
         title : bool
         linestyle : str
@@ -113,8 +114,8 @@ class Comparison:
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
                        x_label=x_label, y_label=y_label,
-                       title=title, legend=legend,
-                       title_str=title_str,
+                       title=title, title_str=title_str,
+                       legend=legend, legend_loc=legend_loc,
                        verbose=self.verbose)
 
         for model, sim in self.sims.items():
@@ -135,11 +136,10 @@ class Comparison:
                  x_lims=None, y_lims=None,
                  x_factor=1, y_factor=1,
                  x_label=None, y_label=None,
+                 legend=True, legend_loc=None,
                  ax=None,
                  linestyle='-',
                  marker='',
-                 legend=True,
-                 legend_loc=0,
                  zero_time=True,
                  title_str=None,
                  data_only=False):
@@ -194,9 +194,9 @@ class Comparison:
                             x_lims=None, y_lims=None,
                             x_factor=1, y_factor=1,
                             x_label=None, y_label=None,
+                            legend=True, legend_loc=None,
                             trans=False,
                             title=True,
-                            legend=True,
                             linestyle='-',
                             marker=''):
         """Plot interactive profile comparison
@@ -219,6 +219,7 @@ class Comparison:
         x_label : str
         y_label : str
         legend : bool
+        legend_loc : str or int
         linestyle : str
         marker : str
         """
@@ -248,7 +249,8 @@ class Comparison:
                           y_lims=y_lims, x_lims=x_lims,
                           x_factor=x_factor, y_factor=y_factor,
                           x_label=x_label, y_label=y_label,
-                          ax=profile_ax, legend=False,
+                          ax=profile_ax,
+                          legend=False, legend_loc=legend_loc,
                           trans=trans, title=title,
                           linestyle=linestyle,
                           marker=marker)

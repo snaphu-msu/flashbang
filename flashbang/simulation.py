@@ -315,7 +315,7 @@ class Simulation:
                       max_cols=2,
                       sub_figsize=(6, 5),
                       trans=None,
-                      legend=False,
+                      legend=False, legend_loc=None,
                       title=True):
         """Plot one or more profile variables
 
@@ -334,6 +334,7 @@ class Simulation:
         x_label : str
         y_label : str
         legend : bool
+        legend_loc : str or int
         max_cols : bool
         sub_figsize : tuple
         trans : bool
@@ -357,7 +358,8 @@ class Simulation:
                               x_factor=x_factor, y_factor=y_factor,
                               x_label=x_label, y_label=y_label,
                               ax=ax[row, col], trans=trans,
-                              legend=show_legend, title=show_title)
+                              legend=show_legend, legend_loc=legend_loc,
+                              title=show_title)
         return fig
 
     def plot_profile(self, chk, y_var,
@@ -367,7 +369,7 @@ class Simulation:
                      x_factor=1, y_factor=1,
                      x_label=None, y_label=None,
                      ax=None,
-                     legend=False,
+                     legend=False, legend_loc=None,
                      trans=None,
                      title=True,
                      label=None,
@@ -394,6 +396,7 @@ class Simulation:
         y_label : str
         ax : Axes
         legend : bool
+        legend_loc : str or int
         trans : bool
         title : bool
         y_lims : [min, max]
@@ -415,7 +418,8 @@ class Simulation:
                        x_scale=x_scale, y_scale=y_scale,
                        x_label=x_label, y_label=y_label,
                        title=title, title_str=title_str,
-                       legend=legend, verbose=self.verbose)
+                       legend=legend, legend_loc=legend_loc,
+                       verbose=self.verbose)
 
         for i in chk:
             profile = self.profiles.sel(chk=i)
@@ -437,10 +441,9 @@ class Simulation:
                          x_factor=1, y_factor=1,
                          x_label=None, y_label=None,
                          ax=None,
-                         legend=True,
+                         legend=True, legend_loc=None,
                          trans=True,
                          title=True,
-                         loc=3,
                          data_only=False):
         """Plot isotope composition profile
 
@@ -459,11 +462,11 @@ class Simulation:
         y_label : str
         ax : Axes
         legend : bool
+        legend_loc : str or int
         trans : bool
         y_lims : [min, max]
         x_lims : [min, max]
         title : bool
-        loc : str or int
         data_only : bool
         """
         if y_vars is None:
@@ -477,7 +480,7 @@ class Simulation:
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
                        x_label=x_label, y_label=y_label,
-                       title=title, legend=legend,
+                       title=title, legend=legend, legend_loc=legend_loc,
                        verbose=self.verbose)
 
         profile = self.profiles.sel(chk=chk)
@@ -502,11 +505,11 @@ class Simulation:
                  x_lims=None, y_lims=None,
                  x_factor=1, y_factor=1,
                  x_label=None, y_label=None,
+                 legend=False, legend_loc=None,
                  ax=None,
                  linestyle='-',
                  marker='',
                  label=None,
-                 legend=False,
                  zero_time=True,
                  title_str=None,
                  color=None,
@@ -529,6 +532,7 @@ class Simulation:
         marker : str
         label : str
         legend : bool
+        legend_loc : str or int
         zero_time : bool
         title_str : str
         color : str
@@ -540,7 +544,8 @@ class Simulation:
                        x_scale=x_scale, y_scale=y_scale,
                        x_label=x_label, y_label=y_label,
                        title=True, title_str=title_str,
-                       legend=legend, verbose=self.verbose)
+                       legend=legend, legend_loc=legend_loc,
+                       verbose=self.verbose)
 
         t_offset = 0
         if zero_time:
@@ -560,10 +565,10 @@ class Simulation:
                      x_scale=None, y_scale=None,
                      x_lims=None, y_lims=None,
                      x_label=None, y_label=None,
+                     legend=False, legend_loc=None,
                      ax=None,
                      linestyle='-',
                      marker='',
-                     legend=False,
                      data_only=False):
         """Plot quantity from dat file
 
@@ -580,6 +585,7 @@ class Simulation:
         linestyle : str
         marker : str
         legend : bool
+        legend_loc : str or int
         data_only : bool
         """
         plot = Plotter(ax=ax, config=self.config,
@@ -588,7 +594,8 @@ class Simulation:
                        x_scale=x_scale, y_scale=y_scale,
                        x_label=x_label, y_label=y_label,
                        title=False,
-                       legend=legend, verbose=self.verbose)
+                       legend=legend, legend_loc=legend_loc,
+                       verbose=self.verbose)
 
         for mass in self.tracers['mass']:
             plot.ax.plot(self.tracers['chk'],
@@ -612,7 +619,7 @@ class Simulation:
                             x_label=None, y_label=None,
                             trans=None,
                             title=True,
-                            legend=False,
+                            legend=False, legend_loc=None,
                             linestyle='-',
                             marker=''):
         """Plot interactive slider of profile for given variable
@@ -632,6 +639,7 @@ class Simulation:
         trans : bool
         title : bool
         legend : bool
+        legend_loc : str or int
         linestyle : str
         marker : str
         """
@@ -658,7 +666,8 @@ class Simulation:
                           x_factor=x_factor, y_factor=y_factor,
                           y_lims=y_lims, x_lims=x_lims,
                           x_label=x_label, y_label=y_label,
-                          ax=profile_ax, legend=legend,
+                          ax=profile_ax,
+                          legend=legend, legend_loc=legend_loc,
                           trans=trans, title=title,
                           linestyle=linestyle,
                           marker=marker)
@@ -676,8 +685,8 @@ class Simulation:
                                 x_label=None, y_label=None,
                                 trans=True,
                                 title=True,
-                                legend=True,
-                                loc='lower left'):
+                                legend=True, legend_loc=None,
+                                ):
         """Plot interactive slider of isotope composition
 
         parameters
@@ -696,7 +705,7 @@ class Simulation:
             plot helmholtz transitions
         title : bool
         legend : bool
-        loc : str
+        legend_loc : str or int
         """
         def update_slider(chk):
             chk = int(chk)
@@ -727,8 +736,9 @@ class Simulation:
                               x_factor=x_factor, y_factor=y_factor,
                               y_lims=y_lims, x_lims=x_lims,
                               x_label=x_label, y_label=y_label,
-                              ax=profile_ax, legend=legend,
-                              trans=trans, title=title, loc=loc)
+                              ax=profile_ax,
+                              legend=legend, legend_loc=legend_loc,
+                              trans=trans, title=title)
 
         lines = self._get_ax_lines(ax=profile_ax, y_vars=y_vars, trans=trans)
         slider.on_changed(update_slider)
