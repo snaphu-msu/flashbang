@@ -69,14 +69,13 @@ class Comparison:
                      x_var='r',
                      x_scale=None, y_scale=None,
                      x_lims=None, y_lims=None,
-                     x_factor=1, y_factor=1,
+                     x_factor=None, y_factor=None,
                      x_label=None, y_label=None,
                      legend=True, legend_loc=None,
                      title=True, title_str=None,
+                     marker=None, linestyle=None,
                      ax=None,
-                     marker=None,
-                     trans=False,
-                     linestyle='-',
+                     trans=None,
                      data_only=False):
         """Plot profile comparison
 
@@ -100,10 +99,10 @@ class Comparison:
         legend_loc : str or int
         title : bool
         title_str : str
-        ax : Axes
-        trans : bool
         linestyle : str
         marker : str
+        ax : Axes
+        trans : bool
         data_only : bool
             only plot data, neglecting all titles/labels/scales
         """
@@ -121,9 +120,9 @@ class Comparison:
         for model, sim in self.sims.items():
             sim.plot_profile(chk=chk, y_var=y_var, x_var=x_var,
                              x_factor=x_factor, y_factor=y_factor,
-                             marker=marker,
+                             marker=marker, linestyle=linestyle,
                              trans=trans if model == self.baseline else False,
-                             linestyle=linestyle, ax=plot.ax, label=model,
+                             ax=plot.ax, label=model,
                              data_only=True)
 
         if not data_only:
@@ -134,13 +133,12 @@ class Comparison:
     def plot_dat(self, y_var,
                  x_scale=None, y_scale=None,
                  x_lims=None, y_lims=None,
-                 x_factor=1, y_factor=1,
+                 x_factor=None, y_factor=None,
                  x_label=None, y_label=None,
                  legend=True, legend_loc=None,
                  title=True, title_str=None,
                  ax=None,
-                 linestyle='-',
-                 marker='',
+                 linestyle=None, marker=None,
                  zero_time=True,
                  data_only=False):
         """Plot time-dependent datfile comparison
@@ -197,7 +195,7 @@ class Comparison:
                             x_label=None, y_label=None,
                             legend=True, legend_loc=None,
                             title=True,
-                            trans=False,
+                            trans=None,
                             linestyle='-',
                             marker=''):
         """Plot interactive profile comparison

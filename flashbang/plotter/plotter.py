@@ -158,7 +158,7 @@ class Plotter:
             linestyle = self.linestyle
         if linewidth is None:
             linewidth = self.linewidth
-            
+
         self.ax.plot(x/self.x_factor, y/self.y_factor,
                      marker=marker, linestyle=linestyle,
                      label=label, color=color, linewidth=linewidth,

@@ -310,7 +310,7 @@ class Simulation:
     def plot_profiles(self, chk, y_vars,
                       x_var='r',
                       x_scale=None, y_scale=None,
-                      x_factor=1, y_factor=1,
+                      x_factor=None, y_factor=None,
                       x_label=None, y_label=None,
                       legend=False, legend_loc=None,
                       title=True, title_str=None,
@@ -368,15 +368,14 @@ class Simulation:
                      x_var='r',
                      x_scale=None, y_scale=None,
                      x_lims=None, y_lims=None,
-                     x_factor=1, y_factor=1,
+                     x_factor=None, y_factor=None,
                      x_label=None, y_label=None,
                      legend=False, legend_loc=None,
                      title=True, title_str=None,
+                     linestyle=None, marker=None,
                      ax=None,
                      trans=None,
                      label=None,
-                     linestyle='-',
-                     marker='',
                      color=None,
                      data_only=False):
         """Plot given profile variable
@@ -399,13 +398,13 @@ class Simulation:
         legend_loc : str or int
         title : bool
         title_str : str
-        ax : Axes
-        trans : bool
         y_lims : [min, max]
         x_lims : [min, max]
-        label : str
         linestyle : str
         marker : str
+        ax : Axes
+        trans : bool
+        label : str
         color : str
         data_only : bool
             only plot data, neglecting all titles/labels/scales
@@ -418,17 +417,19 @@ class Simulation:
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
                        x_label=x_label, y_label=y_label,
+                       x_factor=x_factor, y_factor=y_factor,
+                       linestyle=linestyle, marker=marker,
                        title=title, title_str=title_str,
                        legend=legend, legend_loc=legend_loc,
                        verbose=self.verbose)
 
         for i in chk:
             profile = self.profiles.sel(chk=i)
-            x = profile[x_var] / x_factor
-            y = profile[y_var] / y_factor
+            x = profile[x_var]
+            y = profile[y_var]
 
-            plot.ax.plot(x, y, ls=linestyle, marker=marker, label=label, color=color)
-            self._plot_trans_lines(x=x, y=y, ax=plot.ax, chk=i, trans=trans)
+            plot.plot(x, y, label=label, color=color)
+            self._plot_trans_lines(x=x, y=y, plot=plot, chk=i, trans=trans)
 
         if not data_only:
             plot.set_all()
@@ -439,7 +440,7 @@ class Simulation:
                          x_var='r', y_vars=None,
                          x_scale=None, y_scale=None,
                          x_lims=None, y_lims=None,
-                         x_factor=1, y_factor=1,
+                         x_factor=None, y_factor=None,
                          x_label=None, y_label=None,
                          legend=True, legend_loc=None,
                          title=True, title_str=None,
@@ -483,21 +484,22 @@ class Simulation:
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
                        x_label=x_label, y_label=y_label,
+                       x_factor=x_factor, y_factor=y_factor,
                        title=title, title_str=title_str,
                        legend=legend, legend_loc=legend_loc,
                        verbose=self.verbose)
 
         profile = self.profiles.sel(chk=chk)
-        x = profile[x_var] / x_factor
+        x = profile[x_var]
 
         for y_var in y_vars:
-            y = profile[y_var] / y_factor
+            y = profile[y_var]
             color = {'ye': 'k'}.get(y_var)
             linestyle = {'ye': '--'}.get(y_var)
 
-            plot.ax.plot(x, y, label=y_var, color=color, linestyle=linestyle)
+            plot.plot(x, y, label=y_var, color=color, linestyle=linestyle)
 
-        self._plot_trans_lines(x=x, y=y_lims, ax=plot.ax, chk=chk, trans=trans)
+        self._plot_trans_lines(x=x, y=y_lims, plot=plot, chk=chk, trans=trans)
 
         if not data_only:
             plot.set_all()
@@ -507,13 +509,12 @@ class Simulation:
     def plot_dat(self, y_var,
                  x_scale=None, y_scale=None,
                  x_lims=None, y_lims=None,
-                 x_factor=1, y_factor=1,
+                 x_factor=None, y_factor=None,
                  x_label=None, y_label=None,
                  legend=False, legend_loc=None,
                  title=True, title_str=None,
+                 linestyle=None, marker=None,
                  ax=None,
-                 linestyle='-',
-                 marker='',
                  label=None,
                  zero_time=True,
                  color=None,
@@ -535,9 +536,9 @@ class Simulation:
         legend_loc : str or int
         title : bool
         title_str : str
-        ax : Axes
         linestyle : str
         marker : str
+        ax : Axes
         label : str
         zero_time : bool
         color : str
@@ -548,6 +549,8 @@ class Simulation:
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
                        x_label=x_label, y_label=y_label,
+                       x_factor=x_factor, y_factor=y_factor,
+                       linestyle=linestyle, marker=marker,
                        title=title, title_str=title_str,
                        legend=legend, legend_loc=legend_loc,
                        verbose=self.verbose)
@@ -556,10 +559,10 @@ class Simulation:
         if zero_time:
             t_offset = self.bounce_time
 
-        x = (self.dat['time'] - t_offset) / x_factor
-        y = self.dat[y_var] / y_factor
+        x = self.dat['time'] - t_offset
+        y = self.dat[y_var]
 
-        plot.ax.plot(x, y, linestyle=linestyle, marker=marker, color=color, label=label)
+        plot.plot(x, y, color=color, label=label)
 
         if not data_only:
             plot.set_all()
@@ -603,13 +606,15 @@ class Simulation:
                        x_label=x_label, y_label=y_label,
                        title=title, title_str=title_str,
                        legend=legend, legend_loc=legend_loc,
+                       linestyle=linestyle, marker=marker,
                        verbose=self.verbose)
 
         for mass in self.tracers['mass']:
-            plot.ax.plot(self.tracers['chk'],
-                         self.tracers.sel(mass=mass)[y_var],
-                         linestyle=linestyle, marker=marker,
-                         label=f'{mass.values:.3f}')
+            x = self.tracers['chk']
+            y = self.tracers.sel(mass=mass)[y_var]
+            label = f'{mass.values:.3f}'
+
+            plot.plot(x, y, label=label)
 
         if not data_only:
             plot.set_all()
@@ -623,7 +628,7 @@ class Simulation:
                             x_var='r',
                             x_scale=None, y_scale=None,
                             x_lims=None, y_lims=None,
-                            x_factor=1, y_factor=1,
+                            x_factor=None, y_factor=None,
                             x_label=None, y_label=None,
                             legend=False, legend_loc=None,
                             title=False,
@@ -690,7 +695,7 @@ class Simulation:
                                 x_var='r', y_vars=None,
                                 x_scale=None, y_scale='linear',
                                 x_lims=None, y_lims=None,
-                                x_factor=1, y_factor=1,
+                                x_factor=None, y_factor=None,
                                 x_label=None, y_label=None,
                                 legend=True, legend_loc=None,
                                 title=True,
@@ -791,14 +796,14 @@ class Simulation:
 
         return title_str
 
-    def _plot_trans_lines(self, x, y, ax, chk, trans, linewidth=1):
+    def _plot_trans_lines(self, x, y, plot, chk, trans, linewidth=1):
         """Add transition line to axis
 
         parameters
         ----------
         x : []
         y : []
-        ax : Axes
+        plot : Plotter
         chk : int
         trans : bool
         linewidth : float
@@ -810,7 +815,8 @@ class Simulation:
             for trans_key in self.trans_dens:
                 trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
                                                       x=x, y=y)
-                ax.plot(trans_x, trans_y, ls='--', color='k', linewidth=linewidth)
+                plot.plot(trans_x, trans_y, linestyle='--', marker='',
+                          color='k', linewidth=linewidth)
 
     # =======================================================
     #                      Slider Tools
