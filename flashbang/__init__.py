@@ -4,8 +4,8 @@ from . import paths
 from . import quantities
 from . import tools
 from . import compare
-from .plotter import plot_tools
-from .plotter import plotter
+from .plotting import plot_tools
+from .plotting import plotter
 
 __all__ = ['simulation',
            'compare',
