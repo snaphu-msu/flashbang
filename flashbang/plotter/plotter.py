@@ -12,6 +12,7 @@ class Plotter:
                  x_scale=None, y_scale=None,
                  x_label=None, y_label=None,
                  x_lims=None, y_lims=None,
+                 x_factor=None, y_factor=None,
                  legend=False, legend_loc=None,
                  title=False, title_str=None,
                  figsize=None,
@@ -32,6 +33,8 @@ class Plotter:
         y_label : str
         x_lims : [min, max]
         y_lims : [min, max]
+        x_factor : float
+        y_factor : float
         legend : bool
         legend_loc : str or int
         title : bool
@@ -48,6 +51,8 @@ class Plotter:
         self.y_label = y_label
         self.x_lims = x_lims
         self.y_lims = y_lims
+        self.x_factor = x_factor
+        self.y_factor = y_factor
         self.legend = legend
         self.legend_loc = legend_loc
         self.title = title
@@ -101,6 +106,12 @@ class Plotter:
             self.x_scale = self.config.ax_scale(self.x_var)
         if self.y_scale is None:
             self.y_scale = self.config.ax_scale(self.y_var)
+
+        # factors
+        if self.x_factor is None:
+            self.x_factor = self.config.factor(self.x_var)
+        if self.y_factor is None:
+            self.y_factor = self.config.factor(self.y_var)
 
         # lims
         if self.x_lims is None:
