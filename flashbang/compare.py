@@ -72,12 +72,11 @@ class Comparison:
                      x_factor=1, y_factor=1,
                      x_label=None, y_label=None,
                      legend=True, legend_loc=None,
+                     title=True, title_str=None,
                      ax=None,
                      marker=None,
                      trans=False,
-                     title=True,
                      linestyle='-',
-                     title_str=None,
                      data_only=False):
         """Plot profile comparison
 
@@ -97,14 +96,14 @@ class Comparison:
         y_factor : float
         x_label : str
         y_label : str
-        ax : Axes
         legend : bool
         legend_loc : str or int
-        trans : bool
         title : bool
+        title_str : str
+        ax : Axes
+        trans : bool
         linestyle : str
         marker : str
-        title_str : str
         data_only : bool
             only plot data, neglecting all titles/labels/scales
         """
@@ -137,11 +136,11 @@ class Comparison:
                  x_factor=1, y_factor=1,
                  x_label=None, y_label=None,
                  legend=True, legend_loc=None,
+                 title=True, title_str=None,
                  ax=None,
                  linestyle='-',
                  marker='',
                  zero_time=True,
-                 title_str=None,
                  data_only=False):
         """Plot time-dependent datfile comparison
 
@@ -156,13 +155,14 @@ class Comparison:
         y_factor : float
         x_label : str
         y_label : str
+        legend : bool
+        legend_loc : str or int
+        title : bool
+        title_str : str
         ax : Axes
         linestyle : str
         marker : str
-        legend : bool
-        legend_loc : str or int
         zero_time : bool
-        title_str : str
         data_only : bool
         """
         plot = Plotter(ax=ax, config=self.config,
@@ -170,7 +170,7 @@ class Comparison:
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
                        x_label=x_label, y_label=y_label,
-                       title=True, title_str=title_str,
+                       title=title, title_str=title_str,
                        legend=legend, legend_loc=legend_loc,
                        verbose=self.verbose)
 
@@ -195,8 +195,8 @@ class Comparison:
                             x_factor=1, y_factor=1,
                             x_label=None, y_label=None,
                             legend=True, legend_loc=None,
+                            title=True, title_str=None,
                             trans=False,
-                            title=True,
                             linestyle='-',
                             marker=''):
         """Plot interactive profile comparison
@@ -209,9 +209,6 @@ class Comparison:
         x_var : str
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
-        trans : bool
-            plot helmholtz transitions
-        title : bool
         x_lims : [min, max]
         y_lims : [min, max]
         x_factor : float
@@ -220,6 +217,10 @@ class Comparison:
         y_label : str
         legend : bool
         legend_loc : str or int
+        title : bool
+        title_str : str
+        trans : bool
+            plot helmholtz transitions
         linestyle : str
         marker : str
         """
@@ -249,9 +250,10 @@ class Comparison:
                           y_lims=y_lims, x_lims=x_lims,
                           x_factor=x_factor, y_factor=y_factor,
                           x_label=x_label, y_label=y_label,
-                          ax=profile_ax,
                           legend=False, legend_loc=legend_loc,
-                          trans=trans, title=title,
+                          title=title, title_str=title_str,
+                          ax=profile_ax,
+                          trans=trans,
                           linestyle=linestyle,
                           marker=marker)
 
