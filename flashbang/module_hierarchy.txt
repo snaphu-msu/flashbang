@@ -19,7 +19,7 @@ simulation.py
  Level 2
 ----------------------------
 load_save.py
-
+plotter.py
 
 ----------------------------
  Level 1
@@ -27,7 +27,6 @@ load_save.py
 quantities.py
 extract_tracers.py
 config.py
-
 
 ----------------------------
  Level 0
