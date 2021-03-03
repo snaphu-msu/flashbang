@@ -70,6 +70,7 @@ class Comparison:
                      x_scale=None, y_scale=None,
                      x_lims=None, y_lims=None,
                      x_factor=1, y_factor=1,
+                     x_label=None, y_label=None,
                      ax=None,
                      marker=None,
                      trans=False,
@@ -93,9 +94,9 @@ class Comparison:
         x_lims : [min, max]
         y_lims : [min, max]
         x_factor : float
-            Divide x-values by this factor
         y_factor : float
-            Divide y-values by this factor
+        x_label : str
+        y_label : str
         ax : Axes
         legend : bool
         trans : bool
@@ -111,6 +112,7 @@ class Comparison:
                        chk=chk,
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
+                       x_label=x_label, y_label=y_label,
                        title=title, legend=legend,
                        title_str=title_str,
                        verbose=self.verbose)
@@ -132,6 +134,7 @@ class Comparison:
                  x_scale=None, y_scale=None,
                  x_lims=None, y_lims=None,
                  x_factor=1, y_factor=1,
+                 x_label=None, y_label=None,
                  ax=None,
                  linestyle='-',
                  marker='',
@@ -151,6 +154,8 @@ class Comparison:
         y_lims : [min, max]
         x_factor : float
         y_factor : float
+        x_label : str
+        y_label : str
         ax : Axes
         linestyle : str
         marker : str
@@ -164,17 +169,16 @@ class Comparison:
                        x_var='time', y_var=y_var,
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
+                       x_label=x_label, y_label=y_label,
                        title=True, title_str=title_str,
                        legend=legend, legend_loc=legend_loc,
                        verbose=self.verbose)
 
         for model, sim in self.sims.items():
             sim.plot_dat(y_var=y_var, ax=plot.ax, label=model,
-                         x_scale=x_scale, y_scale=y_scale,
                          x_factor=x_factor, y_factor=y_factor,
                          marker=marker, zero_time=zero_time,
-                         linestyle=linestyle,
-                         data_only=True, legend=False)
+                         linestyle=linestyle, data_only=True)
 
         if not data_only:
             plot.set_all()
@@ -189,6 +193,7 @@ class Comparison:
                             x_scale=None, y_scale=None,
                             x_lims=None, y_lims=None,
                             x_factor=1, y_factor=1,
+                            x_label=None, y_label=None,
                             trans=False,
                             title=True,
                             legend=True,
@@ -211,6 +216,8 @@ class Comparison:
         y_lims : [min, max]
         x_factor : float
         y_factor : float
+        x_label : str
+        y_label : str
         legend : bool
         linestyle : str
         marker : str
@@ -240,6 +247,7 @@ class Comparison:
                           y_scale=y_scale, x_scale=x_scale,
                           y_lims=y_lims, x_lims=x_lims,
                           x_factor=x_factor, y_factor=y_factor,
+                          x_label=x_label, y_label=y_label,
                           ax=profile_ax, legend=False,
                           trans=trans, title=title,
                           linestyle=linestyle,

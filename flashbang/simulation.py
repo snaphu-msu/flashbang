@@ -311,6 +311,7 @@ class Simulation:
                       x_var='r',
                       x_scale=None, y_scale=None,
                       x_factor=1, y_factor=1,
+                      x_label=None, y_label=None,
                       max_cols=2,
                       sub_figsize=(6, 5),
                       trans=None,
@@ -330,6 +331,8 @@ class Simulation:
         x_scale : 'log' or 'linear'
         x_factor : float
         y_factor : float
+        x_label : str
+        y_label : str
         legend : bool
         max_cols : bool
         sub_figsize : tuple
@@ -352,6 +355,7 @@ class Simulation:
                               y_var=y_var, x_var=x_var,
                               y_scale=y_scale, x_scale=x_scale,
                               x_factor=x_factor, y_factor=y_factor,
+                              x_label=x_label, y_label=y_label,
                               ax=ax[row, col], trans=trans,
                               legend=show_legend, title=show_title)
         return fig
@@ -361,6 +365,7 @@ class Simulation:
                      x_scale=None, y_scale=None,
                      x_lims=None, y_lims=None,
                      x_factor=1, y_factor=1,
+                     x_label=None, y_label=None,
                      ax=None,
                      legend=False,
                      trans=None,
@@ -385,6 +390,8 @@ class Simulation:
         x_scale : 'log' or 'linear'
         x_factor : float
         y_factor : float
+        x_label : str
+        y_label : str
         ax : Axes
         legend : bool
         trans : bool
@@ -406,6 +413,7 @@ class Simulation:
                        chk=chk[0], bounce_time=self.bounce_time,
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
+                       x_label=x_label, y_label=y_label,
                        title=title, title_str=title_str,
                        legend=legend, verbose=self.verbose)
 
@@ -427,6 +435,7 @@ class Simulation:
                          x_scale=None, y_scale=None,
                          x_lims=None, y_lims=None,
                          x_factor=1, y_factor=1,
+                         x_label=None, y_label=None,
                          ax=None,
                          legend=True,
                          trans=True,
@@ -446,6 +455,8 @@ class Simulation:
         x_scale : 'log' or 'linear'
         x_factor : float
         y_factor : float
+        x_label : str
+        y_label : str
         ax : Axes
         legend : bool
         trans : bool
@@ -465,6 +476,7 @@ class Simulation:
                        chk=chk, bounce_time=self.bounce_time,
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
+                       x_label=x_label, y_label=y_label,
                        title=title, legend=legend,
                        verbose=self.verbose)
 
@@ -489,6 +501,7 @@ class Simulation:
                  x_scale=None, y_scale=None,
                  x_lims=None, y_lims=None,
                  x_factor=1, y_factor=1,
+                 x_label=None, y_label=None,
                  ax=None,
                  linestyle='-',
                  marker='',
@@ -509,6 +522,8 @@ class Simulation:
         y_lims : [min, max]
         x_factor : float
         y_factor : float
+        x_label : str
+        y_label : str
         ax : Axes
         linestyle : str
         marker : str
@@ -523,6 +538,7 @@ class Simulation:
                        x_var='time', y_var=y_var,
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
+                       x_label=x_label, y_label=y_label,
                        title=True, title_str=title_str,
                        legend=legend, verbose=self.verbose)
 
@@ -543,6 +559,7 @@ class Simulation:
     def plot_tracers(self, y_var,
                      x_scale=None, y_scale=None,
                      x_lims=None, y_lims=None,
+                     x_label=None, y_label=None,
                      ax=None,
                      linestyle='-',
                      marker='',
@@ -557,6 +574,8 @@ class Simulation:
         y_scale : 'log' or 'linear'
         x_lims : [min, max]
         y_lims : [min, max]
+        x_label : str
+        y_label : str
         ax : Axes
         linestyle : str
         marker : str
@@ -567,6 +586,7 @@ class Simulation:
                        x_var='chk', y_var=y_var,
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
+                       x_label=x_label, y_label=y_label,
                        title=False,
                        legend=legend, verbose=self.verbose)
 
@@ -589,6 +609,7 @@ class Simulation:
                             x_scale=None, y_scale=None,
                             x_lims=None, y_lims=None,
                             x_factor=1, y_factor=1,
+                            x_label=None, y_label=None,
                             trans=None,
                             title=True,
                             legend=False,
@@ -602,13 +623,14 @@ class Simulation:
         x_var : str
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
-        x_factor : float
-        y_factor : float
-        trans : bool
-            plot helmholtz transitions
-        title : bool
         x_lims : [min, max]
         y_lims : [min, max]
+        x_factor : float
+        y_factor : float
+        x_label : str
+        y_label : str
+        trans : bool
+        title : bool
         legend : bool
         linestyle : str
         marker : str
@@ -635,6 +657,7 @@ class Simulation:
                           y_scale=y_scale, x_scale=x_scale,
                           x_factor=x_factor, y_factor=y_factor,
                           y_lims=y_lims, x_lims=x_lims,
+                          x_label=x_label, y_label=y_label,
                           ax=profile_ax, legend=legend,
                           trans=trans, title=title,
                           linestyle=linestyle,
@@ -650,6 +673,7 @@ class Simulation:
                                 x_scale=None, y_scale='linear',
                                 x_lims=None, y_lims=None,
                                 x_factor=1, y_factor=1,
+                                x_label=None, y_label=None,
                                 trans=True,
                                 title=True,
                                 legend=True,
@@ -666,6 +690,8 @@ class Simulation:
         y_lims : [min, max]
         x_factor : float
         y_factor : float
+        x_label : str
+        y_label : str
         trans : bool
             plot helmholtz transitions
         title : bool
@@ -700,6 +726,7 @@ class Simulation:
                               x_scale=x_scale, y_scale=y_scale,
                               x_factor=x_factor, y_factor=y_factor,
                               y_lims=y_lims, x_lims=x_lims,
+                              x_label=x_label, y_label=y_label,
                               ax=profile_ax, legend=legend,
                               trans=trans, title=title, loc=loc)
 
