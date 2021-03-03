@@ -292,9 +292,7 @@ class Comparison:
         """
         if (title_str is None) and (chk is not None):
             baseline = self.sims[self.baseline]
-            # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
-            dt = self.config.plotting('factors')['chk_dt']
-            timestep = dt * chk - baseline.bounce_time
+            timestep = baseline.timesteps.loc[chk, 'time'] - baseline.bounce_time
             title_str = f't = {timestep:.3f} s'
 
         return title_str

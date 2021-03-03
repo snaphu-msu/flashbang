@@ -800,9 +800,7 @@ class Simulation:
         title_str : str
         """
         if (title_str is None) and (chk is not None):
-            # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
-            dt = self.config.plotting('factors')['chk_dt']
-            timestep = dt * chk - self.bounce_time
+            timestep = self.timesteps.loc[chk, 'time'] - self.bounce_time
             title_str = f't = {timestep:.3f} s'
 
         return title_str
