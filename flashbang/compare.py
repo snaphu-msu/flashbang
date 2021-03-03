@@ -10,6 +10,8 @@ from matplotlib.widgets import Slider
 # flashbang
 from . import simulation
 from .plotter import plot_tools
+from .plotter.plotter import Plotter
+
 from . import tools
 from .config import Config
 
@@ -104,21 +106,27 @@ class Comparison:
         data_only : bool
             only plot data, neglecting all titles/labels/scales
         """
-        fig, ax = plot_tools.setup_fig(ax=ax)
+        plot = Plotter(ax=ax, config=self.config,
+                       x_var=x_var, y_var=y_var,
+                       chk=chk,
+                       x_lims=x_lims, y_lims=y_lims,
+                       x_scale=x_scale, y_scale=y_scale,
+                       title=title, legend=legend,
+                       title_str=title_str,
+                       verbose=self.verbose)
 
         for model, sim in self.sims.items():
             sim.plot_profile(chk=chk, y_var=y_var, x_var=x_var,
                              x_factor=x_factor, y_factor=y_factor,
                              marker=marker,
                              trans=trans if model == self.baseline else False,
-                             linestyle=linestyle, ax=ax, label=model,
+                             linestyle=linestyle, ax=plot.ax, label=model,
                              data_only=True)
 
         if not data_only:
-            self._set_ax_all(ax, x_var=x_var, y_var=y_var, x_lims=x_lims, y_lims=y_lims,
-                             x_scale=x_scale, y_scale=y_scale, chk=chk, title=title,
-                             title_str=title_str, legend=legend)
-        return fig
+            plot.set_all()
+
+        return plot.fig
 
     def plot_dat(self, y_var,
                  x_scale=None, y_scale=None,
@@ -128,6 +136,7 @@ class Comparison:
                  linestyle='-',
                  marker='',
                  legend=True,
+                 legend_loc=0,
                  zero_time=True,
                  title_str=None,
                  data_only=False):
@@ -146,14 +155,21 @@ class Comparison:
         linestyle : str
         marker : str
         legend : bool
+        legend_loc : str or int
         zero_time : bool
         title_str : str
         data_only : bool
         """
-        fig, ax = plot_tools.setup_fig(ax=ax)
+        plot = Plotter(ax=ax, config=self.config,
+                       x_var='time', y_var=y_var,
+                       x_lims=x_lims, y_lims=y_lims,
+                       x_scale=x_scale, y_scale=y_scale,
+                       title=True, title_str=title_str,
+                       legend=legend, legend_loc=legend_loc,
+                       verbose=self.verbose)
 
         for model, sim in self.sims.items():
-            sim.plot_dat(y_var=y_var, ax=ax, label=model,
+            sim.plot_dat(y_var=y_var, ax=plot.ax, label=model,
                          x_scale=x_scale, y_scale=y_scale,
                          x_factor=x_factor, y_factor=y_factor,
                          marker=marker, zero_time=zero_time,
@@ -161,11 +177,9 @@ class Comparison:
                          data_only=True, legend=False)
 
         if not data_only:
-            self._set_ax_all(ax, x_var='time', y_var=y_var, x_lims=x_lims,
-                             y_lims=y_lims, x_scale=x_scale, y_scale=y_scale,
-                             title_str=title_str, legend=legend, title=False)
+            plot.set_all()
 
-        return fig
+        return plot.fig
 
     # =======================================================
     #                      Sliders
@@ -214,7 +228,7 @@ class Comparison:
                                        x_factor=x_factor, y_factor=y_factor,
                                        lines=lines)
 
-            self._set_ax_title(ax=profile_ax, chk=chk, title=title)
+            # self._set_ax_title(ax=profile_ax, chk=chk, title=title)
             fig.canvas.draw_idle()
 
         # ----------------
@@ -231,7 +245,7 @@ class Comparison:
                           linestyle=linestyle,
                           marker=marker)
 
-        self._set_ax_legend(ax=profile_ax, legend=legend)
+        # self._set_ax_legend(ax=profile_ax, legend=legend)
         lines = self._get_ax_lines(ax=profile_ax, trans=trans)
         slider.on_changed(update_slider)
 
@@ -240,115 +254,6 @@ class Comparison:
     # =======================================================
     #                      Plotting Tools
     # =======================================================
-    def _set_ax_all(self, ax,
-                    x_var, y_var,
-                    x_scale, y_scale,
-                    x_lims, y_lims,
-                    title,
-                    legend,
-                    loc=None,
-                    chk=None,
-                    title_str=None):
-        """Set all axis properties
-
-        Parameters
-        ----------
-        ax : Axes
-        x_var : str
-        y_var : str
-        y_scale : 'log' or 'linear'
-        x_scale : 'log' or 'linear'
-        chk : int
-        title : bool
-        title_str : str
-        x_lims : [min, max]
-        y_lims : [min, max]
-        legend : bool
-        loc : int or str
-        """
-        self._set_ax_title(ax, chk=chk, title=title, title_str=title_str)
-        self._set_ax_lims(ax, x_lims=x_lims, y_lims=y_lims)
-        self._set_ax_labels(ax, x_var=x_var, y_var=y_var)
-        self._set_ax_legend(ax, legend=legend, loc=loc)
-        self._set_ax_scales(ax, x_var=x_var, y_var=y_var,
-                            x_scale=x_scale, y_scale=y_scale)
-
-    def _set_ax_scales(self, ax, x_var, y_var, x_scale, y_scale):
-        """Set axis scales (linear, log)
-
-        Parameters
-        ----------
-        ax : Axes
-        y_var : str
-        x_var : str
-        y_scale : 'log' or 'linear'
-        x_scale : 'log' or 'linear'
-        """
-        if x_scale is None:
-            x_scale = self.config.ax_scale(x_var)
-        if y_scale is None:
-            y_scale = self.config.ax_scale(y_var)
-
-        ax.set_xscale(x_scale)
-        ax.set_yscale(y_scale)
-
-    def _set_ax_title(self, ax, title, chk=None, title_str=None):
-        """Set axis title
-
-        Parameters
-        ----------
-        ax : Axes
-        chk : int
-        title : bool
-        title_str : str
-        """
-        if title:
-            if (title_str is None) and (chk is not None):
-                # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
-                dt = self.config.plotting('scales')['chk_dt']
-                timestep = dt * chk
-                title_str = f't = {timestep:.3f} s'
-
-            ax.set_title(title_str)
-
-    def _set_ax_lims(self, ax, x_lims, y_lims):
-        """Set x and y axis limits
-
-        Parameters
-        ----------
-        ax : Axes
-        x_lims : [min, max]
-        y_lims : [min, max]
-        """
-        if y_lims is not None:
-            ax.set_ylim(y_lims)
-        if x_lims is not None:
-            ax.set_xlim(x_lims)
-
-    def _set_ax_labels(self, ax, x_var, y_var):
-        """Set axis labels
-
-        Parameters
-        ----------
-        ax : Axes
-        x_var : str
-        y_var : str
-        """
-        ax.set_xlabel(self.config.ax_label(x_var))
-        ax.set_ylabel(self.config.ax_label(y_var))
-
-    def _set_ax_legend(self, ax, legend, loc=None):
-        """Set axis labels
-
-        Parameters
-        ----------
-        ax : Axes
-        legend : bool
-        loc : int or str
-        """
-        if legend:
-            ax.legend(loc=loc)
-
     def _get_trans_xy(self, chk, sim, trans_key, x, y):
         """Return x, y points of transition line, for given x-axis variable
 

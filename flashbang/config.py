@@ -21,8 +21,9 @@ class Config:
 
         Parameters
         ----------
-        name : str
+        name : str or None
             name of config to load, e.g. 'stir'
+            if None, uses 'default'
         verbose : bool
         """
         if name is None:

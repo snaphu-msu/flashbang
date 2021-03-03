@@ -6,7 +6,7 @@ from ..config import Config
 
 class Plotter:
     """
-    Handles axis properties
+    Generalized plotter for handling axis properties
     """
 
     def __init__(self,
@@ -39,7 +39,7 @@ class Plotter:
         x_lims : [min, max]
         y_lims : [min, max]
         legend : bool
-        legend_loc : str
+        legend_loc : str or int
         title : bool
         title_str : str
         figsize : []

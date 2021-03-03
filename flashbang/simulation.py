@@ -59,6 +59,7 @@ from matplotlib.widgets import Slider
 # flashbang
 from . import load_save
 from .plotter import plot_tools
+from .plotter.plotter import Plotter
 from .quantities import get_density_zone
 from .paths import model_path
 from .tools import ensure_sequence
@@ -399,22 +400,27 @@ class Simulation:
             only plot data, neglecting all titles/labels/scales
         """
         chk = ensure_sequence(chk)
-        fig, ax = plot_tools.setup_fig(ax=ax)
+
+        plot = Plotter(ax=ax, config=self.config,
+                       x_var=x_var, y_var=y_var,
+                       chk=chk[0], bounce_time=self.bounce_time,
+                       x_lims=x_lims, y_lims=y_lims,
+                       x_scale=x_scale, y_scale=y_scale,
+                       title=title, title_str=title_str,
+                       legend=legend, verbose=self.verbose)
 
         for i in chk:
             profile = self.profiles.sel(chk=i)
             x = profile[x_var] / x_factor
             y = profile[y_var] / y_factor
 
-            ax.plot(x, y, ls=linestyle, marker=marker, label=label, color=color)
-            self._plot_trans_lines(x=x, y=y, ax=ax, chk=i, trans=trans)
+            plot.ax.plot(x, y, ls=linestyle, marker=marker, label=label, color=color)
+            self._plot_trans_lines(x=x, y=y, ax=plot.ax, chk=i, trans=trans)
 
         if not data_only:
-            self._set_ax_all(ax, x_var=x_var, y_var=y_var, x_lims=x_lims, y_lims=y_lims,
-                             x_scale=x_scale, y_scale=y_scale, chk=chk[0], title=title,
-                             title_str=title_str, legend=legend)
+            plot.set_all()
 
-        return fig
+        return plot.fig
 
     def plot_composition(self, chk,
                          x_var='r', y_vars=None,
@@ -454,7 +460,14 @@ class Simulation:
         if y_lims is None:
             y_lims = self.config.ax_lims('X')
 
-        fig, ax = plot_tools.setup_fig(ax=ax)
+        plot = Plotter(ax=ax, config=self.config,
+                       x_var=x_var, y_var='X',
+                       chk=chk, bounce_time=self.bounce_time,
+                       x_lims=x_lims, y_lims=y_lims,
+                       x_scale=x_scale, y_scale=y_scale,
+                       title=title, legend=legend,
+                       verbose=self.verbose)
+
         profile = self.profiles.sel(chk=chk)
         x = profile[x_var] / x_factor
 
@@ -463,16 +476,14 @@ class Simulation:
             color = {'ye': 'k'}.get(y_var)
             linestyle = {'ye': '--'}.get(y_var)
 
-            ax.plot(x, y, label=y_var, color=color, linestyle=linestyle)
+            plot.ax.plot(x, y, label=y_var, color=color, linestyle=linestyle)
 
-        self._plot_trans_lines(x=x, y=y_lims, ax=ax, chk=chk, trans=trans)
+        self._plot_trans_lines(x=x, y=y_lims, ax=plot.ax, chk=chk, trans=trans)
 
         if not data_only:
-            self._set_ax_all(ax, x_var=x_var, y_var='X', x_lims=x_lims, y_lims=y_lims,
-                             x_scale=x_scale, y_scale=y_scale, chk=chk,
-                             title=title, legend=legend, loc=loc)
+            plot.set_all()
 
-        return fig
+        return plot.fig
 
     def plot_dat(self, y_var,
                  x_scale=None, y_scale=None,
@@ -508,7 +519,12 @@ class Simulation:
         color : str
         data_only : bool
         """
-        fig, ax = plot_tools.setup_fig(ax=ax)
+        plot = Plotter(ax=ax, config=self.config,
+                       x_var='time', y_var=y_var,
+                       x_lims=x_lims, y_lims=y_lims,
+                       x_scale=x_scale, y_scale=y_scale,
+                       title=True, title_str=title_str,
+                       legend=legend, verbose=self.verbose)
 
         t_offset = 0
         if zero_time:
@@ -517,14 +533,12 @@ class Simulation:
         x = (self.dat['time'] - t_offset) / x_factor
         y = self.dat[y_var] / y_factor
 
-        ax.plot(x, y, linestyle=linestyle, marker=marker, color=color, label=label)
+        plot.ax.plot(x, y, linestyle=linestyle, marker=marker, color=color, label=label)
 
         if not data_only:
-            self._set_ax_all(ax, x_var='time', y_var=y_var, x_lims=x_lims, y_lims=y_lims,
-                             x_scale=x_scale, y_scale=y_scale,
-                             title=True, title_str=title_str, legend=legend)
+            plot.set_all()
 
-        return fig
+        return plot.fig
 
     def plot_tracers(self, y_var,
                      x_scale=None, y_scale=None,
@@ -549,17 +563,23 @@ class Simulation:
         legend : bool
         data_only : bool
         """
-        fig, ax = plot_tools.setup_fig(ax=ax)
+        plot = Plotter(ax=ax, config=self.config,
+                       x_var='chk', y_var=y_var,
+                       x_lims=x_lims, y_lims=y_lims,
+                       x_scale=x_scale, y_scale=y_scale,
+                       title=False,
+                       legend=legend, verbose=self.verbose)
 
         for mass in self.tracers['mass']:
-            ax.plot(self.tracers['chk'], self.tracers.sel(mass=mass)[y_var],
-                    linestyle=linestyle, marker=marker, label=f'{mass.values:.3f}')
+            plot.ax.plot(self.tracers['chk'],
+                         self.tracers.sel(mass=mass)[y_var],
+                         linestyle=linestyle, marker=marker,
+                         label=f'{mass.values:.3f}')
 
         if not data_only:
-            self._set_ax_all(ax, x_var='chk', y_var=y_var, x_lims=x_lims, y_lims=y_lims,
-                             x_scale=x_scale, y_scale=y_scale, title=False, legend=legend)
+            plot.set_all()
 
-        return fig
+        return plot.fig
 
     # =======================================================
     #                      Sliders
@@ -601,7 +621,7 @@ class Simulation:
             y = profile[y_var] / y_factor
 
             self._update_ax_line(x=x, y=y, line=lines[y_var])
-            self._set_ax_title(profile_ax, chk=chk, title=title)
+            # self._set_ax_title(profile_ax, chk=chk, title=title)
             self._update_trans_lines(chk=chk, x=x, y=y, lines=lines, trans=trans)
 
             fig.canvas.draw_idle()
@@ -664,7 +684,7 @@ class Simulation:
                 y = profile[y_var] / y_factor
                 self._update_ax_line(x=x, y=y, line=lines[y_var])
 
-            self._set_ax_title(profile_ax, chk=chk, title=title)
+            # self._set_ax_title(profile_ax, chk=chk, title=title)
             fig.canvas.draw_idle()
 
         # ----------------
@@ -728,119 +748,6 @@ class Simulation:
                 trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
                                                       x=x, y=y)
                 ax.plot(trans_x, trans_y, ls='--', color='k', linewidth=linewidth)
-
-    def _set_ax_all(self, ax, x_var, y_var, x_scale, y_scale,
-                    x_lims, y_lims, title, legend,
-                    loc=None,
-                    chk=None,
-                    title_str=None):
-        """Set all axis properties
-
-        parameters
-        ----------
-        ax : Axes
-        x_var : str
-        y_var : str
-        y_scale : 'log' or 'linear'
-        x_scale : 'log' or 'linear'
-        chk : int
-        title : bool
-        title_str : str
-        x_lims : [min, max]
-        y_lims : [min, max]
-        legend : bool
-        loc : int or str
-        """
-        self._set_ax_title(ax, chk=chk, title=title, title_str=title_str)
-        self._set_ax_lims(ax, x_lims=x_lims, y_lims=y_lims, x_var=x_var, y_var=y_var)
-        self._set_ax_labels(ax, x_var=x_var, y_var=y_var)
-        self._set_ax_legend(ax, legend=legend, loc=loc)
-        self._set_ax_scales(ax, x_var=x_var, y_var=y_var,
-                            x_scale=x_scale, y_scale=y_scale)
-
-    def _set_ax_scales(self, ax, y_var, x_var, y_scale, x_scale):
-        """Set axis scales (linear, log)
-
-        parameters
-        ----------
-        ax : Axes
-        y_var : str
-        x_var : str
-        y_scale : 'log' or 'linear'
-        x_scale : 'log' or 'linear'
-        """
-        if x_scale is None:
-            x_scale = self.config.ax_scale(x_var)
-        if y_scale is None:
-            y_scale = self.config.ax_scale(y_var)
-
-        ax.set_xscale(x_scale)
-        ax.set_yscale(y_scale)
-
-    def _set_ax_title(self, ax, title, chk=None, title_str=None):
-        """Set axis title
-
-        parameters
-        ----------
-        ax : Axes
-        chk : int
-        title : bool
-        title_str : str
-        """
-        if title:
-            if (title_str is None) and (chk is not None):
-                # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
-                dt = self.config.plotting('scales')['chk_dt']
-                timestep = dt * chk - self.bounce_time
-                title_str = f't = {timestep:.3f} s'
-
-            ax.set_title(title_str)
-
-    def _set_ax_lims(self, ax, x_lims, y_lims, x_var, y_var):
-        """Set x and y axis limits
-
-        parameters
-        ----------
-        ax : Axes
-        x_lims : [min, max]
-        y_lims : [min, max]
-        x_var : str
-        y_var : str
-        """
-        if x_lims is None:
-            x_lims = self.config.ax_lims(x_var)
-        if y_lims is None:
-            y_lims = self.config.ax_lims(y_var)
-
-        if x_lims is not None:
-            ax.set_xlim(x_lims)
-        if y_lims is not None:
-            ax.set_ylim(y_lims)
-
-    def _set_ax_labels(self, ax, x_var, y_var):
-        """Set axis labels
-
-        parameters
-        ----------
-        ax : Axes
-        x_var : str
-        y_var : str
-        """
-        xlabel = self.config.ax_label(x_var)
-        ylabel = self.config.ax_label(y_var)
-        ax.set_xlabel(xlabel)
-        ax.set_ylabel(ylabel)
-
-    def _set_ax_legend(self, ax, legend, loc=None):
-        """Set axis labels
-
-        parameters
-        ----------
-        ax : Axes
-        legend : bool
-        """
-        if legend:
-            ax.legend(loc=loc)
 
     # =======================================================
     #                      Slider Tools
