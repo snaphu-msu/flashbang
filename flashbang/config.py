@@ -126,6 +126,13 @@ class Config:
 
         return trans
 
+    def factor(self, var):
+        """Get scaling factor, default to 1.0
+
+        Returns float
+        """
+        return self.plotting('factors').get(var, 1.0)
+
 
 def load_config_file(name, verbose=True):
     """Load .ini config file and return as dict
