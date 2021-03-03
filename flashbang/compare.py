@@ -23,7 +23,7 @@ class Comparison:
                  runs,
                  models,
                  model_sets,
-                 config,
+                 config=None,
                  verbose=True):
         """
         Parameters
@@ -107,9 +107,10 @@ class Comparison:
         data_only : bool
             only plot data, neglecting all titles/labels/scales
         """
+        title_str = self._get_title(chk=chk, title_str=title_str)
+
         plot = Plotter(ax=ax, config=self.config,
                        x_var=x_var, y_var=y_var,
-                       chk=chk,
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
                        x_label=x_label, y_label=y_label,
@@ -195,7 +196,7 @@ class Comparison:
                             x_factor=1, y_factor=1,
                             x_label=None, y_label=None,
                             legend=True, legend_loc=None,
-                            title=True, title_str=None,
+                            title=True,
                             trans=False,
                             linestyle='-',
                             marker=''):
@@ -218,7 +219,6 @@ class Comparison:
         legend : bool
         legend_loc : str or int
         title : bool
-        title_str : str
         trans : bool
             plot helmholtz transitions
         linestyle : str
@@ -251,7 +251,7 @@ class Comparison:
                           x_factor=x_factor, y_factor=y_factor,
                           x_label=x_label, y_label=y_label,
                           legend=False, legend_loc=legend_loc,
-                          title=title, title_str=title_str,
+                          title=title,
                           ax=profile_ax,
                           trans=trans,
                           linestyle=linestyle,
@@ -283,6 +283,23 @@ class Comparison:
         trans_y = np.array([np.min(y), np.max(y)])
 
         return trans_x, trans_y
+
+    def _get_title(self, chk, title_str):
+        """Get title string
+
+        Parameters
+        ----------
+        chk : int
+        title_str : str
+        """
+        if (title_str is None) and (chk is not None):
+            baseline = self.sims[self.baseline]
+            # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
+            dt = self.config.plotting('scales')['chk_dt']
+            timestep = dt * chk - baseline.bounce_time
+            title_str = f't = {timestep:.3f} s'
+
+        return title_str
 
     # =======================================================
     #                      Slider Tools

@@ -5,15 +5,9 @@ from ..config import Config
 
 
 class Plotter:
-    """
-    Generalized plotter for handling axis properties
-    """
-
     def __init__(self,
                  ax=None,
                  config=None,
-                 chk=None,
-                 bounce_time=0,
                  x_var=None, y_var=None,
                  x_scale=None, y_scale=None,
                  x_label=None, y_label=None,
@@ -24,12 +18,12 @@ class Plotter:
                  set_all=False,
                  verbose=True,
                  ):
-        """
-        parameters
+        """Generalized plotter for handling axis properties
+
+        Parameters
         ----------
         ax : pyplot Axis
         config : str or Config
-        chk : int
         y_var : str
         x_var : str
         y_scale : one of ('log', 'linear')
@@ -46,8 +40,6 @@ class Plotter:
         set_all : bool
         verbose : bool
         """
-        self.chk = chk
-        self.bounce_time = bounce_time
         self.x_var = x_var
         self.y_var = y_var
         self.x_scale = x_scale
@@ -119,13 +111,6 @@ class Plotter:
         # legend
         if self.legend_loc is None:
             self.legend_loc = 2
-
-        # title
-        if (self.title_str is None) and (self.chk is not None):
-            # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
-            dt = self.config.plotting('scales')['chk_dt']
-            timestep = dt * self.chk - self.bounce_time
-            self.title_str = f't = {timestep:.3f} s'
 
     # =======================================================
     #                      Axis

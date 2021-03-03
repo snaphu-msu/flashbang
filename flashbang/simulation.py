@@ -71,7 +71,7 @@ class Simulation:
                  run,
                  model,
                  model_set,
-                 config='default',
+                 config=None,
                  verbose=True,
                  load_all=True,
                  reload=False,
@@ -88,7 +88,7 @@ class Simulation:
         model_set : str
             Higher-level label of model collection
         config : str
-            Base name of config file to use, e.g. 'default' for 'config/default.ini'
+            Name of config file to use, e.g. 'stir' for 'config/stir.ini'
         load_all : bool
             Immediately load all model data (chk profiles, dat)
         load_tracers : bool
@@ -312,11 +312,12 @@ class Simulation:
                       x_scale=None, y_scale=None,
                       x_factor=1, y_factor=1,
                       x_label=None, y_label=None,
+                      legend=False, legend_loc=None,
+                      title=True, title_str=None,
                       max_cols=2,
                       sub_figsize=(6, 5),
                       trans=None,
-                      legend=False, legend_loc=None,
-                      title=True):
+                      ):
         """Plot one or more profile variables
 
         parameters
@@ -335,10 +336,11 @@ class Simulation:
         y_label : str
         legend : bool
         legend_loc : str or int
+        title : bool
+        title_str : str
         max_cols : bool
         sub_figsize : tuple
         trans : bool
-        title : bool
         """
         chk = ensure_sequence(chk)
         y_vars = ensure_sequence(y_vars)
@@ -359,7 +361,7 @@ class Simulation:
                               x_label=x_label, y_label=y_label,
                               ax=ax[row, col], trans=trans,
                               legend=show_legend, legend_loc=legend_loc,
-                              title=show_title)
+                              title=show_title, title_str=title_str)
         return fig
 
     def plot_profile(self, chk, y_var,
@@ -409,10 +411,10 @@ class Simulation:
             only plot data, neglecting all titles/labels/scales
         """
         chk = ensure_sequence(chk)
+        title_str = self._get_title(chk=chk[0], title_str=title_str)
 
         plot = Plotter(ax=ax, config=self.config,
                        x_var=x_var, y_var=y_var,
-                       chk=chk[0], bounce_time=self.bounce_time,
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
                        x_label=x_label, y_label=y_label,
@@ -474,9 +476,10 @@ class Simulation:
         if y_lims is None:
             y_lims = self.config.ax_lims('X')
 
+        title_str = self._get_title(chk=chk, title_str=title_str)
+
         plot = Plotter(ax=ax, config=self.config,
                        x_var=x_var, y_var='X',
-                       chk=chk, bounce_time=self.bounce_time,
                        x_lims=x_lims, y_lims=y_lims,
                        x_scale=x_scale, y_scale=y_scale,
                        x_label=x_label, y_label=y_label,
@@ -623,7 +626,7 @@ class Simulation:
                             x_factor=1, y_factor=1,
                             x_label=None, y_label=None,
                             legend=False, legend_loc=None,
-                            title=False, title_str=None,
+                            title=False,
                             trans=None,
                             linestyle='-',
                             marker=''):
@@ -643,7 +646,6 @@ class Simulation:
         y_label : str
         trans : bool
         title : bool
-        title_str : str
         legend : bool
         legend_loc : str or int
         linestyle : str
@@ -673,7 +675,7 @@ class Simulation:
                           y_lims=y_lims, x_lims=x_lims,
                           x_label=x_label, y_label=y_label,
                           legend=legend, legend_loc=legend_loc,
-                          title=title, title_str=title_str,
+                          title=title,
                           ax=profile_ax,
                           trans=trans,
                           linestyle=linestyle,
@@ -691,7 +693,7 @@ class Simulation:
                                 x_factor=1, y_factor=1,
                                 x_label=None, y_label=None,
                                 legend=True, legend_loc=None,
-                                title=True, title_str=None,
+                                title=True,
                                 trans=True,
                                 ):
         """Plot interactive slider of isotope composition
@@ -711,7 +713,6 @@ class Simulation:
         legend : bool
         legend_loc : str or int
         title : bool
-        title_str : str
         trans : bool
             plot helmholtz transitions
         """
@@ -744,9 +745,9 @@ class Simulation:
                               x_factor=x_factor, y_factor=y_factor,
                               y_lims=y_lims, x_lims=x_lims,
                               x_label=x_label, y_label=y_label,
-                              ax=profile_ax,
                               legend=legend, legend_loc=legend_loc,
-                              title=title, title_str=title_str,
+                              title=title,
+                              ax=profile_ax,
                               trans=trans)
 
         lines = self._get_ax_lines(ax=profile_ax, y_vars=y_vars, trans=trans)
@@ -773,6 +774,22 @@ class Simulation:
         trans_y = np.array([np.min(y), np.max(y)])
 
         return trans_x, trans_y
+
+    def _get_title(self, chk, title_str):
+        """Get title string
+
+        Parameters
+        ----------
+        chk : int
+        title_str : str
+        """
+        if (title_str is None) and (chk is not None):
+            # timestep = self.chk_table.loc[chk, 'time'] - self.bounce_time
+            dt = self.config.plotting('scales')['chk_dt']
+            timestep = dt * chk - self.bounce_time
+            title_str = f't = {timestep:.3f} s'
+
+        return title_str
 
     def _plot_trans_lines(self, x, y, ax, chk, trans, linewidth=1):
         """Add transition line to axis
