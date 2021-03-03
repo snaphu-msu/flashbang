@@ -15,7 +15,7 @@ class ConfigError(Exception):
 
 class Config:
     def __init__(self,
-                 name,
+                 name=None,
                  verbose=True):
         """Holds and returns config values
 
@@ -25,9 +25,12 @@ class Config:
             name of config to load, e.g. 'stir'
         verbose : bool
         """
-        self.name = name
-        self.verbose = verbose
+        if name is None:
+            self.name = 'default'
+        else:
+            self.name = name
 
+        self.verbose = verbose
         self.config = load_config_file(name=self.name, verbose=self.verbose)
 
         # override any options from plotting.ini
