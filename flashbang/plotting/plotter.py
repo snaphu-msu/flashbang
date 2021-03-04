@@ -196,11 +196,14 @@ class Plotter:
         if self.y_lims is not None:
             self.ax.set_ylim(self.y_lims)
 
-    def set_title(self):
+    def set_title(self, title_str=None):
         """Set axis title
         """
+        if title_str is None:
+            title_str = self.title_str
+
         if self.title:
-            self.ax.set_title(self.title_str)
+            self.ax.set_title(title_str)
 
     def set_legend(self):
         """Set axis legend
