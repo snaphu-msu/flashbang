@@ -54,12 +54,12 @@ import time
 import numpy as np
 import xarray as xr
 import pandas as pd
-from matplotlib.widgets import Slider
 
 # flashbang
 from . import load_save
 from .plotting import plot_tools
 from .plotting.plotter import Plotter
+from .plotting.slider import FlashSlider
 from .quantities import get_density_zone
 from .paths import model_path
 from .tools import ensure_sequence
@@ -445,7 +445,7 @@ class Simulation:
         if not data_only:
             plot.set_all()
 
-        return plot.fig
+        return plot
 
     def plot_composition(self, chk,
                          x_var='r', y_vars=None,
@@ -515,7 +515,7 @@ class Simulation:
         if not data_only:
             plot.set_all()
 
-        return plot.fig
+        return plot
 
     def plot_dat(self, y_var,
                  x_scale=None, y_scale=None,
@@ -578,7 +578,7 @@ class Simulation:
         if not data_only:
             plot.set_all()
 
-        return plot.fig
+        return plot
 
     def plot_tracers(self, y_var,
                      x_scale=None, y_scale=None,
@@ -630,7 +630,7 @@ class Simulation:
         if not data_only:
             plot.set_all()
 
-        return plot.fig
+        return plot
 
     # =======================================================
     #                      Sliders
@@ -644,8 +644,8 @@ class Simulation:
                             legend=False, legend_loc=None,
                             title=False,
                             trans=None,
-                            linestyle='-',
-                            marker=''):
+                            linestyle=None,
+                            marker=None):
         """Plot interactive slider of profile for given variable
 
         parameters
@@ -674,39 +674,43 @@ class Simulation:
             x = profile[x_var] / x_factor
             y = profile[y_var] / y_factor
 
-            self._update_ax_line(x=x, y=y, line=lines[y_var])
-            # self._set_ax_title(profile_ax, chk=chk, title=title)
-            self._update_trans_lines(chk=chk, x=x, y=y, lines=lines, trans=trans)
+            slider.update_ax_line(x=x, y=y, y_var=y_var)
+            slider.update_trans_lines(chk=chk, x=x, y=y)
 
-            fig.canvas.draw_idle()
+            title_str = self._get_title(chk=chk)
+            plot.set_title(title_str=title_str)
+
+            slider.fig.canvas.draw_idle()
 
         # ----------------
         trans = self.config.check_trans(trans=trans)
-        fig, profile_ax, slider = self._setup_slider()
+        slider = FlashSlider(y_vars=[y_var],
+                             chk_table=self.chk_table,
+                             trans=trans,
+                             trans_dens=self.trans_dens)
 
-        self.plot_profile(chk=self.chk_table.index[-1],
-                          y_var=y_var, x_var=x_var,
-                          y_scale=y_scale, x_scale=x_scale,
-                          x_factor=x_factor, y_factor=y_factor,
-                          y_lims=y_lims, x_lims=x_lims,
-                          x_label=x_label, y_label=y_label,
-                          legend=legend, legend_loc=legend_loc,
-                          title=title,
-                          ax=profile_ax,
-                          trans=trans,
-                          linestyle=linestyle,
-                          marker=marker)
+        plot = self.plot_profile(chk=self.chk_table.index[-1],
+                                 y_var=y_var, x_var=x_var,
+                                 y_scale=y_scale, x_scale=x_scale,
+                                 x_factor=x_factor, y_factor=y_factor,
+                                 y_lims=y_lims, x_lims=x_lims,
+                                 x_label=x_label, y_label=y_label,
+                                 legend=legend, legend_loc=legend_loc,
+                                 title=title,
+                                 ax=slider.ax,
+                                 trans=trans,
+                                 linestyle=linestyle,
+                                 marker=marker)
 
-        lines = self._get_ax_lines(ax=profile_ax, y_vars=[y_var], trans=trans)
-        slider.on_changed(update_slider)
+        slider.slider.on_changed(update_slider)
 
-        return fig, slider
+        return slider
 
     def plot_composition_slider(self,
                                 x_var='r', y_vars=None,
                                 x_scale=None, y_scale='linear',
                                 x_lims=None, y_lims=None,
-                                x_factor=None, y_factor=None,
+                                x_factor=1, y_factor=1,
                                 x_label=None, y_label=None,
                                 legend=True, legend_loc=None,
                                 title=True,
@@ -738,14 +742,15 @@ class Simulation:
             profile = self.profiles.sel(chk=chk)
             x = profile[x_var] / x_factor
 
-            self._update_trans_lines(chk=chk, x=x, y=y_lims, lines=lines, trans=trans)
+            slider.update_trans_lines(chk=chk, x=x, y=y_lims)
 
             for y_var in y_vars:
                 y = profile[y_var] / y_factor
-                self._update_ax_line(x=x, y=y, line=lines[y_var])
+                slider.update_ax_line(x=x, y=y, y_var=y_var)
 
-            # self._set_ax_title(profile_ax, chk=chk, title=title)
-            fig.canvas.draw_idle()
+            title_str = self._get_title(chk=chk)
+            plot.set_title(title_str=title_str)
+            slider.fig.canvas.draw_idle()
 
         # ----------------
         if y_vars is None:
@@ -753,23 +758,25 @@ class Simulation:
         if y_lims is None:
             y_lims = self.config.ax_lims('X')
 
-        fig, profile_ax, slider = self._setup_slider()
+        slider = FlashSlider(y_vars=y_vars,
+                             chk_table=self.chk_table,
+                             trans=trans,
+                             trans_dens=self.trans_dens)
 
-        self.plot_composition(chk=self.chk_table.index[-1],
-                              x_var=x_var, y_vars=y_vars,
-                              x_scale=x_scale, y_scale=y_scale,
-                              x_factor=x_factor, y_factor=y_factor,
-                              y_lims=y_lims, x_lims=x_lims,
-                              x_label=x_label, y_label=y_label,
-                              legend=legend, legend_loc=legend_loc,
-                              title=title,
-                              ax=profile_ax,
-                              trans=trans)
+        plot = self.plot_composition(chk=self.chk_table.index[-1],
+                                     x_var=x_var, y_vars=y_vars,
+                                     x_scale=x_scale, y_scale=y_scale,
+                                     x_factor=x_factor, y_factor=y_factor,
+                                     y_lims=y_lims, x_lims=x_lims,
+                                     x_label=x_label, y_label=y_label,
+                                     legend=legend, legend_loc=legend_loc,
+                                     title=title,
+                                     ax=slider.ax,
+                                     trans=trans)
 
-        lines = self._get_ax_lines(ax=profile_ax, y_vars=y_vars, trans=trans)
-        slider.on_changed(update_slider)
+        slider.slider.on_changed(update_slider)
 
-        return fig, slider
+        return slider
 
     # =======================================================
     #                      Plotting Tools
@@ -791,7 +798,7 @@ class Simulation:
 
         return trans_x, trans_y
 
-    def _get_title(self, chk, title_str):
+    def _get_title(self, chk, title_str=None):
         """Get title string
 
         Parameters
@@ -826,70 +833,6 @@ class Simulation:
                                                       x=x, y=y)
                 plot.plot(trans_x, trans_y, linestyle='--', marker='',
                           color='k', linewidth=linewidth)
-
-    # =======================================================
-    #                      Slider Tools
-    # =======================================================
-    def _setup_slider(self):
-        """Return slider fig
-        """
-        fig, profile_ax, slider_ax = plot_tools.setup_slider_fig()
-        chk_min = self.chk_table.index[0]
-        chk_max = self.chk_table.index[-1]
-
-        slider = Slider(slider_ax, 'chk', chk_min, chk_max, valinit=chk_max, valstep=1)
-
-        return fig, profile_ax, slider
-
-    def _get_ax_lines(self, ax, y_vars, trans):
-        """Return dict of axis lines
-
-        Parameters
-        ----------
-        ax : Axis
-        y_vars : [str]
-        trans : bool
-        """
-        lines = {}
-        n_vars = len(y_vars)
-
-        for i, y_var in enumerate(y_vars):
-            lines[y_var] = ax.lines[i]
-
-        if trans:
-            for i, trans_key in enumerate(self.trans_dens):
-                lines[trans_key] = ax.lines[n_vars+i]
-
-        return lines
-
-    def _update_ax_line(self, x, y, line):
-        """Update x,y line values
-
-        Parameters
-        ----------
-        x : array
-        y : array
-        line : Axis.line
-        """
-        line.set_xdata(x)
-        line.set_ydata(y)
-
-    def _update_trans_lines(self, chk, x, y, lines, trans):
-        """Update trans line values on plot
-
-        Parameters
-        ----------
-        chk : int
-        x : []
-        y : []
-        lines : {var: Axis.line}
-        trans : bool
-        """
-        if trans:
-            for trans_key in self.trans_dens:
-                trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
-                                                      x=x, y=y)
-                self._update_ax_line(x=trans_x, y=trans_y, line=lines[trans_key])
 
     # =======================================================
     #                   Convenience
