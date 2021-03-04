@@ -423,6 +423,9 @@ class Simulation:
         chk = ensure_sequence(chk)
         title_str = self._get_title(chk=chk[0], title_str=title_str)
 
+        if trans is None:
+            trans = self.config.trans('plot')
+
         plot = Plotter(ax=ax, config=self.config,
                        x_var=x_var, y_var=y_var,
                        x_lims=x_lims, y_lims=y_lims,
@@ -440,7 +443,9 @@ class Simulation:
             y = profile[y_var]
 
             plot.plot(x, y, label=label, color=color)
-            self._plot_trans_lines(x=x, y=y, plot=plot, chk=i, trans=trans)
+
+            if trans:
+                self._plot_trans_lines(x=x, y=y, plot=plot, chk=i)
 
         if not data_only:
             plot.set_all()
@@ -487,6 +492,8 @@ class Simulation:
             y_vars = self.config.plotting('isotopes')
         if y_lims is None:
             y_lims = self.config.ax_lims('X')
+        if trans is None:
+            trans = self.config.trans('plot')
 
         title_str = self._get_title(chk=chk, title_str=title_str)
 
@@ -510,7 +517,8 @@ class Simulation:
 
             plot.plot(x, y, label=y_var, color=color, linestyle=linestyle)
 
-        self._plot_trans_lines(x=x, y=y_lims, plot=plot, chk=chk, trans=trans)
+        if trans:
+            self._plot_trans_lines(x=x, y=y_lims, plot=plot, chk=chk)
 
         if not data_only:
             plot.set_all()
@@ -814,7 +822,7 @@ class Simulation:
 
         return title_str
 
-    def _plot_trans_lines(self, x, y, plot, chk, trans, linewidth=1):
+    def _plot_trans_lines(self, x, y, plot, chk, linewidth=1):
         """Add transition line to axis
 
         parameters
@@ -823,18 +831,13 @@ class Simulation:
         y : []
         plot : Plotter
         chk : int
-        trans : bool
         linewidth : float
         """
-        if trans is None:
-            trans = self.config.trans('plot')
-
-        if trans:
-            for trans_key in self.trans_dens:
-                trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
-                                                      x=x, y=y)
-                plot.plot(trans_x, trans_y, linestyle='--', marker='',
-                          color='k', linewidth=linewidth)
+        for trans_key in self.trans_dens:
+            trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
+                                                  x=x, y=y)
+            plot.plot(trans_x, trans_y, linestyle='--', marker='',
+                      color='k', linewidth=linewidth)
 
     # =======================================================
     #                   Convenience
