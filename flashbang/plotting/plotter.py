@@ -126,7 +126,7 @@ class Plotter:
 
         # legend
         if self.legend_loc is None:
-            self.legend_loc = 2
+            self.legend_loc = 3
 
     # =======================================================
     #                      Plot
