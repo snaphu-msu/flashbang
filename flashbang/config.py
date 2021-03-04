@@ -116,16 +116,6 @@ class Config:
         """
         return self.plotting('labels').get(var, var)
 
-    def check_trans(self, trans):
-        """Gets trans option from config if not specified, default to False
-
-        Returns : bool
-        """
-        if trans is None:
-            trans = self.plotting('options').get('trans', False)
-
-        return trans
-
     def factor(self, var):
         """Get scaling factor, default to 1.0
 

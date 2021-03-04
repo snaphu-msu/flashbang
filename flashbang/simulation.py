@@ -683,7 +683,9 @@ class Simulation:
             slider.fig.canvas.draw_idle()
 
         # ----------------
-        trans = self.config.check_trans(trans=trans)
+        if trans is None:
+            trans = self.config.trans('plot')
+
         slider = FlashSlider(y_vars=[y_var],
                              chk_table=self.chk_table,
                              trans=trans,
@@ -825,7 +827,7 @@ class Simulation:
         linewidth : float
         """
         if trans is None:
-            trans = self.config.check_trans('trans')
+            trans = self.config.trans('plot')
 
         if trans:
             for trans_key in self.trans_dens:
