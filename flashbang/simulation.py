@@ -639,7 +639,7 @@ class Simulation:
                             x_var='r',
                             x_scale=None, y_scale=None,
                             x_lims=None, y_lims=None,
-                            x_factor=None, y_factor=None,
+                            x_factor=1, y_factor=1,
                             x_label=None, y_label=None,
                             legend=False, legend_loc=None,
                             title=False,
