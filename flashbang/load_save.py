@@ -224,7 +224,7 @@ def get_multiprofile(run, model, model_set,
     chk_list : [int]
     params : [str]
     derived_params : [str]
-    config : str
+    config : str or Config
     reload : bool
     save : bool
     verbose : bool
@@ -296,7 +296,7 @@ def get_all_profiles(run, model, model_set,
     chk_list : [int]
     params : [str]
     derived_params : [str]
-    config : str
+    config : str or Config
     reload : bool
     save : bool
     verbose : bool
@@ -365,7 +365,7 @@ def get_profile(chk, run, model, model_set,
         profile parameters to extract and return from chk file
     derived_params : [str]
         secondary profile parameters, derived from primary parameters
-    config : str
+    config : str or Config
     reload : bool
         force reload from chk file, else try to load pre-extracted profile
     save : bool
@@ -454,13 +454,15 @@ def extract_profile(chk, run, model, model_set,
         profile parameters to extract and return from chk file
     derived_params : [str]
         secondary profile parameters, derived from primary parameters
-    config : str
+    config : str or Config
     verbose : bool
     """
+    if (config is None) or (type(config) is str):
+        config = Config(name=config, verbose=verbose)
+
     if params is None:
-        conf = Config(name=config, verbose=verbose)
-        params = conf.profiles('all')
-        derived_params = conf.profiles('derived_params')
+        params = config.profiles('all')
+        derived_params = config.profiles('derived_params')
 
     profile = xr.Dataset()
     chk_raw = load_chk(chk=chk, run=run, model=model, model_set=model_set)
@@ -480,6 +482,9 @@ def extract_profile(chk, run, model, model_set,
 
     if 'abar' in derived_params:
         add_abar_profile(profile)
+
+    if 'sumx' in derived_params:
+        add_sumx_profile(profile, isotopes=config.profiles('isotopes'))
 
     n_zones = len(profile['zone'])
     profile.coords['zone'] = np.arange(n_zones)  # set coords (mostly for concat later)
@@ -532,6 +537,27 @@ def add_abar_profile(profile):
 
     abar = 1 / profile['sumy']
     profile['abar'] = ('zone', abar)
+
+
+def add_sumx_profile(profile, isotopes):
+    """Add sumX to profile
+
+    parameters
+    ----------
+    profile : xr.Dataset
+    isotopes : [str]
+        list of all isotopes
+    """
+    sumx = profile[isotopes[0].strip()]
+
+    for isotope in isotopes[1:]:
+        isotope = isotope.strip()
+        if isotope not in profile:
+            raise ValueError(f"isotope '{isotope}' not found in model")
+
+        sumx += profile[isotope]
+
+    profile['sumx'] = ('zone', sumx)
 
 
 # ===============================================================
@@ -780,7 +806,7 @@ def get_tracers(run, model, model_set,
     mass_grid : [float]
     reload : bool
     save : bool
-    config : str
+    config : str or Config
     verbose : bool
     """
     tracers = None

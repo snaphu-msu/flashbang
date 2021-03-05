@@ -203,16 +203,12 @@ class Simulation:
         reload : bool
         save : bool
         """
-        params = self.config.profiles('all')
-        derived_params = self.config.profiles('derived_params')
-
         self.profiles = load_save.get_multiprofile(
                                 run=self.run,
                                 model=self.model,
                                 model_set=self.model_set,
                                 chk_list=self.chk_table.index,
-                                params=params,
-                                derived_params=derived_params,
+                                config=self.config,
                                 reload=reload,
                                 save=save,
                                 verbose=self.verbose)
