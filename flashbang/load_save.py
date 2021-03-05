@@ -478,6 +478,9 @@ def extract_profile(chk, run, model, model_set,
     if 'yl' in derived_params:
         add_yl_profile(profile)
 
+    if 'abar' in derived_params:
+        add_abar_profile(profile)
+
     n_zones = len(profile['zone'])
     profile.coords['zone'] = np.arange(n_zones)  # set coords (mostly for concat later)
 
@@ -515,6 +518,20 @@ def add_yl_profile(profile):
 
     yl = profile['ye'] + profile['ynu']
     profile['yl'] = ('zone', yl)
+
+
+def add_abar_profile(profile):
+    """Add Abar (1/sumY) to profile
+
+    parameters
+    ----------
+    profile : xr.Dataset
+    """
+    if 'sumy' not in profile:
+        raise ValueError(f'Need sumy in profile to calculate abar')
+
+    abar = 1 / profile['sumy']
+    profile['abar'] = ('zone', abar)
 
 
 # ===============================================================

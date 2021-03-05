@@ -650,7 +650,7 @@ class Simulation:
                             x_factor=1, y_factor=1,
                             x_label=None, y_label=None,
                             legend=False, legend_loc=None,
-                            title=False,
+                            title=True,
                             trans=None,
                             linestyle=None,
                             marker=None):
