@@ -38,18 +38,14 @@ def main(run, model, model_set,
     reload = str_to_bool(reload)
     save = str_to_bool(save)
     threads = int(threads)
+    config = Config(name=str(config))
 
     chk_list = load_save.find_chk(run=run, model=model, model_set=model_set)
-    conf = Config(name=config)
-
-    params = conf.profiles('all')
-    derived_params = conf.profiles('derived_params')
 
     if multithread:
         args = []
         for chk in chk_list:
-            args.append((chk, run, model, model_set,
-                         reload, save, params, derived_params))
+            args.append((chk, run, model, model_set, reload, save, config))
 
         with mp.Pool(processes=threads) as pool:
             pool.starmap(extract_profiles, args)
@@ -61,8 +57,7 @@ def main(run, model, model_set,
                              model_set=model_set,
                              reload=reload,
                              save=save,
-                             params=params,
-                             derived_params=derived_params)
+                             config=config)
 
     t1 = time.time()
     print(f'Time taken: {t1-t0:.2f} s')
@@ -74,8 +69,7 @@ def extract_profiles(chk,
                      model_set,
                      reload,
                      save,
-                     params,
-                     derived_params):
+                     config):
     """Function for multithread pool
     """
     load_save.get_profile(chk=chk,
@@ -84,8 +78,7 @@ def extract_profiles(chk,
                           model_set=model_set,
                           reload=reload,
                           save=save,
-                          params=params,
-                          derived_params=derived_params)
+                          config=config)
 
 
 if __name__ == "__main__":
