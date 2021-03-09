@@ -322,6 +322,23 @@ class Simulation:
         dt = self.timesteps['time'] - self.bounce['time']
         self.bounce['chk'] = dt.abs().argsort()[0]
 
+    def get_bounce_core_mass(self, max_mass=1, entr=3):
+        """Get inner core mass at bounce
+
+        Parameters
+        ----------
+        max_mass : float
+            maximum enclosed mass to look within
+        entr : float
+            entropy threshold defining core mass
+        """
+        bounce_profile = self.profiles.sel(chk=self.bounce['chk'])
+
+        bounce_slice = bounce_profile.where(bounce_profile.mass < max_mass, drop=True)
+        mass = bounce_slice.where(bounce_slice.entr > entr, drop=True).mass
+
+        self.bounce['core_mass'] = float(mass)
+
     # =======================================================
     #                      Plotting
     # =======================================================
