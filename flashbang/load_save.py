@@ -635,7 +635,9 @@ def get_chk_table(run, model, model_set,
     verbose : bool
     """
     chk_table = pd.DataFrame()
+    chk_list = find_chk(run=run, model=model, model_set=model_set, verbose=verbose)
 
+    # attempt to load cache file
     if not reload:
         try:
             chk_table = load_cache('chk_table', run=run, model=model,
@@ -643,14 +645,30 @@ def get_chk_table(run, model, model_set,
         except FileNotFoundError:
             printv('chk_table cache not found, reloading', verbose)
 
-    if chk_table.empty:
-        chk_table['chk'] = find_chk(run=run, model=model, model_set=model_set,
-                                    verbose=verbose)
-        chk_table.set_index('chk', inplace=True)
+    # fall back on creating new chk_table
+    if len(chk_table) == 0 or (len(chk_table) != len(chk_list)):
+        chk_table = extract_chk_table(chk_list)
 
         if save:
             save_cache('chk_table', data=chk_table, run=run, model=model,
                        model_set=model_set, verbose=verbose)
+
+    return chk_table
+
+
+def extract_chk_table(chk_list):
+    """Create new table of chk files available
+
+    Returns: pd.DataFrame
+
+    parameters
+    ----------
+    chk_list : [int]
+        list of chk files available; see find_chk()
+    """
+    chk_table = pd.DataFrame()
+    chk_table['chk'] = chk_list
+    chk_table.set_index('chk', inplace=True)
 
     return chk_table
 
