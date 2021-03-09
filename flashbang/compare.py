@@ -345,7 +345,7 @@ class Comparison:
         """
         if (title_str is None) and (chk is not None):
             timestep = self.baseline_sim.timesteps.loc[chk, 'time']
-            bounce = self.baseline_sim.bounce_time
+            bounce = self.baseline_sim.bounce['time']
 
             timestep = timestep - bounce
             title_str = f't = {timestep:.3f} s'

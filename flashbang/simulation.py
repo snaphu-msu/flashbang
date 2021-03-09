@@ -108,8 +108,7 @@ class Simulation:
         self.model_path = model_path(model, model_set=model_set)
 
         self.dat = None                  # time-integrated data from .dat; see load_dat()
-        self.bounce_time = None          # core-bounce in simulation time (s)
-        self.bounce_chk = None           # chk closest to bounce time
+        self.bounce = {}                 # bounce properties
         self.trans_dens = None           # transition densities (helmholtz models)
         self.mass_grid = None            # mass shells of tracers
         self.chk_table = pd.DataFrame()  # scalar chk quantities (trans_dens, time, etc.)
@@ -157,10 +156,10 @@ class Simulation:
     def get_bounce_time(self):
         """Get bounce time (s) from log file
         """
-        self.bounce_time = load_save.get_bounce_time(run=self.run,
-                                                     model=self.model,
-                                                     model_set=self.model_set,
-                                                     verbose=self.verbose)
+        self.bounce['time'] = load_save.get_bounce_time(run=self.run,
+                                                        model=self.model,
+                                                        model_set=self.model_set,
+                                                        verbose=self.verbose)
 
     # =======================================================
     #                   Loading Data
@@ -320,8 +319,8 @@ class Simulation:
     def get_bounce_chk(self):
         """Find chk closest to bounce
         """
-        dt = self.timesteps['time'] - self.bounce_time
-        self.bounce_chk = dt.abs().argsort()[0]
+        dt = self.timesteps['time'] - self.bounce['time']
+        self.bounce['chk'] = dt.abs().argsort()[0]
 
     # =======================================================
     #                      Plotting
@@ -584,7 +583,7 @@ class Simulation:
 
         t_offset = 0
         if zero_time:
-            t_offset = self.bounce_time
+            t_offset = self.bounce['time']
 
         x = self.dat['time'] - t_offset
         y = self.dat[y_var]
@@ -825,7 +824,7 @@ class Simulation:
         title_str : str
         """
         if (title_str is None) and (chk is not None):
-            timestep = self.timesteps.loc[chk, 'time'] - self.bounce_time
+            timestep = self.timesteps.loc[chk, 'time'] - self.bounce['time']
             title_str = f't = {timestep:.3f} s'
 
         return title_str
