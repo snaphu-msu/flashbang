@@ -109,6 +109,7 @@ class Simulation:
 
         self.dat = None                  # time-integrated data from .dat; see load_dat()
         self.bounce_time = None          # core-bounce in simulation time (s)
+        self.bounce_chk = None           # chk closest to bounce time
         self.trans_dens = None           # transition densities (helmholtz models)
         self.mass_grid = None            # mass shells of tracers
         self.chk_table = pd.DataFrame()  # scalar chk quantities (trans_dens, time, etc.)
@@ -151,6 +152,7 @@ class Simulation:
         self.load_all_profiles(reload=reload, save=save)
         self.get_transition_zones(reload=reload, save=save)
         self.load_timesteps(reload=reload, save=save)
+        self.get_bounce_chk()
 
     def get_bounce_time(self):
         """Get bounce time (s) from log file
@@ -314,6 +316,12 @@ class Simulation:
         if not np.array_equal(self.tracers.coords['chk'], self.chk_table.index):
             self.printv('Profiles missing from tracers; re-extracting')
             self.get_tracers(reload=True, save=save)
+
+    def get_bounce_chk(self):
+        """Find chk closest to bounce
+        """
+        dt = self.timesteps['time'] - self.bounce_time
+        self.bounce_chk = dt.abs().argsort()[0]
 
     # =======================================================
     #                      Plotting
