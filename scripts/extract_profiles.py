@@ -68,6 +68,14 @@ def main(run, model, model_set,
                                reload=reload,
                                save=save)
 
+    # Get timesteps
+    load_save.get_timesteps(run=run,
+                            model=model,
+                            model_set=model_set,
+                            chk_list=chk_list,
+                            reload=reload,
+                            save=save)
+
     t1 = time.time()
     print(f'Time taken: {t1-t0:.2f} s')
 

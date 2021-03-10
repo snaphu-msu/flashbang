@@ -739,7 +739,6 @@ def extract_timesteps(chk_list, run, model, model_set,
     params : [str]
     verbose : bool
     """
-    t0 = time.time()
     arrays = dict.fromkeys(params)
     chk0 = load_chk(chk_list[0], run=run, model=model, model_set=model_set)
 
@@ -763,8 +762,6 @@ def extract_timesteps(chk_list, run, model, model_set,
 
     timesteps.set_index('chk', inplace=True)
 
-    t1 = time.time()
-    print('='*20, f'\nTotal time: {t1-t0:.3f} s\n')
     return timesteps
 
 
