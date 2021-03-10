@@ -2,7 +2,7 @@
 Script to extract chk profiles en-masse using multithreading
 
 Usage:
-    python extract_profiles <model> <run>
+    python extract_profiles <run> <model> <model_set>
 """
 import sys
 import multiprocessing as mp
@@ -42,6 +42,7 @@ def main(run, model, model_set,
 
     chk_list = load_save.find_chk(run=run, model=model, model_set=model_set)
 
+    # Extract profiles
     if multithread:
         args = []
         for chk in chk_list:
@@ -58,6 +59,14 @@ def main(run, model, model_set,
                              reload=reload,
                              save=save,
                              config=config)
+
+    # Combine multiprofile
+    load_save.get_multiprofile(run=run,
+                               model=model,
+                               model_set=model_set,
+                               chk_list=chk_list,
+                               reload=reload,
+                               save=save)
 
     t1 = time.time()
     print(f'Time taken: {t1-t0:.2f} s')
