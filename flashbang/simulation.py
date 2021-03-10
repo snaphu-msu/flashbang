@@ -191,7 +191,7 @@ class Simulation:
         self.dat = load_save.get_dat(run=self.run,
                                      model=self.model,
                                      model_set=self.model_set,
-                                     cols_dict=self.config.dat('columns'),
+                                     config=self.config,
                                      reload=reload,
                                      save=save,
                                      verbose=self.verbose)
