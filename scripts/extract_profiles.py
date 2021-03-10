@@ -42,6 +42,14 @@ def main(run, model, model_set,
 
     chk_list = load_save.find_chk(run=run, model=model, model_set=model_set)
 
+    # Extract dat file
+    load_save.get_dat(run=run,
+                      model=model,
+                      model_set=model_set,
+                      config=config,
+                      reload=reload,
+                      save=save)
+
     # Extract profiles
     if multithread:
         args = []
@@ -60,7 +68,7 @@ def main(run, model, model_set,
                              save=save,
                              config=config)
 
-    # Combine multiprofile
+    # Combine all profiles
     load_save.get_multiprofile(run=run,
                                model=model,
                                model_set=model_set,
