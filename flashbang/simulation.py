@@ -447,6 +447,7 @@ class Simulation:
         chk = ensure_sequence(chk)
         title_str = self._get_title(chk=chk[0], title_str=title_str)
 
+        self._check_trans(trans=trans)
         if trans is None:
             trans = self.config.trans('plot')
 
@@ -513,6 +514,8 @@ class Simulation:
         data_only : bool
         """
         self._check_composition()
+        self._check_trans(trans=trans)
+
         if y_vars is None:
             y_vars = self.config.plotting('isotopes')
         if y_lims is None:
@@ -716,6 +719,7 @@ class Simulation:
             slider.fig.canvas.draw_idle()
 
         # ----------------
+        self._check_trans(trans=trans)
         if trans is None:
             trans = self.config.trans('plot')
 
@@ -789,6 +793,7 @@ class Simulation:
 
         # ----------------
         self._check_composition()
+        self._check_trans(trans=trans)
         if y_vars is None:
             y_vars = self.config.plotting('isotopes')
         if y_lims is None:
@@ -872,7 +877,20 @@ class Simulation:
         """Check if isotopes defined
         """
         if len(self.config.profiles('isotopes')) == 0:
-            raise AttributeError('No isotopes found. Does this model use a network?')
+            raise AttributeError('No isotopes found. '
+                                 'Are you sure this model use a network?')
+
+    def _check_trans(self, trans):
+        """Check if transition dens defined
+
+        Parameters
+        ----------
+        trans : bool
+        """
+        if trans:
+            if self.trans_dens is None:
+                raise AttributeError('No trans_dens found. '
+                                     'Are you sure this a hybrid-EOS model?')
 
     def printv(self, string, verbose=None, **kwargs):
         """Verbose-aware print
