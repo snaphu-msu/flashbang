@@ -512,6 +512,7 @@ class Simulation:
         x_lims : [min, max]
         data_only : bool
         """
+        self._check_composition()
         if y_vars is None:
             y_vars = self.config.plotting('isotopes')
         if y_lims is None:
@@ -787,6 +788,7 @@ class Simulation:
             slider.fig.canvas.draw_idle()
 
         # ----------------
+        self._check_composition()
         if y_vars is None:
             y_vars = self.config.plotting('isotopes')
         if y_lims is None:
@@ -866,6 +868,12 @@ class Simulation:
     # =======================================================
     #                   Convenience
     # =======================================================
+    def _check_composition(self):
+        """Check if isotopes defined
+        """
+        if len(self.config.profiles('isotopes')) == 0:
+            raise AttributeError('No isotopes found. Does this model use a network?')
+
     def printv(self, string, verbose=None, **kwargs):
         """Verbose-aware print
 
