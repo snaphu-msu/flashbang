@@ -678,6 +678,7 @@ def extract_chk_table(chk_list):
 # ===============================================================
 def get_timesteps(run, model, model_set,
                   params=('time', 'nstep'),
+                  chk_list=None,
                   reload=False,
                   save=True,
                   verbose=True):
@@ -691,6 +692,7 @@ def get_timesteps(run, model, model_set,
     model : str
     model_set : str
     params : [str]
+    chk_list : [int]
     reload : bool
     save : bool
     verbose : bool
@@ -707,7 +709,9 @@ def get_timesteps(run, model, model_set,
 
     # fall back on loading from raw chk files
     if timesteps is None:
-        chk_list = find_chk(run=run, model=model, model_set=model_set, verbose=verbose)
+        if chk_list is None:
+            chk_list = find_chk(run=run, model=model, model_set=model_set,
+                                verbose=verbose)
 
         timesteps = extract_timesteps(chk_list, run=run, model=model, model_set=model_set,
                                       params=params, verbose=verbose)
