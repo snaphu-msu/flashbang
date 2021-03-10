@@ -106,9 +106,11 @@ def save_cache(name, data, run, model, model_set,
 # =======================================================================
 #                      Dat files
 # =======================================================================
-def get_dat(run, model, model_set, cols_dict,
+def get_dat(run, model, model_set,
+            cols_dict=None,
             reload=False,
             save=True,
+            config=None,
             verbose=True):
     """Get reduced set of integrated quantities, as contained in [run].dat file
 
@@ -121,11 +123,18 @@ def get_dat(run, model, model_set, cols_dict,
     model_set : str
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
+    config : str or Config
     reload : bool
     save : bool
     verbose : bool
     """
     dat_table = None
+
+    if (config is None) or (type(config) is str):
+        config = Config(name=config, verbose=verbose)
+
+    if cols_dict is None:
+        cols_dict = config.dat('columns')
 
     # attempt to load cache file
     if not reload:
