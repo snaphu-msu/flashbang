@@ -778,7 +778,7 @@ def extract_timesteps(chk_list, run, model, model_set,
 #                      Log files
 # ===============================================================
 def get_bounce_time(run, model, model_set,
-                    match_str='Bounce',
+                    match_str='Bounce!',
                     verbose=True):
     """Get bounce time (s) from .log file
 
@@ -807,6 +807,77 @@ def get_bounce_time(run, model, model_set,
             printv('Bounce time not found! Returning 0.0 s', verbose)
 
     return bounce_time
+
+
+def extract_timesteps_log(run, model, model_set,
+                          match_str='[IO_writeCheckpoint] close:',
+                          pad=4,
+                          verbose=True):
+    """Get chk timesteps (s) from .log file
+
+    Returns : pd.DataFrame
+
+    parameters
+    ----------
+    run : str
+    model : str
+    model_set : str
+    match_str : str
+        String which immediately precedes the chk dump
+    pad : int
+        number of digits chk number is padded to, e.g. 4 for 0005
+    verbose : bool
+    """
+    def split_line(line_str):
+        """Split and extract timestep values from line
+        """
+        _n = None
+        _t = None
+
+        for term in line_str.split():
+            key_val = term.split('=')
+            if key_val[0] == 'n':
+                _n = int(key_val[1])
+            elif key_val[0] == 't':
+                _t = float(key_val[1])
+
+        return _n, _t
+
+    next_line = -99
+    chks = []
+    nsteps = []
+    timesteps = []
+
+    filepath = paths.flash_filepath('log', run=run, model=model, model_set=model_set)
+    printv(f'Getting timesteps time: {filepath}', verbose)
+
+    with open(filepath, 'r') as f:
+        for i, line in enumerate(f):
+
+            # identify chk number
+            if match_str in line:
+                next_line = i + 1
+                chks += [int(line[-pad:])]
+
+            # get nstep and timestep
+            elif i == next_line:
+                if chks[-1] is 0:
+                    n, t = 0, 0
+                else:
+                    n, t = split_line(line)
+                nsteps += [n]
+                timesteps += [t]
+
+    if len(chks) is 0:
+        printv('No chk timesteps found!', verbose)
+
+    table = pd.DataFrame()
+    table['chk'] = chks
+    table['time'] = timesteps
+    table['nstep'] = nsteps
+    table.set_index('chk', inplace=True)
+
+    return table
 
 
 # ===============================================================
