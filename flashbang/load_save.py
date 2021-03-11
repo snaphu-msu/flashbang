@@ -722,8 +722,9 @@ def get_timesteps(run, model, model_set,
             chk_list = find_chk(run=run, model=model, model_set=model_set,
                                 verbose=verbose)
 
-        timesteps = extract_timesteps(chk_list, run=run, model=model, model_set=model_set,
-                                      params=params, verbose=verbose)
+        timesteps = extract_timesteps_chk(chk_list, run=run, model=model,
+                                          model_set=model_set,
+                                          params=params, verbose=verbose)
 
         if save:
             save_cache('timesteps', data=timesteps, run=run, model=model,
@@ -732,10 +733,12 @@ def get_timesteps(run, model, model_set,
     return timesteps
 
 
-def extract_timesteps(chk_list, run, model, model_set,
-                      params=('time', 'nstep'),
-                      verbose=True):
-    """Extract timestep quantities from chk files
+def extract_timesteps_chk(chk_list, run, model, model_set,
+                          params=('time', 'nstep'),
+                          verbose=True):
+    """Extract timesteps from chk files
+
+    Slow compared to extract_timesteps_log(), but slightly more precise/reliable
 
     Returns: pd.DataFrame()
 
@@ -836,6 +839,10 @@ def extract_timesteps_log(run, model, model_set,
                           pad=4,
                           verbose=True):
     """Get chk timesteps (s) from .log file
+
+    Much faster than extract_timesteps(), but:
+        - less precision (~1e-7 s compared to ~1e-16 s)
+        - may fail to extract chks at start/end of run (will be NaN in table)
 
     Returns : pd.DataFrame
 
