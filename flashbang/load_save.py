@@ -774,6 +774,28 @@ def extract_timesteps(chk_list, run, model, model_set,
     return timesteps
 
 
+def extract_chk_parameters(chk, run, model, model_set, params):
+    """Extract parameters from chk file
+
+    Returns: {param: value}
+
+    parameters
+    ----------
+    chk : int
+    run : str
+    model : str
+    model_set : str
+    params : [str]
+    """
+    values = {}
+    chk_raw = load_chk(chk, run=run, model=model, model_set=model_set)
+
+    for par in params:
+        values[par] = chk_raw.parameters[par]
+
+    return values
+
+
 # ===============================================================
 #                      Log files
 # ===============================================================
