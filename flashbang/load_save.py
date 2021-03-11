@@ -840,7 +840,7 @@ def extract_timesteps_log(run, model, model_set,
 
     Much faster than extract_timesteps(), but:
         - less precision (~1e-7 s compared to ~1e-16 s)
-        - may fail to extract chks at start/end of run (will be NaN in table)
+        - may fail for chks at start/end of restarts (will be NaN in table)
 
     Returns : pd.DataFrame
 
@@ -871,12 +871,10 @@ def extract_timesteps_log(run, model, model_set,
         return _n, _t
 
     next_line = -99
-    chks = []
-    nsteps = []
-    timesteps = []
+    arrays = {key: [] for key in ['chk', 'time', 'nstep']}
 
     filepath = paths.flash_filepath('log', run=run, model=model, model_set=model_set)
-    printv(f'Getting timesteps time: {filepath}', verbose)
+    printv(f'Extracting chk timesteps: {filepath}', verbose)
 
     with open(filepath, 'r') as f:
         for i, line in enumerate(f):
@@ -884,25 +882,24 @@ def extract_timesteps_log(run, model, model_set,
             # identify chk number
             if match_str in line:
                 next_line = i + 1
-                chks += [int(line[-pad:])]
+                arrays['chk'] += [int(line[-pad:])]
 
             # get nstep and timestep
             elif i == next_line:
-                if chks[-1] is 0:
+                if arrays['chk'][-1] is 0:
                     n, t = 0, 0
                 else:
                     n, t = split_line(line)
-                nsteps += [n]
-                timesteps += [t]
+                arrays['nstep'] += [n]
+                arrays['time'] += [t]
 
-    if len(chks) is 0:
-        printv('No chk timesteps found!', verbose)
-
-    table = pd.DataFrame()
-    table['chk'] = chks
-    table['time'] = timesteps
-    table['nstep'] = nsteps
+    table = pd.DataFrame(arrays)
     table.set_index('chk', inplace=True)
+
+    if len(table) is 0:
+        printv('No chk timesteps found!', verbose)
+    if len(table[table.time.isna()]) > 0:
+        printv('Some chk timesteps not found!', verbose)
 
     return table
 
