@@ -153,14 +153,6 @@ class Simulation:
         self.load_timesteps(reload=reload, save=save)
         self.get_bounce_chk()
 
-    def get_bounce_time(self):
-        """Get bounce time (s) from log file
-        """
-        self.bounce['time'] = load_save.get_bounce_time(run=self.run,
-                                                        model=self.model,
-                                                        model_set=self.model_set,
-                                                        verbose=self.verbose)
-
     # =======================================================
     #                   Loading Data
     # =======================================================
@@ -214,6 +206,14 @@ class Simulation:
                                 save=save,
                                 verbose=self.verbose)
 
+    def get_bounce_time(self):
+        """Get bounce time (s) from log file
+        """
+        self.bounce['time'] = load_save.get_bounce_time(run=self.run,
+                                                        model=self.model,
+                                                        model_set=self.model_set,
+                                                        verbose=self.verbose)
+        
     def check_chk_table(self, save=True):
         """Checks that pre-saved data is up to date with any new chk files
         """
