@@ -751,30 +751,28 @@ def extract_timesteps_chk(chk_list, run, model, model_set,
     params : [str]
     verbose : bool
     """
-    arrays = dict.fromkeys(params)
-    chk0 = load_chk(chk_list[0], run=run, model=model, model_set=model_set)
+    arrays = {key: [] for key in params}
+    arrays['chk'] = chk_list
 
-    for par in params:
-        par_type = type(chk0.parameters[par])
-        arrays[par] = np.zeros_like(chk_list, dtype=par_type)
+    for i, chk in enumerate(chk_list):
+        printv(f'\rLoading timestep, chk: {chk}/{chk_list[-1]}',
+               end='', verbose=verbose)
 
-    for i, chk in enumerate(chk_list[1:]):
-        printv(f'\rLoading timestep, chk: {chk}/{chk_list[-1]}', end='', verbose=verbose)
-        chk_raw = load_chk(chk, run=run, model=model, model_set=model_set)
+        chk_values = extract_chk_parameters(chk=chk,
+                                            run=run,
+                                            model=model,
+                                            model_set=model_set,
+                                            params=params)
 
-        for par in params:
-            arrays[par][i+1] = chk_raw.parameters[par]
+        for par, value in chk_values.items():
+            arrays[par] += [value]
 
     printv('', verbose=verbose)
-    timesteps = pd.DataFrame()
-    timesteps['chk'] = chk_list
 
-    for par, arr in arrays.items():
-        timesteps[par] = arr
+    table = pd.DataFrame(arrays)
+    table.set_index('chk', inplace=True)
 
-    timesteps.set_index('chk', inplace=True)
-
-    return timesteps
+    return table
 
 
 def extract_chk_parameters(chk, run, model, model_set, params):
