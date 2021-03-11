@@ -146,12 +146,14 @@ class Simulation:
         reload : bool
         save : bool
         """
-        self.get_bounce_time()
         self.load_dat(reload=reload, save=save)
         self.load_all_profiles(reload=reload, save=save)
         self.get_transition_zones(reload=reload, save=save)
         self.load_timesteps(reload=reload, save=save)
+
+        self.get_bounce_time()
         self.get_bounce_chk()
+        self.get_bounce_core_mass()
 
     # =======================================================
     #                   Loading Data
@@ -213,7 +215,7 @@ class Simulation:
                                                         model=self.model,
                                                         model_set=self.model_set,
                                                         verbose=self.verbose)
-        
+
     def check_chk_table(self, save=True):
         """Checks that pre-saved data is up to date with any new chk files
         """
@@ -320,7 +322,11 @@ class Simulation:
         """Find chk closest to bounce
         """
         dt = self.timesteps['time'] - self.bounce['time']
-        self.bounce['chk'] = dt.abs().argsort()[0]
+        chk = dt.abs().argsort()[0]
+        chk_dt = self.timesteps.loc[chk, 'time'] - self.bounce['time']
+
+        self.bounce['chk'] = chk
+        self.bounce['chk_dt'] = chk_dt
 
     def get_bounce_core_mass(self, max_mass=1, entr=3):
         """Get inner core mass at bounce
