@@ -711,24 +711,40 @@ def get_timesteps(run, model, model_set,
     # attempt to load cache file
     if not reload:
         try:
-            timesteps = load_cache('timesteps', run=run, model=model,
-                                   model_set=model_set, verbose=verbose)
+            timesteps = load_cache('timesteps',
+                                   run=run,
+                                   model=model,
+                                   model_set=model_set,
+                                   verbose=verbose)
         except FileNotFoundError:
             printv('timesteps cache not found, reloading', verbose)
 
     # fall back on loading from raw chk files
     if timesteps is None:
-        if chk_list is None:
-            chk_list = find_chk(run=run, model=model, model_set=model_set,
-                                verbose=verbose)
-
-        timesteps = extract_timesteps_chk(chk_list, run=run, model=model,
+        timesteps = extract_timesteps_log(run=run,
+                                          model=model,
                                           model_set=model_set,
-                                          params=params, verbose=verbose)
+                                          verbose=verbose)
+
+        # check for missing timesteps
+        missing_chk = list(timesteps[timesteps.time.isna()].index)
+        if len(missing_chk) > 0:
+            printv('Extracting missing chk timesteps', verbose)
+            missing_timesteps = extract_timesteps_chk(chk_list=missing_chk,
+                                                      run=run,
+                                                      model=model,
+                                                      model_set=model_set,
+                                                      params=params)
+
+            timesteps = timesteps.combine_first(missing_timesteps)
 
         if save:
-            save_cache('timesteps', data=timesteps, run=run, model=model,
-                       model_set=model_set, verbose=verbose)
+            save_cache(name='timesteps',
+                       data=timesteps,
+                       run=run,
+                       model=model,
+                       model_set=model_set,
+                       verbose=verbose)
 
     return timesteps
 
