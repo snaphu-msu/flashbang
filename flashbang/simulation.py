@@ -343,6 +343,11 @@ class Simulation:
         bounce_slice = bounce_profile.where(bounce_profile.mass < max_mass, drop=True)
         mass = bounce_slice.where(bounce_slice.entr > entr, drop=True).mass
 
+        if len(mass) is not 1:
+            self.printv('Unique bounce core mass not found! '
+                        'Bounce chk may not be at bounce')
+            return
+
         self.bounce['core_mass'] = float(mass)
 
     # =======================================================
