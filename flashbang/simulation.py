@@ -506,7 +506,7 @@ class Simulation:
         chk : int
         x_var : str
             variable to plot on x-axis
-        y_vars : [str]
+        y_vars : [str] or 'all'
             list of isotopes to plot (see Config.profiles.params)
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
@@ -529,6 +529,8 @@ class Simulation:
 
         if y_vars is None:
             y_vars = self.config.plotting('isotopes')
+        elif y_vars is 'all':
+            y_vars = [x.strip() for x in self.config.profiles('isotopes')]
         if y_lims is None:
             y_lims = self.config.ax_lims('X')
         if trans is None:
@@ -756,8 +758,8 @@ class Simulation:
 
         return slider
 
-    def plot_composition_slider(self,
-                                x_var='r', y_vars=None,
+    def plot_composition_slider(self, y_vars=None,
+                                x_var='r',
                                 x_scale=None, y_scale='linear',
                                 x_lims=None, y_lims=None,
                                 x_factor=1, y_factor=1,
@@ -770,7 +772,7 @@ class Simulation:
 
         parameters
         ----------
-        y_vars : [str]
+        y_vars : [str] or 'all'
         x_var : str
         y_scale : 'log' or 'linear'
         x_scale : 'log' or 'linear'
@@ -807,6 +809,9 @@ class Simulation:
         self._check_trans(trans=trans)
         if y_vars is None:
             y_vars = self.config.plotting('isotopes')
+        elif y_vars == 'all':
+            y_vars = [x.strip() for x in self.config.profiles('isotopes')]
+            y_vars += ['ye']
         if y_lims is None:
             y_lims = self.config.ax_lims('X')
 
