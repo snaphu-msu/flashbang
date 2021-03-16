@@ -228,6 +228,8 @@ class Comparison:
         """
         def update_slider(chk):
             chk = int(chk)
+            title_str = self._get_title(chk=chk, title_str=None)
+            plot.set_title(title_str=title_str)
 
             if trans:
                 self._update_slider_trans(chk=chk, x_var=x_var, y_var=y_var,
@@ -258,7 +260,7 @@ class Comparison:
                                  y_lims=y_lims, x_lims=x_lims,
                                  x_factor=x_factor, y_factor=y_factor,
                                  x_label=x_label, y_label=y_label,
-                                 legend=False, legend_loc=legend_loc,
+                                 legend=legend, legend_loc=legend_loc,
                                  title=title,
                                  ax=slider.ax,
                                  trans=False,
@@ -342,7 +344,7 @@ class Comparison:
         Parameters
         ----------
         chk : int
-        title_str : str
+        title_str : str or None
         """
         if (title_str is None) and (chk is not None):
             timestep = self.baseline_sim.timesteps.loc[chk, 'time']
