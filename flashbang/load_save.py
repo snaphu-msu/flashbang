@@ -21,7 +21,6 @@ import xarray as xr
 import subprocess
 import sys
 import yt
-import time
 import h5py
 
 # flashbang

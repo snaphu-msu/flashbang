@@ -5,11 +5,9 @@ It loads multiple models for plotting.
 For details on model attributes and nomencclature, see simulation.py
 """
 import numpy as np
-from matplotlib.widgets import Slider
 
 # flashbang
 from . import simulation
-from .plotting import plot_tools
 from .plotting.plotter import Plotter
 from .plotting.slider import FlashSlider
 from . import tools
@@ -142,7 +140,7 @@ class Comparison:
                              ax=plot.ax,
                              label=model,
                              data_only=True)
-            
+
         if not data_only:
             plot.set_all()
 
