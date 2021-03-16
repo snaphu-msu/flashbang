@@ -80,8 +80,7 @@ def main(run, model, model_set,
     load_save.get_timesteps(run=run,
                             model=model,
                             model_set=model_set,
-                            chk_list=chk_list,
-                            reload=reload,
+                            reload=True,
                             save=save)
 
     t1 = time.time()
