@@ -687,7 +687,6 @@ def extract_chk_table(chk_list):
 # ===============================================================
 def get_timesteps(run, model, model_set,
                   params=('time', 'nstep'),
-                  chk_list=None,
                   reload=False,
                   save=True,
                   verbose=True):
@@ -701,7 +700,6 @@ def get_timesteps(run, model, model_set,
     model : str
     model_set : str
     params : [str]
-    chk_list : [int]
     reload : bool
     save : bool
     verbose : bool
