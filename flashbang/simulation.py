@@ -671,7 +671,7 @@ class Simulation:
                             x_var='r',
                             x_scale=None, y_scale=None,
                             x_lims=None, y_lims=None,
-                            x_factor=1, y_factor=1,
+                            x_factor=None, y_factor=None,
                             x_label=None, y_label=None,
                             legend=False, legend_loc=None,
                             title=True,
@@ -703,8 +703,8 @@ class Simulation:
             chk = int(chk)
 
             profile = self.profiles.sel(chk=chk)
-            x = profile[x_var] / x_factor
-            y = profile[y_var] / y_factor
+            x = profile[x_var]
+            y = profile[y_var]
 
             slider.update_ax_line(x=x, y=y, y_var=y_var)
             slider.update_trans_lines(chk=chk, x=x, y=y)
@@ -716,13 +716,19 @@ class Simulation:
 
         # ----------------
         self._check_trans(trans=trans)
+        x_factor, y_factor = self._check_factors(x_var=x_var,
+                                                y_var=y_var,
+                                                x_factor=x_factor,
+                                                y_factor=y_factor)
         if trans is None:
             trans = self.config.trans('plot')
 
         slider = FlashSlider(y_vars=[y_var],
                              chk_table=self.chk_table,
                              trans=trans,
-                             trans_dens=self.trans_dens)
+                             trans_dens=self.trans_dens,
+                             x_factor=x_factor,
+                             y_factor=y_factor)
 
         plot = self.plot_profile(chk=self.chk_table.index[-1],
                                  y_var=y_var, x_var=x_var,
@@ -745,7 +751,7 @@ class Simulation:
                                 x_var='r',
                                 x_scale=None, y_scale='linear',
                                 x_lims=None, y_lims=None,
-                                x_factor=1, y_factor=1,
+                                x_factor=None, y_factor=None,
                                 x_label=None, y_label=None,
                                 legend=True, legend_loc=None,
                                 title=True,
@@ -775,12 +781,12 @@ class Simulation:
             chk = int(chk)
 
             profile = self.profiles.sel(chk=chk)
-            x = profile[x_var] / x_factor
+            x = profile[x_var]
 
             slider.update_trans_lines(chk=chk, x=x, y=y_lims)
 
             for y_var in y_vars:
-                y = profile[y_var] / y_factor
+                y = profile[y_var]
                 slider.update_ax_line(x=x, y=y, y_var=y_var)
 
             title_str = self._get_title(chk=chk)
@@ -790,6 +796,11 @@ class Simulation:
         # ----------------
         self._check_composition()
         self._check_trans(trans=trans)
+        x_factor, y_factor = self._check_factors(x_var=x_var,
+                                                y_var='X',
+                                                x_factor=x_factor,
+                                                y_factor=y_factor)
+
         if y_vars is None:
             y_vars = self.config.plotting('isotopes')
         elif y_vars == 'all':
@@ -801,7 +812,9 @@ class Simulation:
         slider = FlashSlider(y_vars=y_vars,
                              chk_table=self.chk_table,
                              trans=trans,
-                             trans_dens=self.trans_dens)
+                             trans_dens=self.trans_dens,
+                             x_factor=x_factor,
+                             y_factor=y_factor)
 
         plot = self.plot_composition(chk=self.chk_table.index[-1],
                                      x_var=x_var, y_vars=y_vars,
