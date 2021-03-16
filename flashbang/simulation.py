@@ -172,7 +172,6 @@ class Simulation:
                                                  reload=reload,
                                                  save=save,
                                                  verbose=self.verbose)
-        self.check_chk_table(save=save)
 
     def load_dat(self, reload=False, save=True):
         """Load .dat file
@@ -215,18 +214,6 @@ class Simulation:
                                                         model=self.model,
                                                         model_set=self.model_set,
                                                         verbose=self.verbose)
-
-    def check_chk_table(self, save=True):
-        """Checks that pre-saved data is up to date with any new chk files
-        """
-        chk_list = load_save.find_chk(run=self.run,
-                                      model=self.model,
-                                      model_set=self.model_set,
-                                      verbose=self.verbose)
-
-        if len(chk_list) != len(self.chk_table):
-            self.printv('chk files missing from table, reloading')
-            self.load_chk_table(reload=True, save=save)
 
     def save_chk_table(self):
         """Saves chk_table DataFrame to file
