@@ -247,10 +247,6 @@ class Simulation:
                                                  reload=reload, save=save,
                                                  verbose=self.verbose)
 
-        if len(self.timesteps) != len(self.chk_table):
-            self.printv('timesteps missing from table, reloading')
-            self.load_timesteps(reload=True, save=save)
-
     # =======================================================
     #                 Analysis & Postprocessing
     # =======================================================
