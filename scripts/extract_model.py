@@ -3,6 +3,17 @@ Script to extract chk profiles en-masse using multithreading
 
 Usage:
     python extract_profiles <run> <model> <model_set>
+
+optional kwargs:
+    multithread : bool
+    reload : bool
+    save : bool
+    config : str
+    threads : int
+
+Note: multithreaded python can be janky. If you have
+    issues with hangs or crashes, try smaller threads
+    or even setting multithread=False
 """
 import sys
 import multiprocessing as mp
