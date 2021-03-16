@@ -130,6 +130,7 @@ class Comparison:
 
         for i, sim in self.sims.items():
             model = self.models[i]
+
             sim.plot_profile(chk=chk,
                              y_var=y_var,
                              x_var=x_var,
@@ -141,7 +142,7 @@ class Comparison:
                              ax=plot.ax,
                              label=model,
                              data_only=True)
-
+            
         if not data_only:
             plot.set_all()
 
@@ -371,8 +372,12 @@ class Comparison:
                                                   x=x,
                                                   y=y)
 
-            plot.plot(trans_x, trans_y, linestyle='--', marker='',
-                      color='k', linewidth=linewidth)
+            plot.plot(x=trans_x,
+                      y=trans_y,
+                      linestyle='--',
+                      marker='',
+                      color='k',
+                      linewidth=linewidth)
 
     def _get_title(self, chk, title_str):
         """Get title string
