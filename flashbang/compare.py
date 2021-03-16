@@ -195,7 +195,7 @@ class Comparison:
                             x_var='r',
                             x_scale=None, y_scale=None,
                             x_lims=None, y_lims=None,
-                            x_factor=1, y_factor=1,
+                            x_factor=None, y_factor=None,
                             x_label=None, y_label=None,
                             legend=True, legend_loc=None,
                             title=True,
@@ -232,18 +232,23 @@ class Comparison:
             plot.set_title(title_str=title_str)
 
             if trans:
-                self._update_slider_trans(chk=chk, x_var=x_var, y_var=y_var,
-                                          x_factor=x_factor, y_factor=y_factor,
+                self._update_slider_trans(chk=chk,
+                                          x_var=x_var,
+                                          y_var=y_var,
                                           slider=slider)
 
-            self._update_slider_profiles(chk=chk, x_var=x_var, y_var=y_var,
-                                         x_factor=x_factor, y_factor=y_factor,
+            self._update_slider_profiles(chk=chk,
+                                         x_var=x_var,
+                                         y_var=y_var,
                                          slider=slider)
 
-            # self._set_ax_title(ax=profile_ax, chk=chk, title=title)
             slider.fig.canvas.draw_idle()
 
         # ----------------
+        x_factor, y_factor = self._check_factors(x_var=x_var,
+                                                 y_var=y_var,
+                                                 x_factor=x_factor,
+                                                 y_factor=y_factor)
         if trans is None:
             trans = self.config.trans('plot')
 
@@ -252,7 +257,10 @@ class Comparison:
             y_vars += [f'{y_var}_{i}']
 
         chk_min, chk_max = self._get_slider_chk()
-        slider = self._setup_slider(y_vars=y_vars, trans=trans)
+        slider = self._setup_slider(y_vars=y_vars,
+                                    trans=trans,
+                                    x_factor=x_factor,
+                                    y_factor=y_factor)
 
         plot = self.plot_profile(chk=chk_max,
                                  y_var=y_var, x_var=x_var,
@@ -268,11 +276,11 @@ class Comparison:
                                  marker=marker)
 
         if trans:
-            self._plot_trans_lines(x_var=x_var, y_var=y_var,
-                                   x_factor=x_factor, y_factor=y_factor,
-                                   plot=plot, chk=chk_max)
+            self._plot_trans_lines(x_var=x_var,
+                                   y_var=y_var,
+                                   plot=plot,
+                                   chk=chk_max)
 
-        # self._set_ax_legend(ax=profile_ax, legend=legend)
         slider.slider.on_changed(update_slider)
 
         return slider, plot
@@ -280,7 +288,7 @@ class Comparison:
     # =======================================================
     #                      Plotting Tools
     # =======================================================
-    def _get_baseline_xy(self, chk, x_var, y_var, x_factor, y_factor):
+    def _get_baseline_xy(self, chk, x_var, y_var):
         """Update trans lines on slider plot
 
         Parameters
@@ -288,13 +296,10 @@ class Comparison:
         chk : int
         x_var : str
         y_var : str
-        x_factor : float
-        y_factor : float
         """
         profile = self.baseline_sim.profiles.sel(chk=chk)
-
-        x = profile[x_var] / x_factor
-        y = profile[y_var] / y_factor
+        x = profile[x_var]
+        y = profile[y_var]
 
         return x, y
 
@@ -315,22 +320,19 @@ class Comparison:
 
         return trans_x, trans_y
 
-    def _plot_trans_lines(self, x_var, y_var, x_factor, y_factor,
-                          plot, chk, linewidth=1):
+    def _plot_trans_lines(self, x_var, y_var, plot, chk,
+                          linewidth=1):
         """Add transition line to axis
 
         parameters
         ----------
         x_var : str
         y_var : str
-        x_factor : float
-        y_factor : float
         plot : Plotter
         chk : int
         linewidth : float
         """
-        x, y = self._get_baseline_xy(chk=chk, x_var=x_var, y_var=y_var,
-                                     x_factor=x_factor, y_factor=y_factor)
+        x, y = self._get_baseline_xy(chk=chk, x_var=x_var, y_var=y_var)
 
         for trans_key in self.baseline_sim.trans_dens:
             trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
@@ -355,6 +357,23 @@ class Comparison:
 
         return title_str
 
+    def _check_factors(self, x_var, y_var, x_factor, y_factor):
+        """Check if factors provided, otherwise use default
+
+        Parameters
+        ----------
+        x_var : str
+        y_var : str
+        x_factor : float
+        y_factor : float
+        """
+        if x_factor is None:
+            x_factor = self.config.factor(x_var)
+        if y_factor is None:
+            y_factor = self.config.factor(y_var)
+
+        return x_factor, y_factor
+
     # =======================================================
     #                      Slider Tools
     # =======================================================
@@ -372,7 +391,7 @@ class Comparison:
         chk_max = min(maxes)
         return chk_min, chk_max
 
-    def _setup_slider(self, y_vars, trans):
+    def _setup_slider(self, y_vars, trans, x_factor, y_factor):
         """Return slider fig
         """
         chk_min, chk_max = self._get_slider_chk()
@@ -381,7 +400,9 @@ class Comparison:
         slider = FlashSlider(y_vars=y_vars,
                              chk_table=chk_table,
                              trans=trans,
-                             trans_dens=self.baseline_sim.trans_dens)
+                             trans_dens=self.baseline_sim.trans_dens,
+                             x_factor=x_factor,
+                             y_factor=y_factor)
         return slider
 
     def _get_ax_lines(self, ax, trans):
@@ -407,8 +428,7 @@ class Comparison:
 
         return lines
 
-    def _update_slider_profiles(self, chk, x_var, y_var,
-                                x_factor, y_factor, slider):
+    def _update_slider_profiles(self, chk, x_var, y_var, slider):
         """Update profile lines on slider plot
 
         Parameters
@@ -416,19 +436,16 @@ class Comparison:
         chk : int
         x_var : str
         y_var : str
-        x_factor : float
-        y_factor : float
         slider : FlashSlider
         """
         for i, sim in self.sims.items():
             profile = sim.profiles.sel(chk=chk)
-            x = profile[x_var] / x_factor
-            y = profile[y_var] / y_factor
+            x = profile[x_var]
+            y = profile[y_var]
 
             slider.update_ax_line(x=x, y=y, y_var=f'{y_var}_{i}')
 
-    def _update_slider_trans(self, chk, x_var, y_var,
-                             x_factor, y_factor, slider):
+    def _update_slider_trans(self, chk, x_var, y_var, slider):
         """Update trans lines on slider plot
 
         Parameters
@@ -436,11 +453,8 @@ class Comparison:
         chk : int
         x_var : str
         y_var : str
-        x_factor : float
-        y_factor : float
         slider : FlashSlider
         """
-        x, y = self._get_baseline_xy(chk=chk, x_var=x_var, y_var=y_var,
-                                     x_factor=x_factor, y_factor=y_factor)
+        x, y = self._get_baseline_xy(chk=chk, x_var=x_var, y_var=y_var)
         slider.update_trans_lines(chk=chk, x=x, y=y)
 
