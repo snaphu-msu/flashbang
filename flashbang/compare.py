@@ -45,7 +45,7 @@ class Comparison:
         self.load_models(config=config)
 
         self.baseline = models[0]
-        self.baseline_sim = self.sims[self.baseline]
+        self.baseline_sim = self.sims[0]
 
     # =======================================================
     #                      Loading
@@ -58,11 +58,11 @@ class Comparison:
         config : str
         """
         for i, model in enumerate(self.models):
-            self.sims[model] = simulation.Simulation(run=self.runs[i],
-                                                     model=model,
-                                                     model_set=self.model_sets[i],
-                                                     config=config,
-                                                     verbose=self.verbose)
+            self.sims[i] = simulation.Simulation(run=self.runs[i],
+                                                 model=model,
+                                                 model_set=self.model_sets[i],
+                                                 config=config,
+                                                 verbose=self.verbose)
 
     # =======================================================
     #                      Plot
@@ -120,7 +120,8 @@ class Comparison:
                        legend=legend, legend_loc=legend_loc,
                        verbose=self.verbose)
 
-        for model, sim in self.sims.items():
+        for i, sim in self.sims.items():
+            model = self.models[i]
             sim.plot_profile(chk=chk, y_var=y_var, x_var=x_var,
                              x_factor=x_factor, y_factor=y_factor,
                              marker=marker, linestyle=linestyle,
@@ -176,8 +177,8 @@ class Comparison:
                        legend=legend, legend_loc=legend_loc,
                        verbose=self.verbose)
 
-        for model, sim in self.sims.items():
-            sim.plot_dat(y_var=y_var, ax=plot.ax, label=model,
+        for i, sim in self.sims.items():
+            sim.plot_dat(y_var=y_var, ax=plot.ax, label=self.models[i],
                          x_factor=x_factor, y_factor=y_factor,
                          marker=marker, zero_time=zero_time,
                          linestyle=linestyle, data_only=True)
@@ -327,7 +328,7 @@ class Comparison:
         linewidth : float
         """
         x, y = self._get_baseline_xy(chk=chk, x_var=x_var, y_var=y_var,
-                                     x_factor=x_factor, y_factor=x_factor)
+                                     x_factor=x_factor, y_factor=y_factor)
 
         for trans_key in self.baseline_sim.trans_dens:
             trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
@@ -392,7 +393,7 @@ class Comparison:
         lines = {}
         trans_offset = 0
         lines[self.baseline] = ax.lines[0]
-        sim_0 = self.sims[self.baseline]
+        sim_0 = self.baseline_sim
 
         if trans:
             trans_offset = len(sim_0.trans_dens)
@@ -417,7 +418,7 @@ class Comparison:
         y_factor : float
         slider : FlashSlider
         """
-        for i, sim in enumerate(self.sims.values()):
+        for i, sim in self.sims.items():
             profile = sim.profiles.sel(chk=chk)
             x = profile[x_var] / x_factor
             y = profile[y_var] / y_factor
