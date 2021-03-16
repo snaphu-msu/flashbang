@@ -557,9 +557,9 @@ def add_sumx_profile(profile, isotopes):
     isotopes : [str]
         list of all isotopes
     """
-    sumx = profile[isotopes[0].strip()]
+    sumx = np.zeros(len(profile['zone']))
 
-    for isotope in isotopes[1:]:
+    for isotope in isotopes:
         isotope = isotope.strip()
         if isotope not in profile:
             raise ValueError(f"isotope '{isotope}' not found in model")
