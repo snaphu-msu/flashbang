@@ -869,6 +869,23 @@ class Simulation:
             plot.plot(trans_x, trans_y, linestyle='--', marker='',
                       color='k', linewidth=linewidth)
 
+    def _check_factors(self, x_var, y_var, x_factor, y_factor):
+        """Check if factors provided, otherwise use default
+
+        Parameters
+        ----------
+        x_var : str
+        y_var : str
+        x_factor : float
+        y_factor : float
+        """
+        if x_factor is None:
+            x_factor = self.config.factor(x_var)
+        if y_factor is None:
+            y_factor = self.config.factor(y_var)
+
+        return x_factor, y_factor
+
     # =======================================================
     #                   Convenience
     # =======================================================
