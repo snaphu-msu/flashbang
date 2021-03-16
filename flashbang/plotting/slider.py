@@ -9,6 +9,8 @@ class FlashSlider:
                  chk_table,
                  trans,
                  trans_dens,
+                 x_factor=1,
+                 y_factor=1,
                  ):
         """Handles a slider plot
 
@@ -22,11 +24,15 @@ class FlashSlider:
             Whether transition density lines are plotted
         trans_dens : {}
             names and values of transition densities
+        x_factor : float
+        y_factor : float
         """
         self.y_vars = y_vars
         self.chk_table = chk_table
         self.trans = trans
         self.trans_dens = trans_dens
+        self.x_factor = x_factor
+        self.y_factor = y_factor
 
         self.fig, self.ax, self.slider = self.setup()
         self.lines = None
@@ -80,8 +86,8 @@ class FlashSlider:
         if self.lines is None:
             self.get_ax_lines()
 
-        self.lines[y_var].set_xdata(x)
-        self.lines[y_var].set_ydata(y)
+        self.lines[y_var].set_xdata(x / self.x_factor)
+        self.lines[y_var].set_ydata(y / self.y_factor)
 
     def update_trans_lines(self, chk, x, y):
         """Update trans line values on plot
