@@ -231,7 +231,8 @@ class Simulation:
         self.timesteps = load_save.get_timesteps(run=self.run,
                                                  model=self.model,
                                                  model_set=self.model_set,
-                                                 reload=reload, save=save,
+                                                 reload=reload,
+                                                 save=save,
                                                  verbose=self.verbose)
 
     # =======================================================
@@ -374,8 +375,11 @@ class Simulation:
         chk = ensure_sequence(chk)
         y_vars = ensure_sequence(y_vars)
         n_var = len(y_vars)
-        fig, ax = plot_tools.setup_subplots(n_var, max_cols=max_cols, sharex=True,
-                                            sub_figsize=sub_figsize, squeeze=False)
+        fig, ax = plot_tools.setup_subplots(n_var,
+                                            max_cols=max_cols,
+                                            sharex=True,
+                                            sub_figsize=sub_figsize,
+                                            squeeze=False)
 
         for i, y_var in enumerate(y_vars):
             row = int(np.floor(i / max_cols))
@@ -384,13 +388,20 @@ class Simulation:
             show_title = title if i == 0 else False
 
             self.plot_profile(chk=chk,
-                              y_var=y_var, x_var=x_var,
-                              y_scale=y_scale, x_scale=x_scale,
-                              x_factor=x_factor, y_factor=y_factor,
-                              x_label=x_label, y_label=y_label,
-                              ax=ax[row, col], trans=trans,
-                              legend=show_legend, legend_loc=legend_loc,
-                              title=show_title, title_str=title_str)
+                              y_var=y_var,
+                              x_var=x_var,
+                              y_scale=y_scale,
+                              x_scale=x_scale,
+                              x_factor=x_factor,
+                              y_factor=y_factor,
+                              x_label=x_label,
+                              y_label=y_label,
+                              ax=ax[row, col],
+                              trans=trans,
+                              legend=show_legend,
+                              legend_loc=legend_loc,
+                              title=show_title,
+                              title_str=title_str)
         return fig
 
     def plot_profile(self, chk, y_var,
@@ -445,15 +456,24 @@ class Simulation:
         if trans is None:
             trans = self.config.trans('plot')
 
-        plot = Plotter(ax=ax, config=self.config,
-                       x_var=x_var, y_var=y_var,
-                       x_lims=x_lims, y_lims=y_lims,
-                       x_scale=x_scale, y_scale=y_scale,
-                       x_label=x_label, y_label=y_label,
-                       x_factor=x_factor, y_factor=y_factor,
-                       linestyle=linestyle, marker=marker,
-                       title=title, title_str=title_str,
-                       legend=legend, legend_loc=legend_loc,
+        plot = Plotter(ax=ax,
+                       config=self.config,
+                       x_var=x_var,
+                       y_var=y_var,
+                       x_lims=x_lims,
+                       y_lims=y_lims,
+                       x_scale=x_scale,
+                       y_scale=y_scale,
+                       x_label=x_label,
+                       y_label=y_label,
+                       x_factor=x_factor,
+                       y_factor=y_factor,
+                       linestyle=linestyle,
+                       marker=marker,
+                       title=title,
+                       title_str=title_str,
+                       legend=legend,
+                       legend_loc=legend_loc,
                        verbose=self.verbose)
 
         for i in chk:
@@ -521,14 +541,22 @@ class Simulation:
 
         title_str = self._get_title(chk=chk, title_str=title_str)
 
-        plot = Plotter(ax=ax, config=self.config,
-                       x_var=x_var, y_var='X',
-                       x_lims=x_lims, y_lims=y_lims,
-                       x_scale=x_scale, y_scale=y_scale,
-                       x_label=x_label, y_label=y_label,
-                       x_factor=x_factor, y_factor=y_factor,
-                       title=title, title_str=title_str,
-                       legend=legend, legend_loc=legend_loc,
+        plot = Plotter(ax=ax,
+                       config=self.config,
+                       x_var=x_var,
+                       y_var='X',
+                       x_lims=x_lims,
+                       y_lims=y_lims,
+                       x_scale=x_scale,
+                       y_scale=y_scale,
+                       x_label=x_label,
+                       y_label=y_label,
+                       x_factor=x_factor,
+                       y_factor=y_factor,
+                       title=title,
+                       title_str=title_str,
+                       legend=legend,
+                       legend_loc=legend_loc,
                        verbose=self.verbose)
 
         profile = self.profiles.sel(chk=chk)
@@ -587,15 +615,24 @@ class Simulation:
         color : str
         data_only : bool
         """
-        plot = Plotter(ax=ax, config=self.config,
-                       x_var='time', y_var=y_var,
-                       x_lims=x_lims, y_lims=y_lims,
-                       x_scale=x_scale, y_scale=y_scale,
-                       x_label=x_label, y_label=y_label,
-                       x_factor=x_factor, y_factor=y_factor,
-                       linestyle=linestyle, marker=marker,
-                       title=title, title_str=title_str,
-                       legend=legend, legend_loc=legend_loc,
+        plot = Plotter(ax=ax,
+                       config=self.config,
+                       x_var='time',
+                       y_var=y_var,
+                       x_lims=x_lims,
+                       y_lims=y_lims,
+                       x_scale=x_scale,
+                       y_scale=y_scale,
+                       x_label=x_label,
+                       y_label=y_label,
+                       x_factor=x_factor,
+                       y_factor=y_factor,
+                       linestyle=linestyle,
+                       marker=marker,
+                       title=title,
+                       title_str=title_str,
+                       legend=legend,
+                       legend_loc=legend_loc,
                        verbose=self.verbose)
 
         t_offset = 0
@@ -642,14 +679,22 @@ class Simulation:
         marker : str
         data_only : bool
         """
-        plot = Plotter(ax=ax, config=self.config,
-                       x_var='chk', y_var=y_var,
-                       x_lims=x_lims, y_lims=y_lims,
-                       x_scale=x_scale, y_scale=y_scale,
-                       x_label=x_label, y_label=y_label,
-                       title=title, title_str=title_str,
-                       legend=legend, legend_loc=legend_loc,
-                       linestyle=linestyle, marker=marker,
+        plot = Plotter(ax=ax,
+                       config=self.config,
+                       x_var='chk',
+                       y_var=y_var,
+                       x_lims=x_lims,
+                       y_lims=y_lims,
+                       x_scale=x_scale,
+                       y_scale=y_scale,
+                       x_label=x_label,
+                       y_label=y_label,
+                       title=title,
+                       title_str=title_str,
+                       legend=legend,
+                       legend_loc=legend_loc,
+                       linestyle=linestyle,
+                       marker=marker,
                        verbose=self.verbose)
 
         for mass in self.tracers['mass']:
@@ -717,9 +762,9 @@ class Simulation:
         # ----------------
         self._check_trans(trans=trans)
         x_factor, y_factor = self._check_factors(x_var=x_var,
-                                                y_var=y_var,
-                                                x_factor=x_factor,
-                                                y_factor=y_factor)
+                                                 y_var=y_var,
+                                                 x_factor=x_factor,
+                                                 y_factor=y_factor)
         if trans is None:
             trans = self.config.trans('plot')
 
@@ -731,12 +776,18 @@ class Simulation:
                              y_factor=y_factor)
 
         plot = self.plot_profile(chk=self.chk_table.index[-1],
-                                 y_var=y_var, x_var=x_var,
-                                 y_scale=y_scale, x_scale=x_scale,
-                                 x_factor=x_factor, y_factor=y_factor,
-                                 y_lims=y_lims, x_lims=x_lims,
-                                 x_label=x_label, y_label=y_label,
-                                 legend=legend, legend_loc=legend_loc,
+                                 y_var=y_var,
+                                 x_var=x_var,
+                                 y_scale=y_scale,
+                                 x_scale=x_scale,
+                                 x_factor=x_factor,
+                                 y_factor=y_factor,
+                                 y_lims=y_lims,
+                                 x_lims=x_lims,
+                                 x_label=x_label,
+                                 y_label=y_label,
+                                 legend=legend,
+                                 legend_loc=legend_loc,
                                  title=title,
                                  ax=slider.ax,
                                  trans=trans,
@@ -797,9 +848,9 @@ class Simulation:
         self._check_composition()
         self._check_trans(trans=trans)
         x_factor, y_factor = self._check_factors(x_var=x_var,
-                                                y_var='X',
-                                                x_factor=x_factor,
-                                                y_factor=y_factor)
+                                                 y_var='X',
+                                                 x_factor=x_factor,
+                                                 y_factor=y_factor)
 
         if y_vars is None:
             y_vars = self.config.plotting('isotopes')
@@ -817,12 +868,18 @@ class Simulation:
                              y_factor=y_factor)
 
         plot = self.plot_composition(chk=self.chk_table.index[-1],
-                                     x_var=x_var, y_vars=y_vars,
-                                     x_scale=x_scale, y_scale=y_scale,
-                                     x_factor=x_factor, y_factor=y_factor,
-                                     y_lims=y_lims, x_lims=x_lims,
-                                     x_label=x_label, y_label=y_label,
-                                     legend=legend, legend_loc=legend_loc,
+                                     x_var=x_var,
+                                     y_vars=y_vars,
+                                     x_scale=x_scale,
+                                     y_scale=y_scale,
+                                     x_factor=x_factor,
+                                     y_factor=y_factor,
+                                     y_lims=y_lims,
+                                     x_lims=x_lims,
+                                     x_label=x_label,
+                                     y_label=y_label,
+                                     legend=legend,
+                                     legend_loc=legend_loc,
                                      title=title,
                                      ax=slider.ax,
                                      trans=trans)
@@ -877,10 +934,16 @@ class Simulation:
         linewidth : float
         """
         for trans_key in self.trans_dens:
-            trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
-                                                  x=x, y=y)
-            plot.plot(trans_x, trans_y, linestyle='--', marker='',
-                      color='k', linewidth=linewidth)
+            trans_x, trans_y = self._get_trans_xy(chk=chk,
+                                                  trans_key=trans_key,
+                                                  x=x,
+                                                  y=y)
+            plot.plot(x=trans_x,
+                      y=trans_y,
+                      linestyle='--',
+                      marker='',
+                      color='k',
+                      linewidth=linewidth)
 
     def _check_factors(self, x_var, y_var, x_factor, y_factor):
         """Check if factors provided, otherwise use default

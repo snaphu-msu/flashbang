@@ -110,23 +110,36 @@ class Comparison:
         """
         title_str = self._get_title(chk=chk, title_str=title_str)
 
-        plot = Plotter(ax=ax, config=self.config,
-                       x_var=x_var, y_var=y_var,
-                       x_lims=x_lims, y_lims=y_lims,
-                       x_scale=x_scale, y_scale=y_scale,
-                       x_label=x_label, y_label=y_label,
-                       x_factor=x_factor, y_factor=y_factor,
-                       title=title, title_str=title_str,
-                       legend=legend, legend_loc=legend_loc,
+        plot = Plotter(ax=ax,
+                       config=self.config,
+                       x_var=x_var,
+                       y_var=y_var,
+                       x_lims=x_lims,
+                       y_lims=y_lims,
+                       x_scale=x_scale,
+                       y_scale=y_scale,
+                       x_label=x_label,
+                       y_label=y_label,
+                       x_factor=x_factor,
+                       y_factor=y_factor,
+                       title=title,
+                       title_str=title_str,
+                       legend=legend,
+                       legend_loc=legend_loc,
                        verbose=self.verbose)
 
         for i, sim in self.sims.items():
             model = self.models[i]
-            sim.plot_profile(chk=chk, y_var=y_var, x_var=x_var,
-                             x_factor=x_factor, y_factor=y_factor,
-                             marker=marker, linestyle=linestyle,
+            sim.plot_profile(chk=chk,
+                             y_var=y_var,
+                             x_var=x_var,
+                             x_factor=x_factor,
+                             y_factor=y_factor,
+                             marker=marker,
+                             linestyle=linestyle,
                              trans=trans if model == self.baseline else False,
-                             ax=plot.ax, label=model,
+                             ax=plot.ax,
+                             label=model,
                              data_only=True)
 
         if not data_only:
@@ -168,20 +181,32 @@ class Comparison:
         zero_time : bool
         data_only : bool
         """
-        plot = Plotter(ax=ax, config=self.config,
-                       x_var='time', y_var=y_var,
-                       x_lims=x_lims, y_lims=y_lims,
-                       x_scale=x_scale, y_scale=y_scale,
-                       x_label=x_label, y_label=y_label,
-                       title=title, title_str=title_str,
-                       legend=legend, legend_loc=legend_loc,
+        plot = Plotter(ax=ax,
+                       config=self.config,
+                       x_var='time',
+                       y_var=y_var,
+                       x_lims=x_lims,
+                       y_lims=y_lims,
+                       x_scale=x_scale,
+                       y_scale=y_scale,
+                       x_label=x_label,
+                       y_label=y_label,
+                       title=title,
+                       title_str=title_str,
+                       legend=legend,
+                       legend_loc=legend_loc,
                        verbose=self.verbose)
 
         for i, sim in self.sims.items():
-            sim.plot_dat(y_var=y_var, ax=plot.ax, label=self.models[i],
-                         x_factor=x_factor, y_factor=y_factor,
-                         marker=marker, zero_time=zero_time,
-                         linestyle=linestyle, data_only=True)
+            sim.plot_dat(y_var=y_var,
+                         ax=plot.ax,
+                         label=self.models[i],
+                         x_factor=x_factor,
+                         y_factor=y_factor,
+                         marker=marker,
+                         zero_time=zero_time,
+                         linestyle=linestyle,
+                         data_only=True)
 
         if not data_only:
             plot.set_all()
@@ -263,12 +288,18 @@ class Comparison:
                                     y_factor=y_factor)
 
         plot = self.plot_profile(chk=chk_max,
-                                 y_var=y_var, x_var=x_var,
-                                 y_scale=y_scale, x_scale=x_scale,
-                                 y_lims=y_lims, x_lims=x_lims,
-                                 x_factor=x_factor, y_factor=y_factor,
-                                 x_label=x_label, y_label=y_label,
-                                 legend=legend, legend_loc=legend_loc,
+                                 y_var=y_var,
+                                 x_var=x_var,
+                                 y_scale=y_scale,
+                                 x_scale=x_scale,
+                                 y_lims=y_lims,
+                                 x_lims=x_lims,
+                                 x_factor=x_factor,
+                                 y_factor=y_factor,
+                                 x_label=x_label,
+                                 y_label=y_label,
+                                 legend=legend,
+                                 legend_loc=legend_loc,
                                  title=title,
                                  ax=slider.ax,
                                  trans=False,
@@ -335,8 +366,11 @@ class Comparison:
         x, y = self._get_baseline_xy(chk=chk, x_var=x_var, y_var=y_var)
 
         for trans_key in self.baseline_sim.trans_dens:
-            trans_x, trans_y = self._get_trans_xy(chk=chk, trans_key=trans_key,
-                                                  x=x, y=y)
+            trans_x, trans_y = self._get_trans_xy(chk=chk,
+                                                  trans_key=trans_key,
+                                                  x=x,
+                                                  y=y)
+
             plot.plot(trans_x, trans_y, linestyle='--', marker='',
                       color='k', linewidth=linewidth)
 

@@ -34,3 +34,4 @@ config.py
 paths.py
 plot_tools.py
 tools.py
+slider.py

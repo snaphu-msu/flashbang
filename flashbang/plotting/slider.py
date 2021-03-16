@@ -102,7 +102,9 @@ class FlashSlider:
             for trans_key in self.trans_dens:
                 trans_x, trans_y = self.get_trans_xy(chk=chk,
                                                      trans_key=trans_key,
-                                                     x=x, y=y)
+                                                     x=x,
+                                                     y=y)
+
                 self.update_ax_line(x=trans_x, y=trans_y, y_var=trans_key)
 
     def get_trans_xy(self, chk, trans_key, x, y):

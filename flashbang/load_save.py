@@ -49,8 +49,11 @@ def load_cache(name, run, model, model_set,
     chk : int
     verbose : bool
     """
-    filepath = paths.cache_filepath(name, run=run, model=model,
-                                    model_set=model_set, chk=chk)
+    filepath = paths.cache_filepath(name,
+                                    run=run,
+                                    model=model,
+                                    model_set=model_set,
+                                    chk=chk)
 
     printv(f'Loading {name} cache: {filepath}', verbose)
 
@@ -85,8 +88,12 @@ def save_cache(name, data, run, model, model_set,
     verbose : bool
     """
     ensure_cache_dir_exists(model, model_set=model_set, verbose=False)
-    filepath = paths.cache_filepath(name, run=run, model=model,
-                                    model_set=model_set, chk=chk)
+
+    filepath = paths.cache_filepath(name,
+                                    run=run,
+                                    model=model,
+                                    model_set=model_set,
+                                    chk=chk)
 
     printv(f'Saving {name} cache: {filepath}', verbose)
 
@@ -139,18 +146,28 @@ def get_dat(run, model, model_set,
     # attempt to load cache file
     if not reload:
         try:
-            dat_table = load_cache('dat', run=run, model=model,
-                                   model_set=model_set, verbose=verbose)
+            dat_table = load_cache('dat',
+                                   run=run,
+                                   model=model,
+                                   model_set=model_set,
+                                   verbose=verbose)
         except FileNotFoundError:
             printv('dat cache not found, reloading', verbose)
 
     # fall back on loading raw .dat
     if dat_table is None:
-        dat_table = extract_dat(run=run, model=model, model_set=model_set,
-                                cols_dict=cols_dict, verbose=verbose)
+        dat_table = extract_dat(run=run,
+                                model=model,
+                                model_set=model_set,
+                                cols_dict=cols_dict,
+                                verbose=verbose)
         if save:
-            save_cache('dat', data=dat_table, run=run, model=model,
-                       model_set=model_set, verbose=verbose)
+            save_cache('dat',
+                       data=dat_table,
+                       run=run,
+                       model=model,
+                       model_set=model_set,
+                       verbose=verbose)
 
     return dat_table
 
@@ -170,9 +187,12 @@ def extract_dat(run, model, model_set, cols_dict,
         dictionary with column names and indexes (Note: 1-indexed)
     verbose : bool
     """
-    filepath = paths.flash_filepath('dat', run=run, model=model, model_set=model_set)
-    printv(f'Extracting dat: {filepath}', verbose=verbose)
+    filepath = paths.flash_filepath('dat',
+                                    run=run,
+                                    model=model,
+                                    model_set=model_set)
 
+    printv(f'Extracting dat: {filepath}', verbose=verbose)
     idxs = []
     keys = []
 
@@ -180,8 +200,13 @@ def extract_dat(run, model, model_set, cols_dict,
         idxs += [idx_1 - 1]  # change to zero-indexed
         keys += [key]
 
-    dat = pd.read_csv(filepath, usecols=idxs, names=keys, skiprows=1, header=None,
-                      delim_whitespace=True, low_memory=False)
+    dat = pd.read_csv(filepath,
+                      usecols=idxs,
+                      names=keys,
+                      skiprows=1,
+                      header=None,
+                      delim_whitespace=True,
+                      low_memory=False)
 
     dat.sort_values('time', inplace=True)  # ensure monotonic
 
@@ -197,7 +222,10 @@ def print_dat_colnames(run, model, model_set):
     model : str
     model_set : str
     """
-    filepath = paths.flash_filepath('dat', run=run, model=model, model_set=model_set)
+    filepath = paths.flash_filepath('dat',
+                                    run=run,
+                                    model=model,
+                                    model_set=model_set)
 
     with open(filepath, 'r') as f:
         colnames = f.readline().split()
@@ -240,25 +268,38 @@ def get_multiprofile(run, model, model_set,
     """
     def save_file():
         if save:
-            save_cache('multiprofile', data=multiprofile, run=run, model=model,
-                       model_set=model_set, verbose=verbose)
+            save_cache('multiprofile',
+                       data=multiprofile,
+                       run=run,
+                       model=model,
+                       model_set=model_set,
+                       verbose=verbose)
 
     if chk_list is None:
-        chk_list = find_chk(run=run, model=model, model_set=model_set, verbose=verbose)
+        chk_list = find_chk(run=run,
+                            model=model,
+                            model_set=model_set,
+                            verbose=verbose)
 
     # 1. Try loading multiprofile
     multiprofile = None
     if not reload:
-        multiprofile = try_load_multiprofile(run=run, model=model,
+        multiprofile = try_load_multiprofile(run=run,
+                                             model=model,
                                              model_set=model_set,
                                              verbose=verbose)
 
     # 2. Reload individual profiles
     if multiprofile is None:
-        profiles = get_all_profiles(run=run, model=model, model_set=model_set,
-                                    chk_list=chk_list, params=params,
-                                    derived_params=derived_params, save=save,
-                                    verbose=verbose, config=config)
+        profiles = get_all_profiles(run=run,
+                                    model=model,
+                                    model_set=model_set,
+                                    chk_list=chk_list,
+                                    params=params,
+                                    derived_params=derived_params,
+                                    save=save,
+                                    verbose=verbose,
+                                    config=config)
 
         multiprofile = join_profiles(profiles, verbose=verbose)
         save_file()
@@ -270,10 +311,13 @@ def get_multiprofile(run, model, model_set,
 
         if len(missing_chk) > 0:
             printv('Loading missing profiles', verbose=verbose)
-            missing_profiles = get_all_profiles(run=run, model=model,
+            missing_profiles = get_all_profiles(run=run,
+                                                model=model,
                                                 model_set=model_set,
-                                                chk_list=missing_chk, params=params,
-                                                save=save, verbose=verbose,
+                                                chk_list=missing_chk,
+                                                params=params,
+                                                save=save,
+                                                verbose=verbose,
                                                 derived_params=derived_params,
                                                 config=config)
 
@@ -313,7 +357,10 @@ def get_all_profiles(run, model, model_set,
     printv(f'Loading chk profiles', verbose=verbose)
 
     if chk_list is None:
-        chk_list = find_chk(run=run, model=model, model_set=model_set, verbose=verbose)
+        chk_list = find_chk(run=run,
+                            model=model,
+                            model_set=model_set,
+                            verbose=verbose)
 
     profiles = {}
     chk_max = chk_list[-1]
@@ -321,9 +368,15 @@ def get_all_profiles(run, model, model_set,
     for chk in chk_list:
         printv(f'\rchk: {chk}/{chk_max}', end='', verbose=verbose)
 
-        profiles[chk] = get_profile(chk, run=run, model=model, model_set=model_set,
-                                    params=params, derived_params=derived_params,
-                                    config=config, reload=reload, save=save,
+        profiles[chk] = get_profile(chk,
+                                    run=run,
+                                    model=model,
+                                    model_set=model_set,
+                                    params=params,
+                                    derived_params=derived_params,
+                                    config=config,
+                                    reload=reload,
+                                    save=save,
                                     verbose=False)
     printv('', verbose=verbose)
     return profiles
@@ -343,8 +396,11 @@ def try_load_multiprofile(run, model, model_set, verbose=True):
    """
     multiprofile = None
     try:
-        multiprofile = load_cache('multiprofile', run=run, model=model,
-                                  model_set=model_set, verbose=verbose)
+        multiprofile = load_cache('multiprofile',
+                                  run=run,
+                                  model=model,
+                                  model_set=model_set,
+                                  verbose=verbose)
     except FileNotFoundError:
         printv('multiprofile cache not found, reloading', verbose=verbose)
         pass
@@ -386,19 +442,32 @@ def get_profile(chk, run, model, model_set,
     # attempt to load cache file
     if not reload:
         try:
-            profile = load_cache('profile', chk=chk, run=run, model=model,
-                                 model_set=model_set, verbose=verbose)
+            profile = load_cache('profile',
+                                 chk=chk,
+                                 run=run,
+                                 model=model,
+                                 model_set=model_set,
+                                 verbose=verbose)
         except FileNotFoundError:
             printv('profile cache not found, reloading', verbose)
 
     # fall back on loading raw chk
     if profile is None:
-        profile = extract_profile(chk, run=run, model=model, model_set=model_set,
-                                  config=config, params=params,
+        profile = extract_profile(chk,
+                                  run=run,
+                                  model=model,
+                                  model_set=model_set,
+                                  config=config,
+                                  params=params,
                                   derived_params=derived_params)
         if save:
-            save_cache('profile', data=profile, chk=chk, run=run, model=model,
-                       model_set=model_set, verbose=verbose)
+            save_cache('profile',
+                       data=profile,
+                       chk=chk,
+                       run=run,
+                       model=model,
+                       model_set=model_set,
+                       verbose=verbose)
 
     return profile
 
@@ -481,8 +550,12 @@ def extract_profile(chk, run, model, model_set,
         profile[var.strip()] = ('zone', np.array(chk_data[var]))
 
     if 'mass' in derived_params:
-        chk_h5py = load_chk(chk=chk, run=run, model=model, model_set=model_set,
+        chk_h5py = load_chk(chk=chk,
+                            run=run,
+                            model=model,
+                            model_set=model_set,
                             use_h5py=True)
+
         add_mass_profile(profile=profile, chk_h5py=chk_h5py)
         chk_h5py.close()
 
@@ -611,8 +684,11 @@ def load_chk(chk, run, model, model_set, use_h5py=False):
     model_set : str
     use_h5py : bool
     """
-    filepath = paths.flash_filepath('chk', chk=chk, run=run,
-                                    model=model, model_set=model_set)
+    filepath = paths.flash_filepath('chk',
+                                    chk=chk,
+                                    run=run,
+                                    model=model,
+                                    model_set=model_set)
 
     if not os.path.exists(filepath):
         raise FileNotFoundError(f'checkpoint {chk:04d} file does not exist: {filepath}')
@@ -644,13 +720,19 @@ def get_chk_table(run, model, model_set,
     verbose : bool
     """
     chk_table = pd.DataFrame()
-    chk_list = find_chk(run=run, model=model, model_set=model_set, verbose=verbose)
+    chk_list = find_chk(run=run,
+                        model=model,
+                        model_set=model_set,
+                        verbose=verbose)
 
     # attempt to load cache file
     if not reload:
         try:
-            chk_table = load_cache('chk_table', run=run, model=model,
-                                   model_set=model_set, verbose=verbose)
+            chk_table = load_cache('chk_table',
+                                   run=run,
+                                   model=model,
+                                   model_set=model_set,
+                                   verbose=verbose)
         except FileNotFoundError:
             printv('chk_table cache not found, reloading', verbose)
 
@@ -659,8 +741,12 @@ def get_chk_table(run, model, model_set,
         chk_table = extract_chk_table(chk_list)
 
         if save:
-            save_cache('chk_table', data=chk_table, run=run, model=model,
-                       model_set=model_set, verbose=verbose)
+            save_cache('chk_table',
+                       data=chk_table,
+                       run=run,
+                       model=model,
+                       model_set=model_set,
+                       verbose=verbose)
 
     return chk_table
 
@@ -828,7 +914,10 @@ def get_bounce_time(run, model, model_set,
         String which immediately precedes the bounce time
     verbose : bool
     """
-    filepath = paths.flash_filepath('log', run=run, model=model, model_set=model_set)
+    filepath = paths.flash_filepath(name='log',
+                                    run=run,
+                                    model=model,
+                                    model_set=model_set)
     bounce_time = 0.0
     printv(f'Getting bounce time: {filepath}', verbose)
 
@@ -887,7 +976,11 @@ def extract_timesteps_log(run, model, model_set,
     next_line = -99
     arrays = {key: [] for key in ['chk', 'time', 'nstep']}
 
-    filepath = paths.flash_filepath('log', run=run, model=model, model_set=model_set)
+    filepath = paths.flash_filepath(name='log',
+                                    run=run,
+                                    model=model,
+                                    model_set=model_set)
+
     printv(f'Extracting chk timesteps: {filepath}', verbose)
 
     with open(filepath, 'r') as f:
@@ -951,8 +1044,11 @@ def get_tracers(run, model, model_set,
     # attempt to load from cache
     if not reload:
         try:
-            tracers = load_cache('tracers', run=run, model=model,
-                                 model_set=model_set, verbose=verbose)
+            tracers = load_cache(name='tracers',
+                                 run=run,
+                                 model=model,
+                                 model_set=model_set,
+                                 verbose=verbose)
         except FileNotFoundError:
             printv('tracers cache not found, reloading', verbose)
 
@@ -968,20 +1064,29 @@ def get_tracers(run, model, model_set,
             params = conf.tracers('params')
 
         if profiles is None:
-            chk_list = find_chk(run=run, model=model, model_set=model_set,
+            chk_list = find_chk(run=run,
+                                model=model,
+                                model_set=model_set,
                                 verbose=verbose)
 
-            profiles = get_multiprofile(run=run, model=model,
-                                        model_set=model_set, chk_list=chk_list,
-                                        params=params, verbose=verbose)
+            profiles = get_multiprofile(run=run,
+                                        model=model,
+                                        model_set=model_set,
+                                        chk_list=chk_list,
+                                        params=params,
+                                        verbose=verbose)
 
         tracers = extract_multi_tracers(mass_grid,
                                         profiles=profiles,
                                         params=params,
                                         verbose=verbose)
         if save:
-            save_cache('tracers', tracers, run=run, model=model,
-                       model_set=model_set, verbose=verbose)
+            save_cache(name='tracers',
+                       data=tracers,
+                       run=run,
+                       model=model,
+                       model_set=model_set,
+                       verbose=verbose)
     return tracers
 
 
