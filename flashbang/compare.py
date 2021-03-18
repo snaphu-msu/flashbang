@@ -36,10 +36,10 @@ class Comparison:
         self.verbose = verbose
         self.config = Config(name=config, verbose=self.verbose)
 
-        n_models = len(models)
-        self.runs = tools.ensure_sequence(runs, n_models)
+        self.n_models = len(models)
+        self.runs = tools.ensure_sequence(runs, n=self.n_models)
         self.models = models
-        self.model_sets = tools.ensure_sequence(model_sets, n_models)
+        self.model_sets = tools.ensure_sequence(model_sets, n=self.n_models)
         self.load_models(config=config)
 
         self.baseline = models[0]
@@ -83,7 +83,7 @@ class Comparison:
 
         Parameters
         ----------
-        chk : int
+        chk : int or [int]
         y_var : str
             variable to plot on y-axis (from Simulation.profile)
         x_var : str
@@ -106,7 +106,8 @@ class Comparison:
         data_only : bool
             only plot data, neglecting all titles/labels/scales
         """
-        title_str = self._get_title(chk=chk, title_str=title_str)
+        chk = tools.ensure_sequence(chk, n=self.n_models)
+        title_str = self._get_title(chk=chk[0], title_str=title_str)
 
         plot = Plotter(ax=ax,
                        config=self.config,
@@ -129,7 +130,7 @@ class Comparison:
         for i, sim in self.sims.items():
             model = self.models[i]
 
-            sim.plot_profile(chk=chk,
+            sim.plot_profile(chk=chk[i],
                              y_var=y_var,
                              x_var=x_var,
                              x_factor=x_factor,
