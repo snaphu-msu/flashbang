@@ -205,7 +205,8 @@ def extract_dat(run, model, model_set, cols_dict,
                       skiprows=1,
                       header=None,
                       delim_whitespace=True,
-                      low_memory=False)
+                      low_memory=False,
+                      dtype='float64')
 
     dat.sort_values('time', inplace=True)  # ensure monotonic
 
