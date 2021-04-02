@@ -154,3 +154,21 @@ def load_config_file(name, verbose=True):
             config[section][option] = ast.literal_eval(ini.get(section, option))
 
     return config
+
+
+def check_config(config, verbose=True):
+    """Check provided config, load if necessary
+
+    Returns : Config
+
+    Parameters
+    ----------
+    config: str or Config
+    verbose : bool
+    """
+    if (config is None) or (type(config) is str):
+        config = Config(name=config, verbose=verbose)
+    elif not isinstance(config, Config):
+        raise ValueError("invalid 'config' value")
+
+    return config
