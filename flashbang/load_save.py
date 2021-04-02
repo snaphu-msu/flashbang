@@ -114,6 +114,7 @@ def save_cache(name, data, run, model, model_set,
 # =======================================================================
 def get_dat(run, model, model_set,
             cols_dict=None,
+            derived=None,
             reload=False,
             save=True,
             config=None,
@@ -129,6 +130,8 @@ def get_dat(run, model, model_set,
     model_set : str
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
+    derived : [str]
+        list of derived variables
     config : str or Config
     reload : bool
     save : bool
@@ -141,6 +144,9 @@ def get_dat(run, model, model_set,
 
     if cols_dict is None:
         cols_dict = config.dat('columns')
+
+    if derived is None:
+        derived = config.dat('derived')
 
     # attempt to load cache file
     if not reload:
@@ -159,6 +165,8 @@ def get_dat(run, model, model_set,
                                 model=model,
                                 model_set=model_set,
                                 cols_dict=cols_dict,
+                                derived=derived,
+                                config=config,
                                 verbose=verbose)
         if save:
             save_cache('dat',
@@ -171,7 +179,10 @@ def get_dat(run, model, model_set,
     return dat_table
 
 
-def extract_dat(run, model, model_set, cols_dict,
+def extract_dat(run, model, model_set,
+                cols_dict=None,
+                derived=None,
+                config=None,
                 verbose=True):
     """Extract and reduce data from .dat file
 
@@ -184,8 +195,20 @@ def extract_dat(run, model, model_set, cols_dict,
     model_set : str
     cols_dict : {}
         dictionary with column names and indexes (Note: 1-indexed)
+    derived : [str]
+        list of derived variables
+    config: str or Config
     verbose : bool
     """
+    if (config is None) or (type(config) is str):
+        config = Config(name=config, verbose=verbose)
+
+    if cols_dict is None:
+        cols_dict = config.dat('columns')
+
+    if derived is None:
+        derived = config.dat('derived')
+
     filepath = paths.flash_filepath('dat',
                                     run=run,
                                     model=model,
@@ -209,6 +232,9 @@ def extract_dat(run, model, model_set, cols_dict,
                       dtype='float64')
 
     dat.sort_values('time', inplace=True)  # ensure monotonic
+
+    if 'heat_eff' in derived:
+        add_heat_eff(dat)
 
     return dat
 
