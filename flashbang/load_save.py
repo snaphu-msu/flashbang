@@ -213,6 +213,23 @@ def extract_dat(run, model, model_set, cols_dict,
     return dat
 
 
+def add_heat_eff(dat):
+    """Add neutrino heating efficiency (eta_heat) to dat table
+
+    Parameters
+    ----------
+    dat : pd.DataFrame
+    """
+    if ('lnue' not in dat) or ('lnueb' not in dat) or ('gain_heat' not in dat):
+        raise ValueError(f'Need lnue, lnueb, and gain_heat to calculate heat_eff')
+
+    gain_heat = dat['gain_heat']
+    lnue = 1e51 * dat['lnue']  # convert to erg/s
+    lnueb = 1e51 * dat['lnueb']
+
+    dat['heat_eff'] = gain_heat / (lnue + lnueb + gain_heat)
+
+
 def print_dat_colnames(run, model, model_set):
     """Print all column names from .dat file
 
