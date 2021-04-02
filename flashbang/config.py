@@ -57,10 +57,14 @@ class Config:
     def dat(self, var):
         """Get dat property
         """
-        if var not in ['columns']:
-            raise ConfigError(f"'{var}' not a valid dat property")
-        else:
+        conf = self.config['dat']
+
+        if var == 'columns':
             return self.config['dat_columns']
+        elif var in conf:
+            return conf[var]
+        else:
+            raise ConfigError(f"'{var}' not a valid dat property")
 
     def trans(self, var):
         """Get transitions property
