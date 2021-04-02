@@ -168,7 +168,5 @@ def check_config(config, verbose=True):
     """
     if (config is None) or (type(config) is str):
         config = Config(name=config, verbose=verbose)
-    elif not isinstance(config, Config):
-        raise ValueError("invalid 'config' value")
 
     return config

@@ -28,7 +28,7 @@ from . import paths
 from .quantities import get_mass_enclosed
 from .extract_tracers import extract_multi_tracers
 from .tools import get_missing_elements, printv
-from .config import Config
+from .config import Config, check_config
 
 
 # ===============================================================
@@ -138,9 +138,7 @@ def get_dat(run, model, model_set,
     verbose : bool
     """
     dat_table = None
-
-    if (config is None) or (type(config) is str):
-        config = Config(name=config, verbose=verbose)
+    config = check_config(config, verbose=verbose)
 
     if cols_dict is None:
         cols_dict = config.dat('columns')
@@ -200,8 +198,7 @@ def extract_dat(run, model, model_set,
     config: str or Config
     verbose : bool
     """
-    if (config is None) or (type(config) is str):
-        config = Config(name=config, verbose=verbose)
+    config = check_config(config, verbose=verbose)
 
     if cols_dict is None:
         cols_dict = config.dat('columns')
@@ -578,8 +575,7 @@ def extract_profile(chk, run, model, model_set,
     config : str or Config
     verbose : bool
     """
-    if (config is None) or (type(config) is str):
-        config = Config(name=config, verbose=verbose)
+    config = check_config(config, verbose=verbose)
 
     if params is None:
         params = config.profiles('all')
