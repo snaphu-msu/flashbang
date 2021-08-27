@@ -213,6 +213,84 @@ class Comparison:
 
         return plot
 
+    def plot_composition(self, chk,
+                         x_var='r', y_vars=None,
+                         x_scale=None, y_scale=None,
+                         x_lims=None, y_lims=None,
+                         x_factor=None, y_factor=None,
+                         x_label=None, y_label=None,
+                         legend=True, legend_loc=None,
+                         title=True, title_str=None,
+                         ax=None,
+                         trans=None,
+                         data_only=False):
+        """Plot profile comparison
+
+        Returns : fig
+
+        Parameters
+        ----------
+        chk : int or [int]
+        y_vars : str
+        x_var : str
+        x_scale : 'log' or 'linear'
+        y_scale : 'log' or 'linear'
+        x_lims : [min, max]
+        y_lims : [min, max]
+        x_factor : float
+        y_factor : float
+        x_label : str
+        y_label : str
+        legend : bool
+        legend_loc : str or int
+        title : bool
+        title_str : str
+        ax : Axes
+        trans : bool
+        data_only : bool
+            only plot data, neglecting all titles/labels/scales
+        """
+        chk = tools.ensure_sequence(chk, n=self.n_models)
+        title_str = self._get_title(chk=chk[0], title_str=title_str)
+
+        plot = Plotter(ax=ax,
+                       config=self.config,
+                       x_var=x_var,
+                       y_var='X',
+                       x_lims=x_lims,
+                       y_lims=y_lims,
+                       x_scale=x_scale,
+                       y_scale=y_scale,
+                       x_label=x_label,
+                       y_label=y_label,
+                       x_factor=x_factor,
+                       y_factor=y_factor,
+                       title=title,
+                       title_str=title_str,
+                       legend=legend,
+                       legend_loc=legend_loc,
+                       verbose=self.verbose)
+
+        for i, sim in self.sims.items():
+            model = self.models[i]
+
+            sim.plot_composition(chk=chk[i],
+                                 y_vars=y_vars,
+                                 x_var=x_var,
+                                 x_factor=x_factor,
+                                 y_factor=y_factor,
+                                 trans=trans if model == self.baseline else False,
+                                 ax=plot.ax,
+                                 data_only=True)
+            if i == 0:
+                plot.set_legend()  # dont duplicate legend labels
+                plot.legend = False
+
+        if not data_only:
+            plot.set_all()
+
+        return plot
+
     # =======================================================
     #                      Sliders
     # =======================================================
