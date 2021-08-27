@@ -99,12 +99,15 @@ class Config:
     def ax_scale(self, var):
         """Get axis scale for given var, default to 'linear'
 
-        Returns : 'log' or 'linear'
+        Returns : str
         """
-        if var in self.plotting('ax_scales')['log']:
-            return 'log'
-        else:
-            return 'linear'
+        ax_scales = self.plotting('ax_scales')
+
+        for scale in ax_scales:
+            if var in ax_scales[scale]:
+                return scale
+
+        return 'linear'
 
     def ax_lims(self, var):
         """Get axis limits for given var
