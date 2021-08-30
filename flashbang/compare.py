@@ -33,6 +33,7 @@ class Comparison:
         verbose : bool
         """
         self.sims = {}
+        self.bounce = {}
         self.verbose = verbose
         self.config = Config(name=config, verbose=self.verbose)
 
@@ -61,6 +62,7 @@ class Comparison:
                                                  model_set=self.model_sets[i],
                                                  config=config,
                                                  verbose=self.verbose)
+            self.bounce[i] = self.sims[i].bounce
 
     # =======================================================
     #                      Plot
@@ -83,7 +85,8 @@ class Comparison:
 
         Parameters
         ----------
-        chk : int or [int]
+        chk : int, [int], or 'bounce'
+            if 'bounce', plot chk closest to bounce
         y_var : str
             variable to plot on y-axis (from Simulation.profile)
         x_var : str
@@ -106,6 +109,7 @@ class Comparison:
         data_only : bool
             only plot data, neglecting all titles/labels/scales
         """
+        chk = self._check_bounce(chk)
         chk = tools.ensure_sequence(chk, n=self.n_models)
         title_str = self._get_title(chk=chk[0], title_str=title_str)
 
@@ -489,6 +493,23 @@ class Comparison:
             y_factor = self.config.factor(y_var)
 
         return x_factor, y_factor
+
+    def _check_bounce(self, chk):
+        """Check if bounce chk requested
+
+        Returns: int or [int]
+
+        Parameters
+        ----------
+        chk : str, int, or [int]
+        """
+        if chk == 'bounce':
+            chk = np.zeros(self.n_models, dtype='int')
+
+            for i in self.sims:
+                chk[i] = self.bounce[i]['chk']
+
+        return chk
 
     # =======================================================
     #                      Slider Tools
