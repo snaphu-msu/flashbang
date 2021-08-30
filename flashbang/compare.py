@@ -234,7 +234,7 @@ class Comparison:
 
         Parameters
         ----------
-        chk : int or [int]
+        chk : int, [int] or 'bounce'
         y_vars : str
         x_var : str
         x_scale : 'log' or 'linear'
@@ -254,6 +254,7 @@ class Comparison:
         data_only : bool
             only plot data, neglecting all titles/labels/scales
         """
+        chk = self._check_bounce(chk)
         chk = tools.ensure_sequence(chk, n=self.n_models)
         title_str = self._get_title(chk=chk[0], title_str=title_str)
 
