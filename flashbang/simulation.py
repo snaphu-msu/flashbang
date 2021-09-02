@@ -305,8 +305,8 @@ class Simulation:
     def get_bounce_chk(self):
         """Find chk closest to bounce
         """
-        dt = self.timesteps['time'] - self.bounce['time']
-        chk = dt.abs().argsort()[0]
+        dt = (self.timesteps['time'] - self.bounce['time']).abs()
+        chk = dt.idxmin()
         chk_dt = self.timesteps.loc[chk, 'time'] - self.bounce['time']
 
         self.bounce['chk'] = chk
