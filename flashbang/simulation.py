@@ -155,6 +155,7 @@ class Simulation:
         self.get_bounce_chk()
         self.get_bounce_core_mass()
         self.get_bounce_ye()
+        self.get_bounce_velx()
 
     # =======================================================
     #                   Loading Data
@@ -353,6 +354,13 @@ class Simulation:
 
         self.bounce['ye_m'] = float(ye_m)
         self.bounce['ye_r'] = float(ye_r)
+
+    def get_bounce_velx(self):
+        """Get max radial velocity at bounce
+        """
+        cm_to_km = 1e-5
+        bounce_profile = self.profiles.sel(chk=self.bounce['chk'])
+        self.bounce['velx'] = float(bounce_profile.velx.max()) * cm_to_km
 
     # =======================================================
     #                      Plotting
