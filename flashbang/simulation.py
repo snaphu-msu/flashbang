@@ -345,10 +345,11 @@ class Simulation:
         radius : float
             radius (km) to sample
         """
+        km_to_cm = 1e5
         bounce_profile = self.profiles.sel(chk=self.bounce['chk'])
 
         ye_m = np.interp(mass, xp=bounce_profile.mass, fp=bounce_profile.ye)
-        ye_r = np.interp(radius, xp=bounce_profile.r, fp=bounce_profile.ye)
+        ye_r = np.interp(radius*km_to_cm, xp=bounce_profile.r, fp=bounce_profile.ye)
 
         self.bounce['ye_m'] = float(ye_m)
         self.bounce['ye_r'] = float(ye_r)
