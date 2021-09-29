@@ -154,6 +154,7 @@ class Simulation:
         self.get_bounce_time()
         self.get_bounce_chk()
         self.get_bounce_core_mass()
+        self.get_bounce_ye()
 
     # =======================================================
     #                   Loading Data
@@ -333,6 +334,24 @@ class Simulation:
             return
 
         self.bounce['core_mass'] = float(mass)
+
+    def get_bounce_ye(self, mass=0.1, radius=1):
+        """Get electron fraction at bounce
+
+        Parameters
+        ----------
+        mass : float
+            mass (Msun) coordinate to sample
+        radius : float
+            radius (km) to sample
+        """
+        bounce_profile = self.profiles.sel(chk=self.bounce['chk'])
+
+        ye_m = np.interp(mass, xp=bounce_profile.mass, fp=bounce_profile.ye)
+        ye_r = np.interp(radius, xp=bounce_profile.r, fp=bounce_profile.ye)
+
+        self.bounce['ye_m'] = float(ye_m)
+        self.bounce['ye_r'] = float(ye_r)
 
     # =======================================================
     #                      Plotting
