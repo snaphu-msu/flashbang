@@ -360,7 +360,7 @@ class Simulation:
         """
         cm_to_km = 1e-5
         bounce_profile = self.profiles.sel(chk=self.bounce['chk'])
-        self.bounce['velx'] = float(bounce_profile.velx.max()) * cm_to_km
+        self.bounce['velx'] = float(bounce_profile.velx.min()) * cm_to_km
 
     # =======================================================
     #                      Plotting
