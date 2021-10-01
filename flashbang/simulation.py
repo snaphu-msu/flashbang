@@ -156,6 +156,7 @@ class Simulation:
         self.get_bounce_core_mass()
         self.get_bounce_ye()
         self.get_bounce_velx()
+        self.get_bounce_rnue_converge()
 
     # =======================================================
     #                   Loading Data
@@ -361,6 +362,14 @@ class Simulation:
         cm_to_km = 1e-5
         bounce_profile = self.profiles.sel(chk=self.bounce['chk'])
         self.bounce['velx'] = float(bounce_profile.velx.min()) * cm_to_km
+
+    def get_bounce_rnue_converge(self):
+        """Convergence time (s, post-bounce) of shock with nu_e sphere
+        """
+        mask = self.dat['rsh'] > self.dat['rnue']
+        converge_time = self.dat[mask]['time'].iloc[0]
+
+        self.bounce['rnue_converge'] = converge_time - self.bounce['time']
 
     # =======================================================
     #                      Plotting
