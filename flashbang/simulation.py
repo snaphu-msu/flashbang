@@ -54,6 +54,7 @@ import time
 import numpy as np
 import xarray as xr
 import pandas as pd
+from astropy import units
 
 # flashbang
 from . import load_save
@@ -157,6 +158,7 @@ class Simulation:
         self.get_bounce_ye()
         self.get_bounce_velx()
         self.get_bounce_rnue_converge()
+        self.get_bounce_mdot()
 
     # =======================================================
     #                   Loading Data
@@ -370,6 +372,12 @@ class Simulation:
         converge_time = self.dat[mask]['time'].iloc[0]
 
         self.bounce['rnue_converge'] = converge_time - self.bounce['time']
+
+    def get_bounce_mdot(self):
+        """Accretion rate at 500 km (Msun/s) at bounce
+        """
+        mdot = np.interp(self.bounce['time'], self.dat['time'], self.dat['mdot'])
+        self.bounce['mdot'] = mdot * units.g.to(units.Msun)
 
     # =======================================================
     #                      Plotting
