@@ -349,7 +349,7 @@ class Simulation:
         radius : float
             radius (km) to sample
         """
-        km_to_cm = 1e5
+        km_to_cm = units.km.to(units.cm)
         bounce_profile = self.profiles.sel(chk=self.bounce['chk'])
 
         ye_m = np.interp(mass, xp=bounce_profile.mass, fp=bounce_profile.ye)
@@ -359,9 +359,9 @@ class Simulation:
         self.bounce['ye_r'] = float(ye_r)
 
     def get_bounce_velx(self):
-        """Get max radial velocity at bounce
+        """Peak negative radial velocity at bounce
         """
-        cm_to_km = 1e-5
+        cm_to_km = units.cm.to(units.km)
         bounce_profile = self.profiles.sel(chk=self.bounce['chk'])
         self.bounce['velx'] = float(bounce_profile.velx.min()) * cm_to_km
 
