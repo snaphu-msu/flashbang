@@ -36,7 +36,7 @@ Everything is structured around the `Simulation` class, located in `flashbang/si
 ```
 $FLASH_MODELS
 │
-└───model_grid_1
+└───model_set_1
 |   |
 |   └───flash_model_1
 |   │   │   run_1.dat
@@ -58,7 +58,7 @@ import flashbang
 
 sim = flashbang.simulation.Simulation(model='flash_model_1', 
                                       run='run_1', 
-                                      model_set='model_grid_1',
+                                      model_set='model_set_1',
                                       output_dir='output')
 ```
 Where `model` is the name of the model directory, `run` is the prefix used in the output filenames, `model_set` is the name of the directory containing `model`, and `output` is the name of the directory containing the `chk` and `plt` files (defaults to `'output'`).
