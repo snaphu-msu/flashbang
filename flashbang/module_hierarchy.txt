@@ -18,8 +18,8 @@ simulation.py
 ----------------------------
  Level 2
 ----------------------------
+plotting/plotter.py
 load_save.py
-plotter.py
 
 ----------------------------
  Level 1
@@ -31,7 +31,7 @@ config.py
 ----------------------------
  Level 0
 ----------------------------
+plotting/plot_tools.py
+plotting/slider.py
 paths.py
-plot_tools.py
 tools.py
-slider.py
