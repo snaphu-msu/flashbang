@@ -21,14 +21,18 @@ class Comparison:
                  runs,
                  models,
                  model_sets,
+                 labels=None,
                  config=None,
-                 verbose=True):
+                 verbose=True,
+                 ):
         """
         Parameters
         ----------
         runs : [str]
         models : [str]
         model_sets : [str]
+        labels : [str]
+            Labels for plotting. Defaults to `models`
         config : str
         verbose : bool
         """
@@ -41,7 +45,11 @@ class Comparison:
         self.runs = tools.ensure_sequence(runs, n=self.n_models)
         self.models = models
         self.model_sets = tools.ensure_sequence(model_sets, n=self.n_models)
+        self.labels = labels
         self.load_models(config=config)
+
+        if labels is None:
+            self.labels = models
 
         self.baseline = models[0]
         self.baseline_sim = self.sims[0]
@@ -143,7 +151,7 @@ class Comparison:
                              linestyle=linestyle,
                              trans=trans if model == self.baseline else False,
                              ax=plot.ax,
-                             label=model,
+                             label=self.labels[i],
                              data_only=True)
 
         if not data_only:
@@ -204,7 +212,7 @@ class Comparison:
         for i, sim in self.sims.items():
             sim.plot_dat(y_var=y_var,
                          ax=plot.ax,
-                         label=self.models[i],
+                         label=self.labels[i],
                          x_factor=x_factor,
                          y_factor=y_factor,
                          marker=marker,
