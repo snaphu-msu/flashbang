@@ -3,11 +3,11 @@ from . import load_save
 from . import paths
 from . import quantities
 from . import tools
-from . import compare
+from . import comparison
 from . import plotting
 
 __all__ = ['simulation',
-           'compare',
+           'comparison',
            'load_save',
            'paths',
            'plotting',
