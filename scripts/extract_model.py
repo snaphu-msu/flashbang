@@ -26,7 +26,6 @@ from flashbang.config import Config
 
 
 def main(run, model, model_set,
-         multithread=True,
          reload=False,
          save=True,
          config='default',
@@ -37,7 +36,6 @@ def main(run, model, model_set,
     run : str
     model : str
     model_set : str
-    multithread : bool
     reload : bool
     save : bool
     config : str
@@ -45,7 +43,6 @@ def main(run, model, model_set,
     """
     t0 = time.time()
 
-    multithread = str_to_bool(multithread)
     reload = str_to_bool(reload)
     save = str_to_bool(save)
     threads = int(threads)
@@ -62,7 +59,7 @@ def main(run, model, model_set,
                       save=save)
 
     # Extract profiles
-    if multithread:
+    if threads > 1:
         args = []
         for chk in chk_list:
             args.append((chk, run, model, model_set, reload, save, config))
