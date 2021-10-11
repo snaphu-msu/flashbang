@@ -2,7 +2,7 @@
 
 The Comparison object represents a collection of 1D FLASH models.
 It loads multiple models for plotting.
-For details on model attributes and nomencclature, see simulation.py
+For details on model attributes and nomenclature, see simulation.py
 """
 import numpy as np
 
@@ -29,8 +29,11 @@ class Comparison:
         Parameters
         ----------
         runs : [str]
+            Labels used in chk and .dat filenames
         models : [str]
+            Names of simulation directories
         model_sets : [str]
+            Names of higher-level model collections (see simulation.py docstring)
         labels : [str]
             Labels for plotting. Defaults to `models`
         config : str

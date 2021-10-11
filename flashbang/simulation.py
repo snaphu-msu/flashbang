@@ -83,11 +83,11 @@ class Simulation:
         parameters
         ----------
         run : str
-            The label that's used in chk and .dat filenames, e.g. 'run' for 'run.dat'
+            Label used in chk and .dat filenames, e.g. 'run' for 'run.dat'
         model : str
-            The name of the main model directory
+            Name of simulation directory containing .dat files, etc.
         model_set : str
-            Higher-level label of model collection
+            Name of higher-level model collection (see module docstring)
         config : str
             Name of config file to use, e.g. 'stir' for 'config/stir.ini'
         load_all : bool
