@@ -70,3 +70,4 @@ Where `model` is the name of the model directory, `run` is the prefix used in th
 * config files (look in `flashbang/config/`)
 * plotting
 * jupyter notebook tutorial
+* Comparison objects
