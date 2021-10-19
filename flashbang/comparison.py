@@ -4,12 +4,14 @@ The Comparison object represents a collection of 1D FLASH models.
 It loads multiple models for plotting.
 For details on model attributes and nomenclature, see simulation.py
 """
+import matplotlib.pyplot as plt
 import numpy as np
 
 # flashbang
 from . import simulation
 from .plotting.plotter import Plotter
 from .plotting.slider import FlashSlider
+from .plotting import plot_tools
 from . import tools
 from .config import Config
 
@@ -161,6 +163,64 @@ class Comparison:
             plot.set_all()
 
         return plot
+
+    def plot_dats(self, y_vars,
+                  x_scale=None,
+                  x_lims=None,
+                  x_factor=None,
+                  x_label=None,
+                  legend=True, legend_loc=None,
+                  title=True, title_str=None,
+                  sub_figsize=(6, 4),
+                  linestyle=None, marker=None,
+                  zero_time=True):
+        """Plot multiple time-dependent datfile comparisons
+
+        parameters
+        ----------
+        y_vars : [str]
+        x_scale : 'log' or 'linear'
+        x_lims : [min, max]
+        x_factor : float
+        x_label : str
+        legend : bool
+        legend_loc : str or int
+        title : bool
+        title_str : str
+        sub_figsize : (width, height)
+        linestyle : str
+        marker : str
+        zero_time : bool
+        """
+        y_vars = tools.ensure_sequence(y_vars)
+        n_var = len(y_vars)
+        fig, ax = plot_tools.setup_subplots(n_var,
+                                            max_cols=1,
+                                            sharex=True,
+                                            sub_figsize=sub_figsize,
+                                            squeeze=False)
+
+        for i, y_var in enumerate(y_vars):
+            show_legend = legend if i == 0 else False
+            show_title = title if i == 0 else False
+
+            self.plot_dat(ax=ax[i, 0],
+                          y_var=y_var,
+                          x_lims=x_lims,
+                          x_factor=x_factor,
+                          x_scale=x_scale,
+                          x_label=x_label,
+                          title=show_title,
+                          title_str=title_str,
+                          legend=show_legend,
+                          zero_time=zero_time,
+                          marker=marker,
+                          linestyle=linestyle,
+                          legend_loc=legend_loc)
+
+        plt.subplots_adjust(hspace=0)
+
+        return fig
 
     def plot_dat(self, y_var,
                  x_scale=None, y_scale=None,
