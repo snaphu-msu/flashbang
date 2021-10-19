@@ -171,7 +171,7 @@ class Comparison:
                   x_label=None,
                   legend=True, legend_loc=None,
                   title=True, title_str=None,
-                  sub_figsize=(6, 4),
+                  sub_figsize=(6, 3),
                   linestyle=None, marker=None,
                   zero_time=True):
         """Plot multiple time-dependent datfile comparisons
