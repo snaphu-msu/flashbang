@@ -417,6 +417,7 @@ class Simulation:
         sub_figsize : tuple
         trans : bool
         """
+        chk = self._check_bounce(chk)
         chk = ensure_sequence(chk)
         y_vars = ensure_sequence(y_vars)
         n_var = len(y_vars)
@@ -494,6 +495,7 @@ class Simulation:
         data_only : bool
             only plot data, neglecting all titles/labels/scales
         """
+        chk = self._check_bounce(chk)
         chk = ensure_sequence(chk)
         title_str = self._get_title(chk=chk[0], title_str=title_str)
 
@@ -1030,6 +1032,20 @@ class Simulation:
             if self.trans_dens is None:
                 raise AttributeError('No trans_dens found. '
                                      'Are you sure this a hybrid-EOS model?')
+
+    def _check_bounce(self, chk):
+        """Check if bounce chk requested
+
+        Returns: int
+
+        Parameters
+        ----------
+        chk : str, int, or [int]
+        """
+        if chk == 'bounce':
+            chk = self.bounce['chk']
+
+        return chk
 
     def printv(self, string, verbose=None, **kwargs):
         """Verbose-aware print
