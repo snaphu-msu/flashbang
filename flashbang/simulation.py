@@ -528,9 +528,7 @@ class Simulation:
             x = profile[x_var]
             y = profile[y_var]
 
-            plot.plot(x, y,
-                      label=f'chk_{i}' if (label is None) else label,
-                      color=color)
+            plot.plot(x, y, label=label, color=color)
 
             if trans:
                 self._plot_trans_lines(x=x, y=y, plot=plot, chk=i)
