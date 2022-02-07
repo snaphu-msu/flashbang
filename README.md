@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/215366074.svg)](https://zenodo.org/badge/latestdoi/215366074)
+
 # flashbang
 Python tools for extracting/analysing/plotting 1D core-collapse supernova models from [FLASH](http://flash.uchicago.edu/site/flashcode/).
 
