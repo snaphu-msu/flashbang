@@ -50,12 +50,12 @@ def config_filepath(name=None):
         base name of config file
         defaults to 'default' (for config file 'default.ini')
     """
-    path = top_path()
-
     if name is None:
         name = 'default'
 
-    return os.path.join(path, 'flashbang', 'config', f'{name}.ini')
+    path = os.path.join(top_path(), 'flashbang', 'config', f'{name}.ini')
+
+    return path
 
 
 # ===============================================================
@@ -70,13 +70,15 @@ def model_path(model, model_set):
     model_set : str
     """
     try:
-        flash_models_path = os.environ['FLASH_MODELS']
+        models_path = os.environ['FLASH_MODELS']
     except KeyError:
         raise EnvironmentError('Environment variable FLASH_MODELS not set. '
                                'Set path to directory containing flash models, e.g., '
                                "'export FLASH_MODELS=${HOME}/BANG/runs'")
 
-    return os.path.join(flash_models_path, model_set, model)
+    path = os.path.join(models_path, model_set, model)
+
+    return path
 
 
 def output_path(model, model_set):
@@ -87,8 +89,8 @@ def output_path(model, model_set):
     model : str
     model_set : str
     """
-    path = model_path(model, model_set=model_set)
-    return os.path.join(path, 'output')
+    path = os.path.join(model_path(model, model_set), 'output')
+    return path
 
 
 # ===============================================================
@@ -134,7 +136,9 @@ def flash_filepath(name, run, model, model_set, chk=None):
         path = model_path(model, model_set=model_set)
 
     filename = flash_filename(name, run=run, chk=chk)
-    return os.path.join(path, filename)
+    filepath = os.path.join(path, filename)
+
+    return filepath
 
 
 # ===============================================================
@@ -143,8 +147,8 @@ def flash_filepath(name, run, model, model_set, chk=None):
 def cache_path():
     """Path to directory for cached files
     """
-    path = top_path()
-    return os.path.join(path, 'cache')
+    path = os.path.join(top_path(), 'cache')
+    return path
 
 
 def model_cache_path(model, model_set):
@@ -155,8 +159,8 @@ def model_cache_path(model, model_set):
     model : str
     model_set : str
     """
-    path = cache_path()
-    return os.path.join(path, model_set, model)
+    path = os.path.join(cache_path(), model_set, model)
+    return path
 
 
 def cache_filename(name, run, model, chk=None):
@@ -199,7 +203,10 @@ def cache_filepath(name, run, model, model_set, chk=None):
     """
     path = model_cache_path(model=model, model_set=model_set)
     filename = cache_filename(name=name, run=run, model=model, chk=chk)
-    return os.path.join(path, filename)
+    
+    filepath = os.path.join(path, filename)
+
+    return filepath
 
 
 def check_chk(chk, name, requires_chk):
