@@ -1,8 +1,7 @@
 """Functions that return standardised strings for paths and filenames for
     FLASH models and their extracted datafiles
 
-For this module to work, you must set the bash environment variables:
-    - FLASHBANG (path to flashbang repo)
+For this module to work, you must set the bash environment variable:
     - FLASH_MODELS (path to directory containing FLASH models)
 
 Function naming convention:
@@ -33,15 +32,12 @@ import os
 # ===============================================================
 #                      Flashbang
 # ===============================================================
-def flashbang_path():
-    """Return path to flashbang repo
+def top_path():
+    """Return path to top-level repo directory
     """
-    try:
-        path = os.environ['FLASHBANG']
-    except KeyError:
-        raise EnvironmentError('Environment variable FLASHBANG not set. '
-                               'Set path to flashbang directory, e.g., '
-                               "'export FLASHBANG=${HOME}/codes/flashbang'")
+    path = os.path.join(os.path.dirname(__file__), '..')
+    path = os.path.abspath(path)
+
     return path
 
 
@@ -54,7 +50,7 @@ def config_filepath(name=None):
         base name of config file
         defaults to 'default' (for config file 'default.ini')
     """
-    path = flashbang_path()
+    path = top_path()
 
     if name is None:
         name = 'default'
@@ -147,7 +143,7 @@ def flash_filepath(name, run, model, model_set, chk=None):
 def cache_path():
     """Path to directory for cached files
     """
-    path = flashbang_path()
+    path = top_path()
     return os.path.join(path, 'cache')
 
 

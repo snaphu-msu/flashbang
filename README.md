@@ -25,11 +25,10 @@ which will create a python environment called `flashbang`, which you can then ac
 `conda activate flashbang`
 
 # Setup
-Set these shell environment variables (e.g. in your `.bashrc`):
-* `FLASHBANG` - path to this code, e.g. `export FLASHBANG=${HOME}/codes/flashbang`
+Set the shell environment variable (e.g. in your `.bashrc`):
 * `FLASH_MODELS` - path to FLASH models, e.g. `export FLASH_MODELS=${HOME}/BANG/runs`
 
-In order to import with ipython etc., append to your python path: `export PYTHONPATH=${FLASHBANG}:${PYTHONPATH}`
+In order to import with ipython etc., append to your python path: `export PYTHONPATH=<path to flashbang>:${PYTHONPATH}`
 
 # Getting Started
 Everything is structured around the `Simulation` class, located in `flashbang/simulation.py`. This object represents a single FLASH simulation, and is intended to facilitate the loading/analysing/plotting of the model data.
