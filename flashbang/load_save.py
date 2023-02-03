@@ -643,7 +643,7 @@ def add_yl_profile(profile):
                          ' to calculate lepton fraction (yl)')
 
     yl = profile['ye'] + profile['ynu']
-    profile['yl'] = ('zone', yl)
+    profile['yl'] = ('zone', yl.data)
 
 
 def add_abar_profile(profile):
@@ -657,7 +657,7 @@ def add_abar_profile(profile):
         raise ValueError(f'Need sumy in profile to calculate abar')
 
     abar = 1 / profile['sumy']
-    profile['abar'] = ('zone', abar)
+    profile['abar'] = ('zone', abar.data)
 
 
 def add_sumx_profile(profile, isotopes):
