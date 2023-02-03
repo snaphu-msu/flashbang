@@ -332,7 +332,7 @@ class Simulation:
         bounce_slice = bounce_profile.where(bounce_profile.mass < max_mass, drop=True)
         mass = bounce_slice.where(bounce_slice.entr > entr, drop=True).mass
 
-        if len(mass) is not 1:
+        if len(mass) != 1:
             self.printv('Unique bounce core mass not found! '
                         'Bounce chk may not be at bounce')
             return
@@ -579,7 +579,7 @@ class Simulation:
 
         if y_vars is None:
             y_vars = self.config.plotting('isotopes')
-        elif y_vars is 'all':
+        elif y_vars == 'all':
             y_vars = [x.strip() for x in self.config.profiles('isotopes')]
         if y_lims is None:
             y_lims = self.config.ax_lims('X')

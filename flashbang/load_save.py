@@ -1032,7 +1032,7 @@ def extract_timesteps_log(run, model, model_set,
 
             # get nstep and timestep
             elif i == next_line:
-                if arrays['chk'][-1] is 0:
+                if arrays['chk'][-1] == 0:
                     n, t = 0, 0
                 else:
                     n, t = split_line(line)
@@ -1042,7 +1042,7 @@ def extract_timesteps_log(run, model, model_set,
     table = pd.DataFrame(arrays)
     table.set_index('chk', inplace=True)
 
-    if len(table) is 0:
+    if len(table) == 0:
         printv('No chk timesteps found!', verbose)
     if len(table[table.time.isna()]) > 0:
         printv('Some chk timesteps not found!', verbose)
