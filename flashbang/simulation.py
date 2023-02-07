@@ -369,9 +369,14 @@ class Simulation:
         """Convergence time (s, post-bounce) of shock with nu_e sphere
         """
         mask = self.dat['rsh'] > self.dat['rnue']
-        converge_time = self.dat[mask]['time'].iloc[0]
+        post_converge = self.dat[mask]
 
-        self.bounce['rnue_converge'] = converge_time - self.bounce['time']
+        if len(post_converge) == 0:
+            self.printv('rnue_converge not found!')
+            self.bounce['rnue_converge'] = None
+        else:
+            converge_time = self.dat[mask]['time'].iloc[0]
+            self.bounce['rnue_converge'] = converge_time - self.bounce['time']
 
     def get_bounce_mdot(self):
         """Accretion rate at 500 km (Msun/s) at bounce
