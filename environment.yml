@@ -2,11 +2,11 @@ name: flashbang
 dependencies:
   - python=3.8
   - astropy=5.1
-  - h5py=3.7
-  - ipython=8.8
-  - matplotlib=3.1
-  - numpy=1.23
-  - pandas=1.4
-  - scipy=1.9
-  - xarray=2022.11
-  - yt=3.6
+  - h5py=3.8
+  - ipython=8.10
+  - matplotlib=3.7
+  - numpy=1.24
+  - pandas=1.5
+  - scipy=1.10
+  - xarray=2023.1
+  - yt=4.1
