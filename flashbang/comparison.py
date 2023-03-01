@@ -26,6 +26,7 @@ class Comparison:
                  labels=None,
                  config=None,
                  verbose=True,
+                 reload=False,
                  ):
         """
         Parameters
@@ -51,7 +52,7 @@ class Comparison:
         self.models = models
         self.model_sets = tools.ensure_sequence(model_sets, n=self.n_models)
         self.labels = labels
-        self.load_models(config=config)
+        self.load_models(config=config, reload=reload)
 
         if labels is None:
             self.labels = models
@@ -62,7 +63,7 @@ class Comparison:
     # =======================================================
     #                      Loading
     # =======================================================
-    def load_models(self, config):
+    def load_models(self, config, reload=False):
         """Load all models
 
         Parameters
@@ -74,7 +75,8 @@ class Comparison:
                                                  model=model,
                                                  model_set=self.model_sets[i],
                                                  config=config,
-                                                 verbose=self.verbose)
+                                                 verbose=self.verbose,
+                                                 reload=reload)
             self.bounce[i] = self.sims[i].bounce
 
     # =======================================================
