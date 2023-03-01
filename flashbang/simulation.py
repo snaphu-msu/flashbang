@@ -55,6 +55,7 @@ import numpy as np
 import xarray as xr
 import pandas as pd
 from astropy import units
+import matplotlib.pyplot as plt
 
 # flashbang
 from . import load_save
@@ -431,6 +432,7 @@ class Simulation:
                                             sharex=True,
                                             sub_figsize=sub_figsize,
                                             squeeze=False)
+        plt.subplots_adjust(hspace=0)
 
         for i, y_var in enumerate(y_vars):
             row = int(np.floor(i / max_cols))
@@ -453,6 +455,7 @@ class Simulation:
                               legend_loc=legend_loc,
                               title=show_title,
                               title_str=title_str)
+
         return fig
 
     def plot_profile(self, chk, y_var,
