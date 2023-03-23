@@ -705,6 +705,7 @@ class Simulation:
         return plot
 
     def plot_tracers(self, y_var,
+                     x_var='chk',
                      x_scale=None, y_scale=None,
                      x_lims=None, y_lims=None,
                      x_label=None, y_label=None,
@@ -719,6 +720,7 @@ class Simulation:
         parameters
         ----------
         y_var : str
+        x_var : str
         x_scale : 'log' or 'linear'
         y_scale : 'log' or 'linear'
         x_lims : [min, max]
@@ -736,7 +738,7 @@ class Simulation:
         """
         plot = Plotter(ax=ax,
                        config=self.config,
-                       x_var='chk',
+                       x_var=x_var,
                        y_var=y_var,
                        x_lims=x_lims,
                        y_lims=y_lims,
@@ -753,7 +755,7 @@ class Simulation:
                        verbose=self.verbose)
 
         for mass in self.tracers['mass']:
-            x = self.tracers['chk']
+            x = self.tracers[x_var]
             y = self.tracers.sel(mass=mass)[y_var]
             label = f'{mass.values:.3f}'
 
