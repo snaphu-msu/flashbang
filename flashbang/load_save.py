@@ -607,6 +607,9 @@ def extract_profile(chk, run, model, model_set,
     if 'sumx' in derived_params:
         add_sumx_profile(profile, isotopes=config.profiles('isotopes'))
 
+    if 'mach' in derived_params:
+        add_mach_profile(profile)
+        
     n_zones = len(profile['zone'])
     profile.coords['zone'] = np.arange(n_zones)  # set coords (mostly for concat later)
 
@@ -679,6 +682,21 @@ def add_sumx_profile(profile, isotopes):
         sumx += profile[isotope]
 
     profile['sumx'] = ('zone', sumx)
+
+
+def add_mach_profile(profile):
+    """Add mach number velocity to profile
+
+    parameters
+    ----------
+    profile : xr.Dataset
+    """
+    if ('velx' not in profile) or ('gamc' not in profile) \
+            or ('pres' not in profile) or ('dens' not in profile):
+        raise ValueError(f'Need velx, gamc, pres and dens to calculate mach')
+
+    mach = profile['velx'] / np.sqrt(profile['gamc'] * profile['pres'] / profile['dens'])
+    profile['mach'] = ('zone', mach.data)
 
 
 # ===============================================================
