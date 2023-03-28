@@ -423,7 +423,7 @@ class Simulation:
         sub_figsize : tuple
         trans : bool
         """
-        chk = self._check_bounce(chk)
+        chk = self._parse_chk(chk)
         chk = ensure_sequence(chk)
         y_vars = ensure_sequence(y_vars)
         n_var = len(y_vars)
@@ -476,8 +476,8 @@ class Simulation:
 
         parameters
         ----------
-        chk : int or [int]
-            checkpoint(s) to plot
+        chk : int or [int] or str
+            checkpoint(s) to plot. Can also use 'bounce' or 'last'
         y_var : str
             variable to plot on y-axis (from Simulation.profile)
         x_var : str
@@ -503,7 +503,7 @@ class Simulation:
         data_only : bool
             only plot data, neglecting all titles/labels/scales
         """
-        chk = self._check_bounce(chk)
+        chk = self._parse_chk(chk)
         chk = ensure_sequence(chk)
         title_str = self._get_title(chk=chk[0], title_str=title_str)
 
@@ -1041,8 +1041,8 @@ class Simulation:
                 raise AttributeError('No trans_dens found. '
                                      'Are you sure this a hybrid-EOS model?')
 
-    def _check_bounce(self, chk):
-        """Check if bounce chk requested
+    def _parse_chk(self, chk):
+        """Check if special chk requested
 
         Returns: int
 
@@ -1052,6 +1052,8 @@ class Simulation:
         """
         if chk == 'bounce':
             chk = self.bounce['chk']
+        elif chk == 'last':
+            chk = self.chk_table.index[-1]
 
         return chk
 
