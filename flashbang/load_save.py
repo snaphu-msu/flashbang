@@ -607,6 +607,9 @@ def extract_profile(chk, run, model, model_set,
     if 'sumx' in derived_params:
         add_sumx_profile(profile, isotopes=config.profiles('isotopes'))
 
+    if 'c_s' in derived_params:
+        add_c_s_profile(profile)
+
     if 'mach' in derived_params:
         add_mach_profile(profile)
         
@@ -684,6 +687,20 @@ def add_sumx_profile(profile, isotopes):
     profile['sumx'] = ('zone', sumx)
 
 
+def add_c_s_profile(profile):
+    """Add soundspeed to profile
+
+    parameters
+    ----------
+    profile : xr.Dataset
+    """
+    if ('gamc' not in profile) or ('pres' not in profile) or ('dens' not in profile):
+        raise ValueError(f'Need gamc, pres and dens to calculate c_s')
+
+    c_s = np.sqrt(profile['gamc'] * profile['pres'] / profile['dens'])
+    profile['c_s'] = ('zone', c_s.data)
+
+
 def add_mach_profile(profile):
     """Add mach number velocity to profile
 
@@ -691,11 +708,10 @@ def add_mach_profile(profile):
     ----------
     profile : xr.Dataset
     """
-    if ('velx' not in profile) or ('gamc' not in profile) \
-            or ('pres' not in profile) or ('dens' not in profile):
-        raise ValueError(f'Need velx, gamc, pres and dens to calculate mach')
+    if ('velx' not in profile) or ('c_s' not in profile):
+        raise ValueError(f'Need velx and c_s to calculate mach')
 
-    mach = profile['velx'] / np.sqrt(profile['gamc'] * profile['pres'] / profile['dens'])
+    mach = profile['velx'] / profile['c_s']
     profile['mach'] = ('zone', mach.data)
 
 
