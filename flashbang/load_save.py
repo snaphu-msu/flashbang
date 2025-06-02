@@ -394,6 +394,9 @@ def get_all_profiles(run, model, model_set,
     save : bool
     verbose : bool
     """
+
+    config = check_config(config, verbose=verbose)
+    
     printv(f'Loading chk profiles', verbose=verbose)
 
     if chk_list is None:
