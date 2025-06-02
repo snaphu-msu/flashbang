@@ -581,6 +581,9 @@ def extract_profile(chk, run, model, model_set,
         params = config.profiles('all')
         derived_params = config.profiles('derived_params')
 
+    if derived_params is None:
+        derived_params = []
+
     profile = xr.Dataset()
     chk_raw = load_chk(chk=chk, run=run, model=model, model_set=model_set)
     chk_data = chk_raw.all_data()
