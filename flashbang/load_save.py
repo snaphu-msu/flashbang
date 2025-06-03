@@ -339,6 +339,7 @@ def get_multiprofile(run, model, model_set,
                                     derived_params=derived_params,
                                     save=save,
                                     verbose=verbose,
+                                    reload=reload,
                                     config=config)
 
         multiprofile = join_profiles(profiles, verbose=verbose)
@@ -358,6 +359,7 @@ def get_multiprofile(run, model, model_set,
                                                 params=params,
                                                 save=save,
                                                 verbose=verbose,
+                                                reload=reload,
                                                 derived_params=derived_params,
                                                 config=config)
 
@@ -1158,6 +1160,7 @@ def get_tracers(run, model, model_set,
                                         chk_list=chk_list,
                                         params=params,
                                         derived_params=derived_params,
+                                        reload=reload,
                                         verbose=verbose)
 
         tracers = extract_multi_tracers(mass_grid,
