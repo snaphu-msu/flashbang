@@ -1096,6 +1096,7 @@ def extract_timesteps_log(run, model, model_set,
 def get_tracers(run, model, model_set,
                 profiles=None,
                 params=None,
+                derived_params=None,
                 mass_grid=None,
                 reload=False,
                 save=True,
@@ -1142,6 +1143,9 @@ def get_tracers(run, model, model_set,
         if params is None:
             params = conf.tracers('params')
 
+        if derived_params is None:
+            derived_params = conf.tracers('derived_params')
+
         if profiles is None:
             chk_list = find_chk(run=run,
                                 model=model,
@@ -1153,6 +1157,7 @@ def get_tracers(run, model, model_set,
                                         model_set=model_set,
                                         chk_list=chk_list,
                                         params=params,
+                                        derived_params=derived_params,
                                         verbose=verbose)
 
         tracers = extract_multi_tracers(mass_grid,
