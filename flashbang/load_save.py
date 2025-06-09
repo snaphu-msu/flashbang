@@ -592,6 +592,9 @@ def extract_profile(chk, run, model, model_set,
     profile = xr.Dataset()
     chk_raw = load_chk(chk=chk, run=run, model=model, model_set=model_set)
     chk_data = chk_raw.all_data()
+    
+    # Add simulation time at which checkpoint was created
+    profile.coords["time"] = chk_raw.current_time.value
 
     for var in params:
         profile[var.strip()] = ('zone', np.array(chk_data[var]))

@@ -44,6 +44,7 @@ def extract_multi_tracers(mass_grid, profiles, params, verbose=True):
     tracers = xr.Dataset()
     tracers.coords['chk'] = chk_list
     tracers.coords['mass'] = mass_grid
+    tracers.coords['time'] = profiles.coords['time'].values
 
     for i, par in enumerate(params):
         tracers[par] = (('chk', 'mass'), data_cube[:, :, i])
@@ -72,7 +73,7 @@ def extract_tracers(mass_grid, profile, params):
     out_array = np.zeros([len(mass_grid), len(params)])
 
     for i, par in enumerate(params):
-        interp_func = interp1d(profile['mass'], profile[par])
+        interp_func = interp1d(profile['mass'], profile[par.strip()])
         out_array[:, i] = interp_func(mass_grid)
 
     return out_array
