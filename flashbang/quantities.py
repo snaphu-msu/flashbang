@@ -125,7 +125,7 @@ def get_mass_halves(radius, density, cell_edges):
     density : np.ndarray
         1D array of density values (cell-averaged)
     cell_edges : np.ndarray
-        1D array of raddii of cell edges
+        1D array of radii of cell edges
     """
     if len(radius) != len(density):
         raise ValueError('radius and density arrays are not the same length ' 
